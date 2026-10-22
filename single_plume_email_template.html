@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>{{email_subject}}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;700&display=swap" rel="stylesheet">
+  <style type="text/css">
+    body, table, td, a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+    table, td { mso-table-lspace:0pt; mso-table-rspace:0pt; }
+    img { -ms-interpolation-mode:bicubic; border:0; height:auto; line-height:100%; outline:none; text-decoration:none; }
+    table { border-collapse:collapse !important; }
+    body { margin:0 !important; padding:0 !important; width:100% !important; background-color:#F4EFE9; }
+    .font-brand { font-family: Alexandria, Arial, Helvetica, sans-serif !important; }
+    .container { width:100%; max-width:640px; }
+    .mobile-pad { padding-left:24px !important; padding-right:24px !important; }
+    @media screen and (max-width:640px) {
+      .container { width:100% !important; }
+      .mobile-pad { padding-left:18px !important; padding-right:18px !important; }
+      .stack-cell, .button-cell { display:block !important; width:100% !important; padding:0 0 12px 0 !important; border-right:none !important; }
+      .button-link { display:block !important; }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#F4EFE9;">
+  <div style="display:none; font-size:1px; color:#F4EFE9; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden; mso-hide:all;">
+    {{preheader_text}}
+  </div>
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F4EFE9;">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="640" class="container" style="max-width:640px; background-color:#ffffff; border:1px solid #E5DDD4;">
+
+          <!-- LOGO -->
+          <tr>
+            <td align="center" style="padding:32px 24px 16px 24px;">
+              <img src="https://images.squarespace-cdn.com/content/v1/681a42ab30e6d15b8dac0c79/b247872b-fbbd-4f23-83ed-8c4114a6d010/FCF_Main+Logo_3-Color_RGB_on+offwhite.png?format=1500w"
+                   alt="Full Circle Future" width="180"
+                   style="display:block; width:180px; max-width:180px; height:auto;" />
+            </td>
+          </tr>
+
+          <!-- EYEBROW -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 8px 32px; font-size:12px; line-height:18px; color:#7A7186; text-transform:uppercase; letter-spacing:0.08em;">
+              Landfill Watch Alert — {{detection_datetime}}
+            </td>
+          </tr>
+
+          <!-- HEADLINE -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 8px 32px; font-size:30px; line-height:38px; font-weight:700; color:#2A1D3D;">
+              Alert: Large methane plume detected at {{landfill_name}}
+            </td>
+          </tr>
+
+          <!-- GREETING -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 24px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              Hi {{recipient_name}},
+            </td>
+          </tr>
+
+          <!-- INTRO -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 18px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              You’re receiving this alert because you signed up for updates from Full Circle Future about  <strong style="color:#E6674F;">{{landfill_name}}</strong> in <strong style="color:#E6674F;">{{municipality}}</strong>. There’s a new development you should know about:
+            </td>
+          </tr>
+
+          <!-- BODY -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 22px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              <a href="http://carbonmapper.org" target="_blank" style="color:#0A8574; text-decoration:underline;">Carbon Mapper</a> recently identified a large plume of methane coming from <strong style="color:#E6674F;">{{landfill_name}}</strong>.
+            </td>
+          </tr>
+
+          <!-- DETECTION DETAILS — teal filled header -->
+          <tr>
+            <td class="mobile-pad" style="padding:0 32px 24px 32px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #0A8574;">
+                <tr>
+                  <td class="font-brand" style="padding:16px 18px 12px 18px; font-size:16px; line-height:24px; font-weight:700; color:#F4EFE9; background-color:#0A8574;">
+                    Detection details
+                  </td>
+                </tr>
+                <tr>
+                  <td class="font-brand" style="padding:12px 18px 8px 18px; font-size:15px; line-height:24px; color:#2F2A36;">
+                    <strong>Date and time:</strong> {{detection_datetime}}<br />
+                    <strong>Methane emissions rate:</strong> {{methane_emissions_rate}}<br />
+                    <strong>Detection technology:</strong> {{detection_technology}}<br />
+                    <strong>View plume on Carbon Mapper:</strong> <a href="{{plume_portal_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_portal_label}}</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="font-brand" style="padding:0 18px 18px 18px; font-size:13px; line-height:20px; color:#5C5566;">
+                    <strong>Note:</strong> 100 kg/hour is a "super emitter" event for oil and gas methane emissions, as determined by the EPA.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- PLUME IMAGE — satellite map composite, falls back to plain plume image -->
+          <tr>
+            <td class="mobile-pad" style="padding:0 32px 28px 32px;">
+              {{#if plume_map_url}}
+                <img src="{{plume_map_url}}" alt="Methane plume from {{landfill_name}} shown over a satellite map" width="576"
+                     style="display:block; width:100%; max-width:576px; height:auto; border:1px solid #E5DDD4;" />
+                <p class="font-brand" style="margin:8px 0 0 0; font-size:12px; line-height:18px; color:#5C5566;">
+                  Plume imagery: Carbon Mapper. Basemap: © Mapbox © OpenStreetMap
+                </p>
+              {{else}}
+                <img src="{{plume_image_url}}" alt="Methane plume image for {{landfill_name}}" width="576"
+                     style="display:block; width:100%; max-width:576px; border:1px solid #E5DDD4;" />
+              {{/if}}
+            </td>
+          </tr>
+
+          <!-- WHY DOES THIS DETECTION MATTER -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 10px 32px; font-size:22px; line-height:28px; font-weight:700; color:#2A1D3D;">
+              Why does this matter?
+            </td>
+          </tr>
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 16px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              Large methane plumes can indicate significant landfill emissions and may help identify problems such as gas collection system failures, cover issues, or other leaks. Many of these emissions sources can be investigated and repaired.
+            </td>
+          </tr>
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 16px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              However, in most states, landfill operators are not required to investigate or respond when large methane plumes are detected by satellites or aircraft. Starting in 2027, California and Colorado will require landfill operators to follow up on certain large remotely detected methane emissions.
+            </td>
+          </tr>
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 28px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              <strong>Finding the emissions is the first step toward fixing them.</strong>
+            </td>
+          </tr>
+
+          <!-- ABOUT THIS LANDFILL — off-white fill + purple border -->
+          <tr>
+            <td class="mobile-pad" style="padding:0 32px 24px 32px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #2A1D3D; background-color:#F4EFE9;">
+                <tr>
+                  <td class="font-brand" style="padding:16px 18px 8px 18px; font-size:16px; line-height:24px; font-weight:700; color:#2A1D3D; background-color:#F4EFE9;">
+                    About this landfill
+                  </td>
+                </tr>
+                <tr>
+                  <td class="font-brand" style="padding:0 18px 16px 18px; font-size:15px; line-height:24px; color:#2F2A36; background-color:#F4EFE9;">
+                    <strong>People living within 5 miles:</strong> {{population}}<br />
+                    <strong>Owner:</strong> {{owner}}<br />
+                    <strong>Waste buried in this landfill:</strong> {{waste_in_place}} metric tons
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 18px 18px 18px; background-color:#F4EFE9;">
+                    <a href="{{wit_url}}" target="_blank" style="display:inline-block; color:#0A8574; font-size:15px; line-height:22px; text-decoration:underline;">
+                      View this landfill on Waste Impact Tracker →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- WHAT CAN I DO -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 10px 32px; font-size:24px; line-height:30px; font-weight:700; color:#0A8574;">
+              What can I do?
+            </td>
+          </tr>
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 16px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              Learn more about this landfill and nearby communities, share this information with others, or support policies that require investigation and corrective action when large methane releases are detected.
+            </td>
+          </tr>
+
+          <!-- ACTION CARDS -->
+          <tr>
+            <td class="mobile-pad" style="padding:0 32px 28px 32px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #2A1D3D;">
+                <tr>
+                  <td class="stack-cell font-brand" width="50%" valign="top" style="padding:20px 16px 0 16px; border-right:1px solid #2A1D3D; font-size:15px; line-height:24px; color:#2F2A36; text-align:center; background-color:#F4EFE9;">
+                    Contact your elected officials and urge them to support policies that require landfill operators to investigate and reduce large methane emissions.
+                  </td>
+                  <td class="stack-cell font-brand" width="50%" valign="top" style="padding:20px 16px 0 16px; font-size:15px; line-height:24px; color:#2F2A36; text-align:center; background-color:#F4EFE9;">
+                    Live near a landfill? Join GOAL — Grassroots Organizers for Accountable Landfills — and connect with others working for change.
+                  </td>
+                </tr>
+                <tr>
+                  <td class="stack-cell" width="50%" valign="bottom" style="padding:16px; border-right:1px solid #2A1D3D; background-color:#F4EFE9;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="center" bgcolor="#2A1D3D" style="background-color:#2A1D3D;">
+                          <a class="button-link font-brand" href="https://secure.everyaction.com/v1RWSAqd30eAhkFWXBBNFg2" target="_blank"
+                             style="display:inline-block; width:100%; padding:14px 18px; font-size:15px; line-height:20px; font-weight:700; color:#FFFFFF; text-decoration:none;">
+                            Take action now
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td class="stack-cell" width="50%" valign="bottom" style="padding:16px; background-color:#F4EFE9;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="center" bgcolor="#E6674F" style="background-color:#E6674F;">
+                          <a class="button-link font-brand" href="https://www.fullcirclefuture.org/goal" target="_blank"
+                             style="display:inline-block; width:100%; padding:14px 18px; font-size:15px; line-height:20px; font-weight:700; color:#FFFFFF; text-decoration:none;">
+                            Learn about GOAL
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- WHY METHANE MATTERS -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 10px 32px; font-size:24px; line-height:30px; font-weight:700; color:#2A1D3D;">
+              Why does methane matter?
+            </td>
+          </tr>
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 28px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              Methane is an extremely potent greenhouse gas — about 80 times more powerful than carbon dioxide in the short term. Large methane releases from landfills can also signal the presence of other harmful pollutants, including benzene, hydrogen sulfide, and PFAS. The good news is that proven, cost-effective solutions exist to dramatically reduce these emissions.
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:16px 32px 8px 32px; font-size:14px; line-height:22px; color:#5C5566; border-top:1px solid #E5DDD4;">
+              Full Circle Future<br />
+              <a href="https://www.fullcirclefuture.org" target="_blank" style="color:#0A8574; text-decoration:underline;">www.fullcirclefuture.org</a>
+            </td>
+          </tr>
+
+          <!-- UNSUBSCRIBE -->
+          <tr>
+            <td data-role="module-unsubscribe" class="mobile-pad font-brand" style="padding:0 32px 32px 32px; font-size:12px; line-height:20px; color:#7A7186; text-align:center;">
+              <a class="Unsubscribe--unsubscribeLink" href="{{{unsubscribe}}}" target="_blank" style="color:#7A7186; text-decoration:underline; font-family:Arial, sans-serif;">Unsubscribe</a>
+              &nbsp;&middot;&nbsp;
+              <a class="Unsubscribe--unsubscribePreferences" href="{{{unsubscribe_preferences}}}" target="_blank" style="color:#7A7186; text-decoration:underline; font-family:Arial, sans-serif;">Unsubscribe Preferences</a>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
