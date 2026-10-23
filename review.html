@@ -82,8 +82,12 @@
   .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
   .panel h2 { font-family: Alexandria, "Source Sans 3", system-ui, sans-serif; font-size: 18px; font-weight: 600; margin: 0 0 6px; }
   .panel p { margin: 0 0 16px; color: var(--muted); }
-  .open-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .open-row input { flex: 1 1 260px; }
+  .field span.opt { display: inline; font-weight: 400; color: var(--muted); margin: 0; }
+  .q-status { font-size: 14px; color: var(--muted); margin: -2px 0 12px; }
+  .q-status:empty { display: none; }
+  .pg-row { display: flex; align-items: center; gap: 12px; }
+  .pg-row a { flex: 1; min-width: 0; }
+  .pg-row .link-btn { flex: none; }
   .pages { list-style: none; margin: 0; padding: 0; }
   .pages li + li { border-top: 1px solid var(--line); }
   .pages a { display: block; padding: 12px 4px; text-decoration: none; color: var(--ink); }
@@ -207,6 +211,40 @@
   .item-note { font-size: 13px; color: var(--muted); margin-top: 4px; }
   .empty { padding: 28px 20px; color: var(--muted); font-size: 15px; }
 
+  /* ---------- Reviewer questions ---------- */
+  .questions { border-bottom: 1px solid var(--line); background: var(--surface-2); }
+  .questions summary {
+    list-style: none; cursor: pointer; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    font-family: Alexandria, "Source Sans 3", system-ui, sans-serif; font-size: 17px; font-weight: 600;
+  }
+  .questions summary::-webkit-details-marker { display: none; }
+  .questions summary::after { content: "Hide"; font-family: "Source Sans 3", system-ui, sans-serif; font-size: 14px; font-weight: 600; color: var(--teal); }
+  .questions:not([open]) summary::after { content: "Show"; }
+  .q-intro { margin: -6px 20px 4px; font-size: 14px; color: var(--muted); }
+  .q-list { list-style: none; margin: 0; padding: 0 20px 16px; }
+  .q { padding: 14px 0; border-top: 1px solid var(--line); }
+  .q:first-child { border-top: 0; }
+  .q-head { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; }
+  .q-num {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--teal); color: var(--teal-ink);
+    display: grid; place-items: center; font-size: 12px; font-weight: 700; margin-top: 1px;
+  }
+  .q-text { font-weight: 600; margin: 0; }
+  .q-body { margin-left: 34px; }
+  .answer { margin-top: 8px; padding: 8px 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .answer.flash { outline: 2px solid var(--coral); }
+  .answer-meta { font-size: 13px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+  .answer-meta strong { color: var(--ink); }
+  .answer-text { margin: 2px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .link-btn { border: 0; background: none; padding: 0; color: var(--teal); font-weight: 600; font-size: 14px; cursor: pointer; }
+  .link-btn.danger { color: var(--coral); margin-left: auto; }
+  .q-actions { margin-top: 8px; }
+  .q-form { margin-top: 10px; }
+  .q-form textarea { min-height: 72px; }
+  .q-old { padding: 4px 20px 16px; border-top: 1px solid var(--line); }
+  .q-old > .q-text { margin-top: 12px; }
+  .q-old-label { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
+
   .toast {
     position: fixed; left: 50%; top: calc(var(--header-h) + 12px); transform: translateX(-50%);
     background: var(--ink); color: var(--surface); padding: 10px 16px; border-radius: 8px;
@@ -249,19 +287,27 @@
   <!-- Landing: shown when the link has no ?page= -->
   <main class="landing" id="landing" hidden>
     <div class="notice" id="setup-notice" hidden>
-      Comments aren’t connected yet. Paste your Apps Script web app URL into <strong>CONFIG.endpoint</strong> near the bottom of review.html.
+      Comments aren’t connected yet. Put your Apps Script web app URL in <strong>config.js</strong>, in the same folder as review.html.
     </div>
     <section class="panel">
       <h2>Open a file for review</h2>
-      <p>Enter the name of an HTML file in this repo. The review link it opens is the one to share.</p>
-      <div class="open-row">
-        <input type="text" id="open-input" placeholder="state_plume_email_template.html" aria-label="File name">
+      <p>Enter the name of an HTML file in this repo, add any questions for reviewers, then open it. The review link it opens is the one to share.</p>
+      <label class="field">
+        <span>File name</span>
+        <input type="text" id="open-input" placeholder="state_plume_email_template.html" autocomplete="off">
+      </label>
+      <label class="field" style="margin-top:14px">
+        <span>Questions for reviewers <span class="opt">(optional, one per line)</span></span>
+        <textarea id="open-questions" rows="6" placeholder="Is anything in this email confusing or unclear?"></textarea>
+      </label>
+      <p class="q-status" id="q-status"></p>
+      <p class="form-error" id="open-error"></p>
+      <div class="actions" style="justify-content:flex-start">
         <button class="btn primary" id="open-btn" type="button">Open for review</button>
       </div>
-      <p class="form-error" id="open-error" style="margin:10px 0 0"></p>
     </section>
     <section class="panel">
-      <h2>Pages with comments</h2>
+      <h2>Pages in review</h2>
       <ul class="pages" id="pages"><li class="pg-meta" style="padding:8px 0">Loading…</li></ul>
     </section>
   </main>
@@ -283,6 +329,11 @@
     </main>
 
     <aside class="side" aria-label="Comments">
+      <details class="questions" id="questions" open hidden>
+        <summary>Questions for reviewers</summary>
+        <p class="q-intro">Answers are shared with the team.</p>
+        <ol class="q-list" id="q-list"></ol>
+      </details>
       <div class="side-head">
         <h2>Comments</h2>
         <div class="tabs" role="group" aria-label="Show">
@@ -297,15 +348,14 @@
 
   <div class="toast" id="toast" hidden role="status"></div>
 
+<!-- Your settings live in config.js, so updating this file never wipes them -->
+<script src="config.js"></script>
 <script>
-/* ============================================================
-   SETTINGS — paste your Apps Script web app URL below
-   ============================================================ */
-const CONFIG = {
-  endpoint: "https://script.google.com/macros/s/AKfycbxFHVqMFyFPrIFyBJrnfPnzRX1BPEqAwTe_gjx4w-Q5Ca88cd_ZhMs3PNQ4KE5A0Z17/exec",
+const CONFIG = Object.assign({
+  endpoint: "",
   defaultWidth: "email",     // "email", "desktop" or "phone"
   refreshSeconds: 30,        // how often to check the sheet for new comments
-};
+}, window.REVIEW_CONFIG || {});
 
 (function () {
   "use strict";
@@ -391,6 +441,24 @@ const CONFIG = {
     return location.origin + location.pathname + "?page=" + encodeURIComponent(pageValue);
   }
 
+  async function fetchText(url) {
+    try {
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r.ok) return null;
+      if ((r.headers.get("content-type") || "").indexOf("text/html") !== -1) return null;
+      return await r.text();
+    } catch (e) { return null; }
+  }
+  // One question per line; skips blank lines and # notes, and drops "1." / "-" prefixes
+  function parseQuestions(text) {
+    return String(text || "").split(/\r?\n/)
+      .map((l) => l.trim().replace(/^(\d+[.)]|[-*•])\s+/, "").trim())
+      .filter((l) => l && l.charAt(0) !== "#");
+  }
+  const sharedQuestionsUrl = new URL("review-questions.txt", location.href).href;
+  const reviewDir = location.pathname.replace(/[^/]*$/, "");
+  const relPath = (u) => (u.pathname.indexOf(reviewDir) === 0 ? u.pathname.slice(reviewDir.length) : u.pathname);
+
   if (!pageParam) initLanding();
   else initReview();
 
@@ -404,14 +472,78 @@ const CONFIG = {
     document.title = "Review comments";
     $("setup-notice").hidden = endpointSet;
 
-    const open = () => {
-      const v = $("open-input").value.trim();
-      if (!v) { $("open-error").textContent = "Enter a file name, like state_plume_email_template.html."; return; }
-      if (!resolvePage(v)) { $("open-error").textContent = "That file needs to be on this site, in the same GitHub Pages domain as review.html."; return; }
+    const input = $("open-input"), qBox = $("open-questions"), qStatus = $("q-status");
+    const btn = $("open-btn"), err = $("open-error");
+    let qDirty = false, starter = null, seq = 0, timer = null;
+    qBox.addEventListener("input", () => { qDirty = true; });
+
+    async function starterQuestions() {
+      if (starter === null) starter = parseQuestions(await fetchText(sharedQuestionsUrl));
+      return starter;
+    }
+    // Fill the questions box with what's saved for this page, or the starter set
+    async function lookup() {
+      const mine = ++seq;
+      const v = input.value.trim();
+      const u = v ? resolvePage(v) : null;
+      if (!u || !/\.html?$/i.test(u.pathname)) {
+        if (!qDirty) { qBox.value = (await starterQuestions()).join("\n"); }
+        qStatus.textContent = "";
+        return;
+      }
+      if (!endpointSet) return;
+      qStatus.textContent = "Checking for saved questions…";
+      try {
+        const d = await apiGet({ action: "questions", page: u.origin + u.pathname });
+        if (mine !== seq) return;
+        if (d.saved) {
+          if (!qDirty) qBox.value = d.questions.join("\n");
+          qStatus.textContent = d.questions.length
+            ? "These are the questions already saved for this page. Edit them and select Open for review to update them."
+            : "This page has no questions saved.";
+        } else {
+          const st = await starterQuestions();
+          if (mine !== seq) return;
+          if (!qDirty) qBox.value = st.join("\n");
+          qStatus.textContent = st.length && !qDirty ? "No questions saved for this page yet. These are the starter questions from review-questions.txt; edit or clear them." : "";
+        }
+      } catch (e) {
+        if (mine === seq) qStatus.textContent = "Couldn’t check for saved questions. You can still type them here.";
+      }
+    }
+    input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(lookup, 500); });
+
+    const open = async () => {
+      const v = input.value.trim();
+      err.textContent = "";
+      if (!v) { err.textContent = "Enter a file name, like state_plume_email_template.html."; input.focus(); return; }
+      const u = resolvePage(v);
+      if (!u) { err.textContent = "That file needs to be on this site, in the same GitHub Pages domain as review.html."; return; }
+      if (endpointSet) {
+        btn.disabled = true; btn.textContent = "Saving questions…";
+        try {
+          await apiPost({ action: "setQuestions", page: u.origin + u.pathname, questions: parseQuestions(qBox.value) });
+        } catch (e) {
+          btn.disabled = false; btn.textContent = "Open for review";
+          err.textContent = /Unknown action/i.test(e.message)
+            ? "The questions didn’t save because the Apps Script is out of date. Update it with the new Code.gs and deploy a new version."
+            : "The questions didn’t save: " + (e.message || "the sheet didn’t respond") + ". Select Open for review to try again.";
+          return;
+        }
+      }
       location.href = reviewLinkFor(v);
     };
-    $("open-btn").addEventListener("click", open);
-    $("open-input").addEventListener("keydown", (e) => { if (e.key === "Enter") open(); });
+    btn.addEventListener("click", open);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") open(); });
+
+    const editParam = params.get("edit");
+    if (editParam) {
+      const u = resolvePage(editParam);
+      input.value = u ? relPath(u) : editParam;
+      lookup().then(() => { qBox.focus(); });
+    } else {
+      lookup();
+    }
 
     const ul = $("pages");
     if (!endpointSet) {
@@ -424,23 +556,34 @@ const CONFIG = {
       setStatus("live", "Connected to the comment sheet");
       ul.textContent = "";
       if (!data.pages.length) {
-        ul.appendChild(el("li", "pg-meta", "No comments yet. Open a file above to start.")).style.padding = "8px 0";
+        ul.appendChild(el("li", "pg-meta", "Nothing in review yet. Open a file above to start.")).style.padding = "8px 0";
         return;
       }
       data.pages.forEach((p) => {
-        const li = el("li");
-        const a = el("a");
         const u = resolvePage(p.page);
-        a.href = reviewLinkFor(u ? u.pathname : p.page);
-        a.appendChild(el("span", "pg-title", p.title || p.page));
-        a.appendChild(el("span", "pg-meta", p.open + " open of " + p.total + " ("+ (u ? u.pathname : p.page) + ")"));
+        const path = u ? relPath(u) : p.page;
+        const li = el("li", "pg-row");
+        const a = el("a");
+        a.href = reviewLinkFor(path);
+        a.appendChild(el("span", "pg-title", p.title || path));
+        const bits = [p.total ? p.open + " open of " + p.total + (p.total === 1 ? " comment" : " comments") : "No comments yet"];
+        if (p.questions) bits.push(p.questions + (p.questions === 1 ? " question" : " questions"));
+        a.appendChild(el("span", "pg-meta", bits.join(", ") + " (" + path + ")"));
         li.appendChild(a);
+        const edit = el("button", "link-btn", "Edit questions");
+        edit.type = "button";
+        edit.addEventListener("click", () => {
+          input.value = path; qDirty = false; err.textContent = "";
+          lookup().then(() => qBox.focus());
+          window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+        });
+        li.appendChild(edit);
         ul.appendChild(li);
       });
     }).catch(() => {
       setStatus("off", "Can’t reach the comment sheet");
       ul.textContent = "";
-      ul.appendChild(el("li", "pg-meta", "The comment sheet didn’t respond. Check the web app URL in CONFIG.endpoint and that the deployment allows access to Anyone.")).style.padding = "8px 0";
+      ul.appendChild(el("li", "pg-meta", "The comment sheet didn’t respond. Check the web app URL in config.js and that the deployment allows access to Anyone.")).style.padding = "8px 0";
     });
   }
 
@@ -488,6 +631,11 @@ const CONFIG = {
     const back = el("a", null, "All pages");
     back.href = location.pathname;
     $("page-hint").appendChild(back);
+    $("page-hint").append("  ");
+    const editQ = el("a", null, "Add or edit questions");
+    editQ.href = location.pathname + "?edit=" + encodeURIComponent(pageParam);
+    editQ.style.marginLeft = "12px";
+    $("page-hint").appendChild(editQ);
     document.title = "Review: " + fileName;
 
     // ---------- Width switcher ----------
@@ -777,7 +925,7 @@ const CONFIG = {
     overlay.addEventListener("mouseleave", () => { target.style.display = "none"; });
     overlay.addEventListener("click", (e) => {
       if (!state.ready || e.target.closest(".pin")) return;
-      if (!endpointSet) { toast("Comments aren’t connected yet. Add the web app URL to CONFIG.endpoint in review.html."); return; }
+      if (!endpointSet) { toast("Comments aren’t connected yet. Add the web app URL to config.js."); return; }
       const p = toDocPoint(e);
       const anchor = makeAnchor(p.x, p.y);
       if (!anchor) return;
@@ -789,6 +937,7 @@ const CONFIG = {
 
     // ---------- Pins ----------
     const isResolved = (c) => c.status === "Resolved";
+    const isAnswer = (c) => !!(c && c.anchor && c.anchor.question);
     function visibleComments() {
       if (state.filter === "open") return state.comments.filter((c) => !isResolved(c));
       if (state.filter === "resolved") return state.comments.filter(isResolved);
@@ -1055,7 +1204,7 @@ const CONFIG = {
       const items = visibleComments().sort((a, b) => (order(a) - order(b)) || (a.n - b.n));
       if (!items.length) {
         let msg;
-        if (!endpointSet) msg = "Comments aren’t connected yet. Add the web app URL to CONFIG.endpoint in review.html.";
+        if (!endpointSet) msg = "Comments aren’t connected yet. Add the web app URL to config.js.";
         else if (!state.loaded) msg = "Loading comments…";
         else if (state.filter === "resolved") msg = "Nothing resolved yet.";
         else if (state.comments.length && state.filter === "open") msg = "Every comment is resolved.";
@@ -1084,7 +1233,171 @@ const CONFIG = {
       });
     }
 
-    function render() { renderPins(); renderList(); }
+    function render() { renderPins(); renderList(); renderAnswers(); }
+
+    // ---------- Reviewer questions ----------
+    // Questions are saved in the sheet's Questions tab (set from the start page).
+    // If a page has none there, <page name>.questions.txt or review-questions.txt is used.
+    state.questions = [];
+    state.answers = [];
+    state.qKey = null;
+    const qBlocks = [];
+    let txtQs = null;
+    async function txtQuestions() {
+      if (txtQs) return txtQs;
+      const pageQs = new URL(pageUrl.pathname.replace(/\.[^./]+$/, "") + ".questions.txt", location.origin).href;
+      txtQs = parseQuestions((await fetchText(pageQs)) ?? (await fetchText(sharedQuestionsUrl)));
+      return txtQs;
+    }
+    function applyQuestions(list) {
+      const key = JSON.stringify(list);
+      if (key === state.qKey) return;
+      state.qKey = key;
+      state.questions = list;
+      buildQuestions();
+      $("page-hint").firstChild.textContent = list.length
+        ? "Click any spot on the page to leave a comment, and answer the questions in the sidebar. "
+        : "Click any spot on the page to leave a comment. ";
+    }
+    function buildQuestions() {
+      const ol = $("q-list");
+      ol.textContent = "";
+      qBlocks.length = 0;
+      if (!state.questions.length) { $("questions").hidden = !state.answers.length; renderAnswers(); return; }
+      state.questions.forEach((q, i) => {
+        const n = i + 1;
+        const li = el("li", "q");
+        const head = el("div", "q-head");
+        head.appendChild(el("span", "q-num", String(n)));
+        head.appendChild(el("p", "q-text", q));
+        li.appendChild(head);
+        const body = el("div", "q-body");
+        const answersBox = el("div");
+        body.appendChild(answersBox);
+
+        const actions = el("div", "q-actions");
+        const openBtn = el("button", "link-btn", "Answer");
+        openBtn.type = "button";
+        actions.appendChild(openBtn);
+        body.appendChild(actions);
+
+        const form = el("div", "q-form");
+        form.hidden = true;
+        const nameField = el("label", "field");
+        nameField.appendChild(el("span", null, "Your name"));
+        const nameInput = el("input"); nameInput.type = "text"; nameInput.maxLength = 80; nameInput.autocomplete = "name";
+        nameField.appendChild(nameInput);
+        const textField = el("label", "field");
+        textField.appendChild(el("span", null, "Your answer"));
+        const ta = el("textarea"); ta.maxLength = 3000;
+        textField.appendChild(ta);
+        const err = el("p", "form-error");
+        const row = el("div", "actions");
+        const cancel = el("button", "btn", "Cancel"); cancel.type = "button";
+        const save = el("button", "btn primary", "Save answer"); save.type = "button";
+        row.append(cancel, save);
+        form.append(nameField, textField, err, row);
+        body.appendChild(form);
+        li.appendChild(body);
+        ol.appendChild(li);
+
+        openBtn.addEventListener("click", () => {
+          if (!endpointSet) { toast("Comments aren’t connected yet. Add the web app URL to config.js."); return; }
+          form.hidden = false; actions.hidden = true;
+          nameInput.value = nameInput.value || lsGet(LS_NAME) || "";
+          (nameInput.value ? ta : nameInput).focus();
+        });
+        cancel.addEventListener("click", () => { form.hidden = true; actions.hidden = false; err.textContent = ""; });
+        const submit = async () => {
+          const name = nameInput.value.trim(), text = ta.value.trim();
+          if (!name) { err.textContent = "Add your name so the team knows who answered."; nameInput.focus(); return; }
+          if (!text) { err.textContent = "Write an answer before saving."; ta.focus(); return; }
+          err.textContent = "";
+          lsSet(LS_NAME, name);
+          save.disabled = true; save.textContent = "Saving…";
+          try {
+            const data = await apiPost({
+              action: "add", page: pageKey, title: state.pageTitle, reviewLink: reviewLink,
+              section: ("Question " + n + ": " + q).slice(0, 120),
+              text, name, anchor: { question: n, qtext: q }, author: authorKey,
+            });
+            state.answers = state.answers.concat([data.comment]);
+            ta.value = ""; form.hidden = true; actions.hidden = false;
+            renderAnswers();
+            toast("Answer saved.");
+          } catch (e) {
+            err.textContent = "The answer didn’t save: " + (e.message || "the sheet didn’t respond") + ". Select Save answer to try again.";
+          } finally {
+            save.disabled = false; save.textContent = "Save answer";
+          }
+        };
+        save.addEventListener("click", submit);
+        ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submit(); } });
+        qBlocks.push({ answersBox, openBtn });
+      });
+      $("questions").hidden = false;
+      renderAnswers();
+    }
+    function answerBox(a) {
+          const box = el("div", "answer");
+          box.dataset.id = a.id;
+          const meta = el("div", "answer-meta");
+          meta.appendChild(el("strong", null, a.name || "Someone"));
+          meta.appendChild(el("span", null, formatTime(a.created)));
+          if (a.mine) {
+            const del = el("button", "link-btn danger", "Delete"); del.type = "button";
+            let armed = false;
+            del.addEventListener("click", async () => {
+              if (!armed) { armed = true; del.textContent = "Select again to delete"; return; }
+              del.disabled = true;
+              try {
+                await apiPost({ action: "delete", id: a.id, author: authorKey });
+                state.answers = state.answers.filter((x) => x.id !== a.id);
+                renderAnswers();
+                toast("Answer deleted.");
+              } catch (e) { del.disabled = false; del.textContent = "Delete"; toast("The answer wasn’t deleted: " + e.message); }
+            });
+            meta.appendChild(del);
+          }
+          box.appendChild(meta);
+          box.appendChild(el("p", "answer-text", a.text || ""));
+          return box;
+    }
+    function renderAnswers() {
+      const byTime = (x, y) => String(x.created).localeCompare(String(y.created));
+      const used = new Set();
+      qBlocks.forEach((b, i) => {
+        const q = state.questions[i];
+        const list = state.answers.filter((a) => a.anchor.qtext ? a.anchor.qtext === q : Number(a.anchor.question) === i + 1).sort(byTime);
+        list.forEach((a) => used.add(a.id));
+        b.answersBox.textContent = "";
+        list.forEach((a) => b.answersBox.appendChild(answerBox(a)));
+        b.openBtn.textContent = list.length ? "Add your answer" : "Answer";
+      });
+      // Answers to questions that have since been edited or removed
+      const old = state.answers.filter((a) => !used.has(a.id)).sort(byTime);
+      let oldBox = $("q-old");
+      if (!old.length) { if (oldBox) oldBox.remove(); return; }
+      if (!oldBox) { oldBox = el("div", "q-old"); oldBox.id = "q-old"; $("questions").appendChild(oldBox); }
+      oldBox.textContent = "";
+      oldBox.appendChild(el("p", "q-text", "Answers to earlier questions"));
+      const groups = new Map();
+      old.forEach((a) => { const k = a.anchor.qtext || ("Question " + a.anchor.question); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(a); });
+      groups.forEach((list, qtext) => {
+        oldBox.appendChild(el("p", "q-old-label", qtext));
+        list.forEach((a) => oldBox.appendChild(answerBox(a)));
+      });
+      $("questions").hidden = false;
+    }
+    function showAnswer(id) {
+      const q = $("questions");
+      q.open = true;
+      const box = q.querySelector('.answer[data-id="' + CSS.escape(id) + '"]');
+      if (!box) return;
+      box.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
+      box.classList.add("flash");
+      setTimeout(() => box.classList.remove("flash"), 2500);
+    }
 
     // ---------- Loading comments from the sheet ----------
     function setComments(arr) {
@@ -1096,10 +1409,12 @@ const CONFIG = {
 
     let firstLoad = true;
     async function refresh() {
-      if (!endpointSet) { setStatus("off", "Not connected"); render(); return; }
+      if (!endpointSet) { setStatus("off", "Not connected"); applyQuestions(await txtQuestions()); render(); return; }
       try {
         const data = await apiGet({ action: "list", page: pageKey, author: authorKey });
-        setComments(data.comments);
+        state.answers = data.comments.filter(isAnswer);
+        setComments(data.comments.filter((c) => !isAnswer(c)));
+        applyQuestions(Array.isArray(data.questions) && data.questions.length ? data.questions : await txtQuestions());
         state.loaded = true;
         setStatus("live", "Synced " + new Date().toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }));
         if (state.activeId && !state.comments.find((c) => c.id === state.activeId)) {
@@ -1107,6 +1422,12 @@ const CONFIG = {
           if (!state.draft) closePop();
         }
         render();
+        if (firstLoad && state.activeId && state.answers.some((a) => a.id === state.activeId)) {
+          const answerId = state.activeId;
+          state.activeId = null;
+          firstLoad = false;
+          setTimeout(() => showAnswer(answerId), 300);
+        }
         if (firstLoad && state.activeId) {
           firstLoad = false;
           const target = state.comments.find((c) => c.id === state.activeId);
