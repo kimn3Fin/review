@@ -18,8 +18,20 @@
     @media screen and (max-width:640px) {
       .container { width:100% !important; }
       .mobile-pad { padding-left:18px !important; padding-right:18px !important; }
-      .stack-cell { display:block !important; width:100% !important; box-sizing:border-box; }
-      .stack-gap { display:block !important; width:100% !important; height:12px !important; }
+      /* Glance tiles stay two-across; icon sits above the number */
+      .glance-cell { padding:12px 8px !important; }
+      .glance-icon { display:block !important; width:100% !important; padding-bottom:6px !important; text-align:center !important; }
+      .glance-icon img { width:48px !important; height:48px !important; margin:0 auto !important; }
+      .glance-num { display:block !important; padding-left:0 !important; font-size:22px !important; line-height:26px !important; white-space:normal !important; text-align:center !important; }
+      .glance-num span { font-size:13px !important; }
+      .glance-label { font-size:12px !important; line-height:16px !important; }
+      /* Action cards stay two-across, each text above its own button */
+      .action-text { padding:14px 10px 0 10px !important; font-size:13px !important; line-height:19px !important; }
+      .action-btn { padding:12px 10px 14px 10px !important; }
+      .action-btn a { padding:12px 6px !important; font-size:14px !important; }
+      /* Big plume-count tiles */
+      .count-num { font-size:34px !important; line-height:40px !important; }
+      .count-label { font-size:11px !important; }
     }
   </style>
 </head>
@@ -32,33 +44,38 @@
           <!-- LOGO -->
           <tr>
             <td align="center" style="padding:32px 24px 16px 24px;">
-              <img src="https://images.squarespace-cdn.com/content/v1/681a42ab30e6d15b8dac0c79/b247872b-fbbd-4f23-83ed-8c4114a6d010/FCF_Main+Logo_3-Color_RGB_on+offwhite.png?format=1500w"
-                   alt="Full Circle Future" width="180" style="display:block; width:180px; max-width:180px; height:auto;" />
+              <a href="https://www.fullcirclefuture.org" target="_blank" style="text-decoration:none;">
+                <img src="https://images.squarespace-cdn.com/content/v1/681a42ab30e6d15b8dac0c79/b247872b-fbbd-4f23-83ed-8c4114a6d010/FCF_Main+Logo_3-Color_RGB_on+offwhite.png?format=1500w"
+                     alt="Full Circle Future" width="180"
+                     style="display:block; width:180px; max-width:180px; height:auto;" />
+              </a>
             </td>
           </tr>
 
           <!-- EYEBROW -->
           <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 8px 32px; font-size:12px; line-height:18px; color:#6B6377; text-transform:uppercase; letter-spacing:0.08em;">
-              Methane Watch Alert &mdash; {{detection_datetime}}
+            <td class="mobile-pad font-brand" style="padding:0 32px 8px 32px; font-size:12px; line-height:18px; color:#7A7186; text-transform:uppercase; letter-spacing:0.08em;">
+              Landfill Watch Alert — {{detection_datetime}}
             </td>
           </tr>
 
           <!-- HEADLINE -->
           <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 20px 32px; font-size:30px; line-height:38px; font-weight:700; color:#2A1D3D;">
+            <td class="mobile-pad font-brand" style="padding:0 32px 8px 32px; font-size:30px; line-height:38px; font-weight:700; color:#2A1D3D;">
               {{#if is_update}}Update: {{plume_count}} methane plumes now detected at {{landfill_name}}{{else}}{{plume_count}} methane plumes detected at {{landfill_name}}{{/if}}
             </td>
           </tr>
 
-          <!-- GREETING + INTRO -->
+          <!-- GREETING -->
           <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 16px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+            <td class="mobile-pad font-brand" style="padding:0 32px 24px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
               Hi {{name}},
             </td>
           </tr>
+
+          <!-- INTRO -->
           <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 16px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+            <td class="mobile-pad font-brand" style="padding:0 32px 18px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
               You&rsquo;re receiving this alert because {{subscription_reason}}.
             </td>
           </tr>
@@ -79,9 +96,10 @@
           </tr>
           {{/if}}
 
+          <!-- BODY -->
           <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 24px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
-              <a href="https://carbonmapper.org" target="_blank" style="color:#0A8574; text-decoration:underline;">Carbon Mapper</a> {{#if is_update}}has now detected{{else}}detected{{/if}} <strong>{{plume_count}} separate methane plumes</strong> at <a href="{{landfill_wit_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{landfill_name}}</a>, {{state}} in a single satellite pass. Several plumes from one landfill at the same moment point to multiple leak points across the site, not one isolated problem.
+            <td class="mobile-pad font-brand" style="padding:0 32px 22px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              <a href="https://carbonmapper.org" target="_blank" style="color:#0A8574; text-decoration:underline;">Carbon Mapper</a> {{#if is_update}}has now detected{{else}}detected{{/if}} <strong>{{plume_count}} separate methane plumes</strong> at <a href="{{wit_url}}" target="_blank" style="color:#E6674F; font-weight:700; text-decoration:underline;">{{landfill_name}}</a>, a landfill in <strong style="color:#E6674F;">{{state}}</strong>, in a single satellite pass. Several plumes from one landfill at the same moment point to multiple leak points across the site, not one isolated problem.
             </td>
           </tr>
 
@@ -90,65 +108,141 @@
             <td class="mobile-pad" style="padding:0 32px 24px 32px;">
               <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #0A8574;">
                 <tr>
-                  <td class="font-brand" bgcolor="#0A8574" style="background-color:#0A8574; padding:12px 18px; font-size:16px; line-height:24px; font-weight:700; color:#FFFFFF;">
+                  <td class="font-brand" style="padding:16px 18px 12px 18px; font-size:16px; line-height:24px; font-weight:700; color:#F4EFE9; background-color:#0A8574;">
                     Detection details
                   </td>
                 </tr>
                 <tr>
-                  <td class="font-brand" style="padding:14px 18px 8px 18px; font-size:15px; line-height:24px; color:#2F2A36;">
+                  <td class="font-brand" style="padding:12px 18px 8px 18px; font-size:15px; line-height:24px; color:#2F2A36;">
                     <strong>Date and time:</strong> {{detection_datetime}}<br />
                     <strong>Plumes detected:</strong> {{plume_count}}{{#if is_update}} ({{new_plume_text}}){{/if}}<br />
-                    <strong>Combined emissions rate:</strong> {{combined_emissions_rate}}<br />
-                    <span style="font-size:13px; line-height:20px; color:#5C5566;">{{combined_rate_note}}</span><br />
-                    <strong>Detection technology:</strong> {{detection_technology}}
+                    <strong>Detection technology:</strong> {{detection_technology}}<br />
+                    <strong>Scene ID:</strong> {{scene_id}}
+                  </td>
+                </tr>
+                <!-- PER-PLUME EMISSIONS — each plume listed separately (rates are not combined) -->
+                <tr>
+                  <td class="font-brand" style="padding:6px 18px 4px 18px; font-size:15px; line-height:24px; color:#2F2A36;">
+                    <strong>Estimated methane emissions rate, by plume:</strong>
                   </td>
                 </tr>
                 <tr>
-                  <td class="font-brand" style="padding:0 18px 16px 18px; font-size:13px; line-height:20px; color:#5C5566;">
-                    <strong>Note:</strong> 100 kg/hour is a &ldquo;super emitter&rdquo; event for oil and gas methane emissions, as determined by the EPA.
+                  <td class="font-brand" style="padding:0 18px 4px 18px; font-size:15px; line-height:22px; color:#2F2A36;">
+                    <div style="padding-bottom:10px;"><strong>{{plume_1_label}}:</strong> {{plume_1_rate}}<br /><a href="{{plume_1_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_1_id}}</a></div>
+                    {{#if plume_2_label}}<div style="padding-bottom:10px;"><strong>{{plume_2_label}}:</strong> {{plume_2_rate}}<br /><a href="{{plume_2_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_2_id}}</a></div>{{/if}}
+                    {{#if plume_3_label}}<div style="padding-bottom:10px;"><strong>{{plume_3_label}}:</strong> {{plume_3_rate}}<br /><a href="{{plume_3_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_3_id}}</a></div>{{/if}}
+                    {{#if plume_4_label}}<div style="padding-bottom:10px;"><strong>{{plume_4_label}}:</strong> {{plume_4_rate}}<br /><a href="{{plume_4_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_4_id}}</a></div>{{/if}}
+                    {{#if plume_5_label}}<div style="padding-bottom:10px;"><strong>{{plume_5_label}}:</strong> {{plume_5_rate}}<br /><a href="{{plume_5_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_5_id}}</a></div>{{/if}}
+                    {{#if plume_6_label}}<div style="padding-bottom:10px;"><strong>{{plume_6_label}}:</strong> {{plume_6_rate}}<br /><a href="{{plume_6_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_6_id}}</a></div>{{/if}}
+                    {{#if plume_7_label}}<div style="padding-bottom:10px;"><strong>{{plume_7_label}}:</strong> {{plume_7_rate}}<br /><a href="{{plume_7_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_7_id}}</a></div>{{/if}}
+                    {{#if plume_8_label}}<div style="padding-bottom:10px;"><strong>{{plume_8_label}}:</strong> {{plume_8_rate}}<br /><a href="{{plume_8_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_8_id}}</a></div>{{/if}}
+                    {{#if plume_9_label}}<div style="padding-bottom:10px;"><strong>{{plume_9_label}}:</strong> {{plume_9_rate}}<br /><a href="{{plume_9_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_9_id}}</a></div>{{/if}}
+                    {{#if plume_10_label}}<div style="padding-bottom:10px;"><strong>{{plume_10_label}}:</strong> {{plume_10_rate}}<br /><a href="{{plume_10_url}}" target="_blank" style="color:#0A8574; font-size:13px; line-height:18px; text-decoration:underline; white-space:nowrap;">{{plume_10_id}}</a></div>{{/if}}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="font-brand" style="padding:0 18px 8px 18px; font-size:13px; line-height:20px; color:#5C5566;">
+                    &ldquo;Not yet quantified&rdquo; means Carbon Mapper hasn&rsquo;t estimated a rate for that plume yet &mdash; not that it was small. Each link opens the plume on the Carbon Mapper Data Portal.
+                  </td>
+                </tr>
+                <tr>
+                  <td class="font-brand" style="padding:0 18px 18px 18px; font-size:13px; line-height:20px; color:#5C5566;">
+                    <strong>Note:</strong> 100 kg/hour is a "super emitter" event for oil and gas methane emissions, as determined by the EPA.
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
 
-          <!-- CLUSTER MAP -->
+          <!-- ABOUT THIS LANDFILL -->
           <tr>
             <td class="mobile-pad" style="padding:0 32px 24px 32px;">
-              <img src="{{plume_image_url}}" alt="Methane plumes at {{landfill_name}} over a satellite map" width="576"
-                   style="display:block; width:100%; max-width:576px; height:auto; border:1px solid #E5DDD4;" />
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #2A1D3D; background-color:#F4EFE9;">
+                <tr>
+                  <td class="font-brand" style="padding:18px 18px 6px 18px; font-size:20px; line-height:26px; font-weight:700; color:#2A1D3D;">
+                    About {{landfill_name}}
+                  </td>
+                </tr>
+                {{#if landfill_owner}}
+                <tr>
+                  <td class="font-brand" style="padding:0 18px 2px 18px; font-size:15px; line-height:23px; color:#2F2A36;">
+                    <strong>Owner:</strong> {{landfill_owner}}
+                  </td>
+                </tr>
+                {{/if}}
+                {{#if landfill_operator}}
+                <tr>
+                  <td class="font-brand" style="padding:0 18px 2px 18px; font-size:15px; line-height:23px; color:#2F2A36;">
+                    <strong>Operator:</strong> {{landfill_operator}}
+                  </td>
+                </tr>
+                {{/if}}
+                <tr>
+                  <td style="padding:6px 18px 0 18px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top:1px solid #E5DDD4;">
+                      <tr>
+                        <td class="glance-cell" width="50%" valign="top" align="center" style="text-align:center; padding:14px 10px 16px 10px; border-right:1px solid #E5DDD4;">
+                          <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                            <tr>
+                              <td class="glance-icon" width="64" valign="middle" style="width:64px;"><img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/people.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" /></td>
+                              <td class="glance-num font-brand" valign="middle" style="padding-left:12px; font-size:28px; line-height:32px; font-weight:700; color:#2A1D3D; white-space:nowrap;">{{landfill_pop_within_5mi}}</td>
+                            </tr>
+                          </table>
+                          <div class="glance-label font-brand" style="text-align:center; padding-top:8px; font-size:14px; line-height:19px; font-weight:700; color:#2A1D3D;">People living within 5 miles of this landfill</div>
+                        </td>
+                        <td class="glance-cell" width="50%" valign="top" align="center" style="text-align:center; padding:14px 10px 16px 10px; ">
+                          <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                            <tr>
+                              <td class="glance-icon" width="64" valign="middle" style="width:64px;"><img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/landfill.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" /></td>
+                              <td class="glance-num font-brand" valign="middle" style="padding-left:12px; font-size:28px; line-height:32px; font-weight:700; color:#2A1D3D; white-space:nowrap;">{{landfill_waste_in_place}}</td>
+                            </tr>
+                          </table>
+                          <div class="glance-label font-brand" style="text-align:center; padding-top:8px; font-size:14px; line-height:19px; font-weight:700; color:#2A1D3D;">Metric tons of waste buried in this landfill</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="font-brand" style="padding:12px 18px 16px 18px; border-top:1px solid #E5DDD4;">
+                    <a href="{{wit_url}}" target="_blank" style="color:#0A8574; font-size:15px; line-height:22px; font-weight:700; text-decoration:underline;">View {{landfill_name}} on Waste Impact Tracker</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- CLUSTER MAP — every plume in the cluster on one satellite map; links to the Carbon Mapper Data Portal -->
+          <tr>
+            <td class="mobile-pad" style="padding:0 32px 24px 32px;">
+              <a href="{{plume_1_url}}" target="_blank" style="text-decoration:none;">
+                <img src="{{plume_image_url}}" alt="Methane plumes at {{landfill_name}} shown over a satellite map. View on the Carbon Mapper Data Portal." width="576"
+                     style="display:block; width:100%; max-width:576px; height:auto; border:1px solid #E5DDD4;" />
+              </a>
               <p class="font-brand" style="margin:8px 0 0 0; font-size:12px; line-height:18px; color:#5C5566;">
-                Letters on the map match the plume list below. Plume imagery: Carbon Mapper. Basemap: &copy; Mapbox &copy; OpenStreetMap
+                <a href="{{plume_1_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">View these plumes on the Carbon Mapper Data Portal &rarr;</a><br />
+                Letters on the map match the plume list above. Plume imagery: Carbon Mapper. Basemap: &copy; Mapbox &copy; OpenStreetMap
               </p>
             </td>
           </tr>
 
-          <!-- PLUME LIST -->
+          <!-- ABOUT THESE DETECTIONS — data limitations + Carbon Mapper contact -->
           <tr>
-            <td class="mobile-pad" style="padding:0 32px 24px 32px;">
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F4EFE9; border:1px solid #2A1D3D;">
+            <td class="mobile-pad" style="padding:0 32px 28px 32px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F4EFE9; border-left:4px solid #0A8574;">
                 <tr>
-                  <td class="font-brand" style="padding:16px 18px 6px 18px; font-size:16px; line-height:24px; font-weight:700; color:#2A1D3D;">
-                    Plumes in this detection
+                  <td class="font-brand" style="padding:14px 18px 4px 18px; font-size:15px; line-height:22px; font-weight:700; color:#2A1D3D;">
+                    About these detections
                   </td>
                 </tr>
                 <tr>
-                  <td class="font-brand" style="padding:0 18px 8px 18px; font-size:15px; line-height:28px; color:#2F2A36;">
-                    <a href="{{plume_1_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_1_label}}</a>
-                    {{#if plume_2_label}}<br /><a href="{{plume_2_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_2_label}}</a>{{/if}}
-                    {{#if plume_3_label}}<br /><a href="{{plume_3_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_3_label}}</a>{{/if}}
-                    {{#if plume_4_label}}<br /><a href="{{plume_4_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_4_label}}</a>{{/if}}
-                    {{#if plume_5_label}}<br /><a href="{{plume_5_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_5_label}}</a>{{/if}}
-                    {{#if plume_6_label}}<br /><a href="{{plume_6_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_6_label}}</a>{{/if}}
-                    {{#if plume_7_label}}<br /><a href="{{plume_7_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_7_label}}</a>{{/if}}
-                    {{#if plume_8_label}}<br /><a href="{{plume_8_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_8_label}}</a>{{/if}}
-                    {{#if plume_9_label}}<br /><a href="{{plume_9_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_9_label}}</a>{{/if}}
-                    {{#if plume_10_label}}<br /><a href="{{plume_10_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">{{plume_10_label}}</a>{{/if}}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="font-brand" style="padding:0 18px 16px 18px; font-size:13px; line-height:20px; color:#5C5566;">
-                    &ldquo;Not yet quantified&rdquo; means Carbon Mapper hasn&rsquo;t estimated a rate for that plume yet &mdash; not that it was small. Each link opens the plume in the Carbon Mapper Data Portal.
+                  <td class="font-brand" style="padding:0 18px 14px 18px; font-size:13px; line-height:20px; color:#2F2A36;">
+                    Satellites and aircraft capture a snapshot, not a continuous record. A plume shows emissions at one moment in time, and <strong>no detection does not mean a landfill isn&rsquo;t emitting methane</strong>.<br /><br />
+                    <strong>Detection limits:</strong> Instruments can only see plumes above a certain size. Smaller releases, which can add up, often go undetected, and the smallest detectable plume varies by instrument.<br />
+                    <strong>Coverage:</strong> Each landfill is observed only occasionally, and some are not observed at all.<br />
+                    <strong>Observation conditions:</strong> Clouds, wind, terrain and surface brightness affect whether a plume can be seen and how precisely it can be measured.<br />
+                    <strong>Estimates:</strong> Emission rates are estimates; the &plusmn; value shows their uncertainty.<br /><br />
+                    Questions about the data or how to interpret these detections? Contact Carbon Mapper at <a href="mailto:info@carbonmapper.org" style="color:#0A8574; text-decoration:underline;">info@carbonmapper.org</a>.
                   </td>
                 </tr>
               </table>
@@ -167,13 +261,33 @@
             </td>
           </tr>
           <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 24px 32px; font-size:15px; line-height:24px; color:#2F2A36;">
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; <strong>Cracks and gaps in cover soil</strong>, especially on steep side slopes<br />
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; <strong>The active working face</strong>, where fresh waste is exposed each day<br />
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; <strong>Newer areas without gas collection.</strong> Federal rules give operators up to five years after waste is placed before collection is required in active areas.<br />
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; <strong>Damaged or poorly tuned gas wells</strong> and wellheads<br />
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; <strong>Leaking pipes and leachate system parts</strong> like sumps and cleanouts<br />
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; <strong>Flares or engines that are offline</strong>, letting gas escape that should be destroyed
+            <td class="mobile-pad" style="padding:0 32px 24px 32px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Cracks and gaps in cover soil</strong>, especially on steep side slopes</td>
+                </tr>
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>The active working face</strong>, where fresh waste is exposed each day</td>
+                </tr>
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Newer areas without gas collection.</strong> Federal rules give operators up to five years after waste is placed before collection is required in active areas.</td>
+                </tr>
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Damaged or poorly tuned gas wells</strong> and wellheads</td>
+                </tr>
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Leaking pipes and leachate system parts</strong> like sumps and cleanouts</td>
+                </tr>
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Flares or engines that are offline</strong>, letting gas escape that should be destroyed</td>
+                </tr>
+              </table>
             </td>
           </tr>
 
@@ -189,77 +303,134 @@
             </td>
           </tr>
           <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 28px 32px; font-size:15px; line-height:24px; color:#2F2A36;">
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; Require gas collection to be installed <strong>sooner</strong> in new waste areas<br />
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; Require <strong>more frequent, more sensitive</strong> monitoring for leaks<br />
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; Require operators to <strong>investigate and repair</strong> when satellites or aircraft detect large plumes. EPA&rsquo;s Super Emitter Program covers oil and gas, but not landfills.<br />
-              <span style="color:#0A8574; font-weight:700;">&bull;</span>&nbsp; Set <strong>stronger standards</strong> for cover materials
+            <td class="mobile-pad" style="padding:0 32px 28px 32px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;">Require gas collection to be installed <strong>sooner</strong> in new waste areas</td>
+                </tr>
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;">Require <strong>more frequent, more sensitive</strong> monitoring for leaks</td>
+                </tr>
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;">Require operators to <strong>investigate and repair</strong> when satellites or aircraft detect large plumes. EPA&rsquo;s Super Emitter Program covers oil and gas, but not landfills.</td>
+                </tr>
+                <tr>
+                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
+                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;">Set <strong>stronger standards</strong> for cover materials</td>
+                </tr>
+              </table>
             </td>
           </tr>
 
-          <!-- MORE ABOUT LANDFILLS IN STATE -->
+          <!-- LANDFILL EMISSIONS IN STATE — renamed section -->
           <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 14px 32px; font-size:24px; line-height:30px; font-weight:700; color:#2A1D3D;">
-              More about landfills in {{state}}
+            <td class="mobile-pad font-brand" style="padding:0 32px 10px 32px; font-size:24px; line-height:30px; font-weight:700; color:#2A1D3D;">
+              {{state}} landfills at a glance
             </td>
           </tr>
+
+          <!-- PLUME COUNTS — big numbers -->
           <tr>
             <td class="mobile-pad" style="padding:0 32px 16px 32px;">
               <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
-                  <td class="stack-cell font-brand" width="48%" valign="top" style="border:1px solid #E5DDD4; padding:16px;">
-                    <div style="font-size:36px; line-height:42px; font-weight:700; color:#E6674F;">{{total_plumes_in_state}}</div>
-                    <div style="font-size:14px; line-height:20px; color:#2F2A36;">landfill plumes detected to date</div>
+                  <!-- Total plumes -->
+                  <td class="font-brand" width="50%" align="center" style="padding:0 8px 0 0;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F4EFE9; border:1px solid #2A1D3D;">
+                      <tr>
+                        <td class="count-num font-brand" align="center" style="padding:20px 12px 4px 12px; font-size:42px; line-height:48px; font-weight:700; color:#E6674F;">
+                          {{total_plumes_in_state}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="count-label font-brand" align="center" style="padding:0 12px 20px 12px; font-size:13px; line-height:18px; color:#2A1D3D; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">
+                          Plumes detected<br/>in {{state}} to date
+                        </td>
+                      </tr>
+                    </table>
                   </td>
-                  <td class="stack-gap" width="4%" style="font-size:0; line-height:0;">&nbsp;</td>
-                  <td class="stack-cell font-brand" width="48%" valign="top" style="border:1px solid #E5DDD4; padding:16px;">
-                    <div style="font-size:36px; line-height:42px; font-weight:700; color:#E6674F;">{{plumes_last_30_days}}</div>
-                    <div style="font-size:14px; line-height:20px; color:#2F2A36;">in the last 30 days</div>
+                  <!-- Last 30 days -->
+                  <td class="font-brand" width="50%" align="center" style="padding:0 0 0 8px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F4EFE9; border:1px solid #2A1D3D;">
+                      <tr>
+                        <td class="count-num font-brand" align="center" style="padding:20px 12px 4px 12px; font-size:42px; line-height:48px; font-weight:700; color:#E6674F;">
+                          {{plumes_last_30_days}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="count-label font-brand" align="center" style="padding:0 12px 20px 12px; font-size:13px; line-height:18px; color:#2A1D3D; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">
+                          Plumes detected<br/>in the last 30 days
+                        </td>
+                      </tr>
+                    </table>
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
+
+          <!-- STATE AT A GLANCE — icon + number tiles. Icons are hosted PNGs (Gmail/Outlook don't show SVG);
+               the ranking and population icons change with the data: rank-[1-53].png and pop-[0-100].png -->
           <tr>
             <td class="mobile-pad" style="padding:0 32px 24px 32px;">
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F4EFE9; border:1px solid #2A1D3D;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #2A1D3D; background-color:#F4EFE9;">
                 <tr>
-                  <td class="font-brand" style="padding:16px 18px 8px 18px; font-size:16px; line-height:24px; font-weight:700; color:#2A1D3D;">
+                  <td class="font-brand" style="padding:18px 18px 2px 18px; font-size:20px; line-height:26px; font-weight:700; color:#2A1D3D;">
                     {{state}} at a glance
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding:0 18px 12px 18px;">
+                  <td style="padding:0 18px;">
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
-                        <td class="stack-cell font-brand" width="49%" valign="top" bgcolor="#FFFFFF" style="background-color:#FFFFFF; padding:12px;">
-                          <div style="font-size:22px; line-height:28px; font-weight:700; color:#2A1D3D;">{{total_waste_in_place}}</div>
-                          <div style="font-size:13px; line-height:18px; color:#5C5566;">metric tons of waste in place</div>
+                        <td class="glance-cell" width="50%" valign="top" align="center" style="text-align:center; padding:16px 10px 16px 10px; border-right:1px solid #E5DDD4; border-bottom:1px solid #E5DDD4;">
+                          <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                            <tr>
+                              <td class="glance-icon" width="64" valign="middle" style="width:64px;"><img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/landfill.png" alt="Landfill icon" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" /></td>
+                              <td class="glance-num font-brand" valign="middle" style="padding-left:12px; font-size:28px; line-height:32px; font-weight:700; color:#2A1D3D; white-space:nowrap;">{{total_waste_in_place}}</td>
+                            </tr>
+                          </table>
+                          <div class="glance-label font-brand" style="text-align:center; padding-top:8px; font-size:14px; line-height:19px; font-weight:700; color:#2A1D3D;">Metric tons of waste buried in landfills statewide</div>
                         </td>
-                        <td class="stack-gap" width="2%" style="font-size:0; line-height:0;">&nbsp;</td>
-                        <td class="stack-cell font-brand" width="49%" valign="top" bgcolor="#FFFFFF" style="background-color:#FFFFFF; padding:12px;">
-                          <div style="font-size:22px; line-height:28px; font-weight:700; color:#2A1D3D;">#{{state_emissions_rank}} of 53</div>
-                          <div style="font-size:13px; line-height:18px; color:#5C5566;">state emissions ranking</div>
+                        <td class="glance-cell" width="50%" valign="top" align="center" style="text-align:center; padding:16px 10px 16px 10px;  border-bottom:1px solid #E5DDD4;">
+                          <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                            <tr>
+                              <td class="glance-icon" width="64" valign="middle" style="width:64px;">{{#if state_emissions_rank}}<img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/rank-{{state_emissions_rank}}.png" alt="Ranking chart" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" />{{/if}}</td>
+                              <td class="glance-num font-brand" valign="middle" style="padding-left:12px; font-size:28px; line-height:32px; font-weight:700; color:#2A1D3D; white-space:nowrap;">#{{state_emissions_rank}}<span style="font-size:16px; font-weight:400; color:#5C5566;"> of 53</span></td>
+                            </tr>
+                          </table>
+                          <div class="glance-label font-brand" style="text-align:center; padding-top:8px; font-size:14px; line-height:19px; font-weight:700; color:#2A1D3D;">State ranking by landfill methane emissions <span style="font-weight:400; color:#5C5566;">(landfills only, not total emissions)</span></div>
                         </td>
                       </tr>
-                      <tr><td colspan="3" style="height:10px; font-size:0; line-height:0;">&nbsp;</td></tr>
                       <tr>
-                        <td class="stack-cell font-brand" width="49%" valign="top" bgcolor="#FFFFFF" style="background-color:#FFFFFF; padding:12px;">
-                          <div style="font-size:22px; line-height:28px; font-weight:700; color:#2A1D3D;">{{pop_within_5mi}}</div>
-                          <div style="font-size:13px; line-height:18px; color:#5C5566;">people living within 5 miles of a landfill</div>
+                        <td class="glance-cell" width="50%" valign="top" align="center" style="text-align:center; padding:16px 10px 16px 10px; border-right:1px solid #E5DDD4; ">
+                          <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                            <tr>
+                              <td class="glance-icon" width="64" valign="middle" style="width:64px;"><img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/people.png" alt="People icon" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" /></td>
+                              <td class="glance-num font-brand" valign="middle" style="padding-left:12px; font-size:28px; line-height:32px; font-weight:700; color:#2A1D3D; white-space:nowrap;">{{pop_within_5mi}}</td>
+                            </tr>
+                          </table>
+                          <div class="glance-label font-brand" style="text-align:center; padding-top:8px; font-size:14px; line-height:19px; font-weight:700; color:#2A1D3D;">People living within 5 miles of a known landfill</div>
                         </td>
-                        <td class="stack-gap" width="2%" style="font-size:0; line-height:0;">&nbsp;</td>
-                        <td class="stack-cell font-brand" width="49%" valign="top" bgcolor="#FFFFFF" style="background-color:#FFFFFF; padding:12px;">
-                          <div style="font-size:22px; line-height:28px; font-weight:700; color:#2A1D3D;">{{pct_pop_within_5mi}}%</div>
-                          <div style="font-size:13px; line-height:18px; color:#5C5566;">of the state&rsquo;s population</div>
+                        <td class="glance-cell" width="50%" valign="top" align="center" style="text-align:center; padding:16px 10px 16px 10px;  ">
+                          <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                            <tr>
+                              <td class="glance-icon" width="64" valign="middle" style="width:64px;">{{#if pct_pop_rounded}}<img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/pop-{{pct_pop_rounded}}.png" alt="Share of population chart" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" />{{/if}}</td>
+                              <td class="glance-num font-brand" valign="middle" style="padding-left:12px; font-size:28px; line-height:32px; font-weight:700; color:#2A1D3D; white-space:nowrap;">{{pct_pop_within_5mi}}%</td>
+                            </tr>
+                          </table>
+                          <div class="glance-label font-brand" style="text-align:center; padding-top:8px; font-size:14px; line-height:19px; font-weight:700; color:#2A1D3D;">Of the state&rsquo;s population lives within 5 miles of a known landfill</div>
                         </td>
                       </tr>
                     </table>
                   </td>
                 </tr>
                 <tr>
-                  <td class="font-brand" style="padding:0 18px 16px 18px;">
-                    <a href="{{wit_state_url}}" target="_blank" style="color:#0A8574; font-size:15px; line-height:22px; text-decoration:underline;">View all landfills in {{state}} on Waste Impact Tracker &rarr;</a>
+                  <td class="font-brand" style="padding:12px 18px 16px 18px; border-top:1px solid #E5DDD4;">
+                    <a href="{{wit_state_url}}" target="_blank" style="color:#0A8574; font-size:15px; line-height:22px; font-weight:700; text-decoration:underline;">View all landfills in {{state}} on Waste Impact Tracker</a>
                   </td>
                 </tr>
               </table>
@@ -268,33 +439,53 @@
 
           <!-- WHAT CAN I DO -->
           <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 14px 32px; font-size:24px; line-height:30px; font-weight:700; color:#0A8574;">
+            <td class="mobile-pad font-brand" style="padding:0 32px 10px 32px; font-size:24px; line-height:30px; font-weight:700; color:#0A8574;">
               What can I do?
             </td>
           </tr>
+
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 16px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              Learn more about this landfill and nearby communities, share this information with others, or support policies that require investigation and corrective action when large methane releases are detected.
+            </td>
+          </tr>
+
           <tr>
             <td class="mobile-pad" style="padding:0 32px 28px 32px;">
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #2A1D3D;">
                 <tr>
-                  <td class="stack-cell font-brand" width="48%" valign="top" bgcolor="#2A1D3D" style="background-color:#2A1D3D; padding:18px; font-size:15px; line-height:23px; color:#FFFFFF;">
-                    Email your elected officials and encourage them to support solutions that reduce landfill pollution.
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top:12px;">
+                  <!-- Card 1: Email legislator — primary action -->
+                  <td class="action-text font-brand" width="50%" valign="top" style="padding:20px 16px 0 16px; border-right:1px solid #2A1D3D; font-size:15px; line-height:24px; color:#2F2A36; text-align:center; background-color:#F4EFE9;">
+                    Contact your elected officials and urge them to support policies that require landfill operators to investigate and reduce large methane emissions.
+                  </td>
+                  <!-- Card 2: GOAL — secondary action -->
+                  <td class="action-text font-brand" width="50%" valign="top" style="padding:20px 16px 0 16px; font-size:15px; line-height:24px; color:#2F2A36; text-align:center; background-color:#F4EFE9;">
+                    Live near a landfill? Join GOAL — Grassroots Organizers for Accountable Landfills — and connect with others working for change.
+                  </td>
+                </tr>
+                <tr>
+                  <!-- Button 1 — primary, darker bg to signal priority -->
+                  <td class="action-btn" width="50%" valign="bottom" style="padding:16px; border-right:1px solid #2A1D3D; background-color:#F4EFE9;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
-                        <td align="center" bgcolor="#FFFFFF" style="background-color:#FFFFFF;">
-                          <a href="https://secure.everyaction.com/v1RWSAqd30eAhkFWXBBNFg2" target="_blank" class="font-brand"
-                             style="display:block; padding:12px; font-size:15px; font-weight:700; color:#2A1D3D; text-decoration:none;">Take action now</a>
+                        <td align="center" bgcolor="#2A1D3D" style="background-color:#2A1D3D;">
+                          <a class="font-brand" href="https://secure.everyaction.com/v1RWSAqd30eAhkFWXBBNFg2" target="_blank"
+                             style="display:block; padding:14px 18px; font-size:15px; line-height:20px; font-weight:700; color:#FFFFFF; text-decoration:none;">
+                            Take action now
+                          </a>
                         </td>
                       </tr>
                     </table>
                   </td>
-                  <td class="stack-gap" width="4%" style="font-size:0; line-height:0;">&nbsp;</td>
-                  <td class="stack-cell font-brand" width="48%" valign="top" bgcolor="#E6674F" style="background-color:#E6674F; padding:18px; font-size:15px; line-height:23px; color:#2A1D3D;">
-                    Live near or affected by a landfill? Join Grassroots Organizers for Accountable Landfills (GOAL).
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top:12px;">
+                  <!-- Button 2 — secondary -->
+                  <td class="action-btn" width="50%" valign="bottom" style="padding:16px; background-color:#F4EFE9;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
-                        <td align="center" bgcolor="#2A1D3D" style="background-color:#2A1D3D;">
-                          <a href="https://www.fullcirclefuture.org/goal" target="_blank" class="font-brand"
-                             style="display:block; padding:12px; font-size:15px; font-weight:700; color:#FFFFFF; text-decoration:none;">Learn about GOAL</a>
+                        <td align="center" bgcolor="#E6674F" style="background-color:#E6674F;">
+                          <a class="font-brand" href="https://www.fullcirclefuture.org/goal" target="_blank"
+                             style="display:block; padding:14px 18px; font-size:15px; line-height:20px; font-weight:700; color:#FFFFFF; text-decoration:none;">
+                            Learn about GOAL
+                          </a>
                         </td>
                       </tr>
                     </table>
@@ -304,31 +495,41 @@
             </td>
           </tr>
 
-          <!-- WHY METHANE MATTERS -->
+          <!-- WHY METHANE MATTERS — merged with detection context above, now condensed -->
           <tr>
             <td class="mobile-pad font-brand" style="padding:0 32px 10px 32px; font-size:24px; line-height:30px; font-weight:700; color:#2A1D3D;">
               Why does methane matter?
             </td>
           </tr>
+
           <tr>
             <td class="mobile-pad font-brand" style="padding:0 32px 28px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
-              Methane is an extremely potent greenhouse gas&mdash;about 80 times more powerful than carbon dioxide in the short term. Large methane releases from landfills can also signal the presence of other harmful pollutants, including benzene, hydrogen sulfide, and PFAS. The good news is that proven, cost-effective solutions exist to dramatically reduce these emissions.
-            </td>
-          </tr>
-
-          <!-- MANAGE ALERTS (shows only when the links exist) -->
-          <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 12px 32px; font-size:13px; line-height:20px; color:#5C5566; text-align:center;">
-              {{#if stop_url}}<a href="{{stop_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">Stop alerts for {{stop_label}}</a>{{/if}}
-              {{#if manage_url}}&nbsp;&middot;&nbsp;<a href="{{manage_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">Manage my alerts</a>{{/if}}
+              Methane is an extremely potent greenhouse gas — about 80 times more powerful than carbon dioxide in the short term. Large methane releases from landfills can also signal the presence of other harmful pollutants, including benzene, hydrogen sulfide, and PFAS. The good news is that proven, cost-effective solutions exist to dramatically reduce these emissions.
             </td>
           </tr>
 
           <!-- FOOTER -->
           <tr>
-            <td class="mobile-pad font-brand" style="padding:16px 32px 32px 32px; font-size:14px; line-height:22px; color:#5C5566; border-top:1px solid #E5DDD4;">
+            <td class="mobile-pad font-brand" style="padding:16px 32px 8px 32px; font-size:14px; line-height:22px; color:#5C5566; border-top:1px solid #E5DDD4;">
               Full Circle Future<br />
               <a href="https://www.fullcirclefuture.org" target="_blank" style="color:#0A8574; text-decoration:underline;">www.fullcirclefuture.org</a>
+            </td>
+          </tr>
+
+          <!-- MANAGE ALERTS — only shows when the script sends these links -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 8px 32px; font-size:13px; line-height:20px; color:#5C5566; text-align:center;">
+              {{#if stop_url}}<a href="{{stop_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">Stop alerts for {{stop_label}}</a>{{/if}}
+              {{#if manage_url}}&nbsp;&middot;&nbsp;<a href="{{manage_url}}" target="_blank" style="color:#0A8574; text-decoration:underline;">Manage my alerts</a>{{/if}}
+            </td>
+          </tr>
+
+          <!-- UNSUBSCRIBE -->
+          <tr>
+            <td data-role="module-unsubscribe" class="mobile-pad font-brand" style="padding:0 32px 32px 32px; font-size:12px; line-height:20px; color:#7A7186; text-align:center;">
+              <a class="Unsubscribe--unsubscribeLink" href="{{{unsubscribe}}}" target="_blank" style="color:#7A7186; text-decoration:underline; font-family:Arial, sans-serif;">Unsubscribe</a>
+              &nbsp;&middot;&nbsp;
+              <a class="Unsubscribe--unsubscribePreferences" href="{{{unsubscribe_preferences}}}" target="_blank" style="color:#7A7186; text-decoration:underline; font-family:Arial, sans-serif;">Unsubscribe Preferences</a>
             </td>
           </tr>
 
