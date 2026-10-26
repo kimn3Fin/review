@@ -154,58 +154,86 @@
             </td>
           </tr>
 
-          <!-- ABOUT THIS LANDFILL -->
+          <!-- ABOUT THIS LANDFILL — text only -->
           <tr>
-            <td class="mobile-pad" style="padding:0 32px 24px 32px;">
+            <td class="mobile-pad" style="padding:0 32px 28px 32px;">
               <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #2A1D3D; background-color:#F4EFE9;">
                 <tr>
-                  <td class="font-brand" style="padding:18px 18px 6px 18px; font-size:20px; line-height:26px; font-weight:700; color:#2A1D3D;">
+                  <td class="font-brand" style="padding:16px 18px 6px 18px; font-size:18px; line-height:24px; font-weight:700; color:#2A1D3D;">
                     About {{landfill_name}}
                   </td>
                 </tr>
-                {{#if landfill_owner}}
                 <tr>
-                  <td class="font-brand" style="padding:0 18px 2px 18px; font-size:15px; line-height:23px; color:#2F2A36;">
-                    <strong>Owner:</strong> {{landfill_owner}}
+                  <td class="font-brand" style="padding:0 18px 10px 18px; font-size:15px; line-height:24px; color:#2F2A36;">
+                    {{#if landfill_owner}}<strong>Owner:</strong> {{landfill_owner}}<br />{{/if}}
+                    {{#if landfill_operator}}<strong>Operator:</strong> {{landfill_operator}}<br />{{/if}}
+                    {{#if landfill_pop_within_5mi}}<strong>People living within 5 miles:</strong> {{landfill_pop_within_5mi}}<br />{{/if}}
+                    {{#if landfill_waste_in_place}}<strong>Waste buried in this landfill:</strong> {{landfill_waste_in_place}} metric tons{{/if}}
                   </td>
                 </tr>
-                {{/if}}
-                {{#if landfill_operator}}
                 <tr>
-                  <td class="font-brand" style="padding:0 18px 2px 18px; font-size:15px; line-height:23px; color:#2F2A36;">
-                    <strong>Operator:</strong> {{landfill_operator}}
+                  <td class="font-brand" style="padding:0 18px 16px 18px; font-size:15px; line-height:22px;">
+                    <a href="{{wit_url}}" target="_blank" style="color:#0A8574; text-decoration:underline; font-weight:700;">View {{landfill_name}} on Waste Impact Tracker</a>
                   </td>
                 </tr>
-                {{/if}}
+              </table>
+            </td>
+          </tr>
+
+          <!-- WHAT MULTIPLE PLUMES TELL US — common leak sources as a 2-column icon grid (icons are hosted PNGs) -->
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 10px 32px; font-size:24px; line-height:30px; font-weight:700; color:#2A1D3D;">
+              What multiple plumes tell us
+            </td>
+          </tr>
+          <tr>
+            <td class="mobile-pad font-brand" style="padding:0 32px 14px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
+              Landfills rarely leak from just one spot. Methane builds up throughout the buried waste and escapes wherever it finds a path. Common sources include:
+            </td>
+          </tr>
+          <tr>
+            <td class="mobile-pad" style="padding:0 32px 28px 32px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F4EFE9; border:1px solid #2A1D3D;">
                 <tr>
-                  <td style="padding:6px 18px 0 18px;">
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top:1px solid #E5DDD4;">
-                      <tr>
-                        <td class="glance-cell" width="50%" valign="top" align="center" style="text-align:center; padding:14px 10px 16px 10px; border-right:1px solid #E5DDD4;">
-                          <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" style="margin:0 auto;">
-                            <tr>
-                              <td class="glance-icon" width="64" valign="middle" style="width:64px;"><img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/people.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" /></td>
-                              <td class="glance-num font-brand" valign="middle" style="padding-left:12px; font-size:28px; line-height:32px; font-weight:700; color:#2A1D3D; white-space:nowrap;">{{landfill_pop_within_5mi}}</td>
-                            </tr>
-                          </table>
-                          <div class="glance-label font-brand" style="text-align:center; padding-top:8px; font-size:14px; line-height:19px; font-weight:700; color:#2A1D3D;">People living within 5 miles of this landfill</div>
-                        </td>
-                        <td class="glance-cell" width="50%" valign="top" align="center" style="text-align:center; padding:14px 10px 16px 10px; ">
-                          <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" style="margin:0 auto;">
-                            <tr>
-                              <td class="glance-icon" width="64" valign="middle" style="width:64px;"><img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/landfill.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" /></td>
-                              <td class="glance-num font-brand" valign="middle" style="padding-left:12px; font-size:28px; line-height:32px; font-weight:700; color:#2A1D3D; white-space:nowrap;">{{landfill_waste_in_place}}</td>
-                            </tr>
-                          </table>
-                          <div class="glance-label font-brand" style="text-align:center; padding-top:8px; font-size:14px; line-height:19px; font-weight:700; color:#2A1D3D;">Metric tons of waste buried in this landfill</div>
-                        </td>
-                      </tr>
+                  <td style="padding:0 16px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td width="50%" valign="top" align="center" class="font-brand" style="padding:16px 8px 16px 0; text-align:center;">
+                    <img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/leak-cover-cracks.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" />
+                    <div style="padding-top:8px; font-size:15px; line-height:20px; font-weight:700; color:#2A1D3D;">Cracks in cover soil</div>
+                    <div style="padding-top:4px; font-size:14px; line-height:20px; color:#2F2A36;">Gaps in the soil that covers the waste, especially on steep slopes.</div>
+                  </td>
+                  <td width="50%" valign="top" align="center" class="font-brand" style="padding:16px 0 16px 8px; text-align:center;">
+                    <img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/leak-working-face.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" />
+                    <div style="padding-top:8px; font-size:15px; line-height:20px; font-weight:700; color:#2A1D3D;">Active working face</div>
+                    <div style="padding-top:4px; font-size:14px; line-height:20px; color:#2F2A36;">Where fresh waste is dumped and left exposed each day.</div>
+                  </td>
+                </tr>
+                <tr style="border-top:1px solid #E5DDD4;">
+                  <td width="50%" valign="top" align="center" class="font-brand" style="padding:16px 8px 16px 0; text-align:center;">
+                    <img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/leak-no-collection.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" />
+                    <div style="padding-top:8px; font-size:15px; line-height:20px; font-weight:700; color:#2A1D3D;">Areas without gas collection</div>
+                    <div style="padding-top:4px; font-size:14px; line-height:20px; color:#2F2A36;">Federal rules allow up to five years before newer areas need gas collection.</div>
+                  </td>
+                  <td width="50%" valign="top" align="center" class="font-brand" style="padding:16px 0 16px 8px; text-align:center;">
+                    <img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/leak-gas-well.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" />
+                    <div style="padding-top:8px; font-size:15px; line-height:20px; font-weight:700; color:#2A1D3D;">Damaged gas wells</div>
+                    <div style="padding-top:4px; font-size:14px; line-height:20px; color:#2F2A36;">Broken or poorly tuned gas wells and wellheads.</div>
+                  </td>
+                </tr>
+                <tr style="border-top:1px solid #E5DDD4;">
+                  <td width="50%" valign="top" align="center" class="font-brand" style="padding:16px 8px 16px 0; text-align:center;">
+                    <img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/leak-pipes.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" />
+                    <div style="padding-top:8px; font-size:15px; line-height:20px; font-weight:700; color:#2A1D3D;">Leaking pipes and leachate parts</div>
+                    <div style="padding-top:4px; font-size:14px; line-height:20px; color:#2F2A36;">Leaks from gas pipes and leachate parts like sumps and cleanouts.</div>
+                  </td>
+                  <td width="50%" valign="top" align="center" class="font-brand" style="padding:16px 0 16px 8px; text-align:center;">
+                    <img src="https://kimn3fin.github.io/fullcirclefuture/email-graphics/leak-flare-offline.png" alt="" width="64" height="64" style="display:block; width:64px; height:64px; margin:0 auto;" />
+                    <div style="padding-top:8px; font-size:15px; line-height:20px; font-weight:700; color:#2A1D3D;">Offline flares or engines</div>
+                    <div style="padding-top:4px; font-size:14px; line-height:20px; color:#2F2A36;">Gas that should be burned off escapes instead.</div>
+                  </td>
+                </tr>
                     </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="font-brand" style="padding:12px 18px 16px 18px; border-top:1px solid #E5DDD4;">
-                    <a href="{{wit_url}}" target="_blank" style="color:#0A8574; font-size:15px; line-height:22px; font-weight:700; text-decoration:underline;">View {{landfill_name}} on Waste Impact Tracker</a>
                   </td>
                 </tr>
               </table>
@@ -244,48 +272,6 @@
                     <strong>Estimates:</strong> Emission rates are estimates; the &plusmn; value shows their uncertainty.<br /><br />
                     Questions about the data or how to interpret these detections? Contact Carbon Mapper at <a href="mailto:info@carbonmapper.org" style="color:#0A8574; text-decoration:underline;">info@carbonmapper.org</a>.
                   </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- WHAT MULTIPLE PLUMES TELL US -->
-          <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 10px 32px; font-size:24px; line-height:30px; font-weight:700; color:#2A1D3D;">
-              What multiple plumes tell us
-            </td>
-          </tr>
-          <tr>
-            <td class="mobile-pad font-brand" style="padding:0 32px 12px 32px; font-size:16px; line-height:26px; color:#2F2A36;">
-              Landfills rarely leak from just one spot. Methane builds up throughout the buried waste and escapes wherever it finds a path. Common sources include:
-            </td>
-          </tr>
-          <tr>
-            <td class="mobile-pad" style="padding:0 32px 24px 32px;">
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
-                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Cracks and gaps in cover soil</strong>, especially on steep side slopes</td>
-                </tr>
-                <tr>
-                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
-                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>The active working face</strong>, where fresh waste is exposed each day</td>
-                </tr>
-                <tr>
-                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
-                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Newer areas without gas collection.</strong> Federal rules give operators up to five years after waste is placed before collection is required in active areas.</td>
-                </tr>
-                <tr>
-                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
-                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Damaged or poorly tuned gas wells</strong> and wellheads</td>
-                </tr>
-                <tr>
-                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
-                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Leaking pipes and leachate system parts</strong> like sumps and cleanouts</td>
-                </tr>
-                <tr>
-                  <td width="18" valign="top" class="font-brand" style="width:18px; font-size:15px; line-height:24px; color:#0A8574; font-weight:700;">&bull;</td>
-                  <td valign="top" class="font-brand" style="padding-bottom:6px; font-size:15px; line-height:24px; color:#2F2A36;"><strong>Flares or engines that are offline</strong>, letting gas escape that should be destroyed</td>
                 </tr>
               </table>
             </td>
