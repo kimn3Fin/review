@@ -15,6 +15,10 @@ Optional: add `&width=desktop` or `&width=phone` to open at that width. The defa
 
 `review.html` on its own (no `?page=`) lists every page that has comments.
 
+## Replying to a comment
+
+Click a pin (or the comment in the sidebar), type in the **Reply** box, and select **Reply**. Replies show under the comment for everyone, and the sidebar shows how many replies each comment has. Each reply is also a row in the sheet, with "Reply to comment N" in the Section column.
+
 ## Questions for reviewers
 
 Add questions on the start page (`review.html` with nothing after it): type the file name, write the questions in the box, one per line, and select **Open for review**. They're saved in the **Questions** tab of the Google Sheet, and reviewers see them at the top of the sidebar. Answers save to the **Comments** tab with the question in the Section column.
