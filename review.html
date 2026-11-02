@@ -173,6 +173,16 @@
   .card-time { color: var(--muted); font-size: 14px; }
   .card-text { margin: 8px 0 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
   .card-note { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
+  .pop { max-height: calc(100vh - var(--header-h) - 40px); overflow-y: auto; }
+  .replies { border-left: 2px solid var(--line); margin: 0 0 12px; padding-left: 12px; }
+  .reply { margin-bottom: 10px; }
+  .reply-meta { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+  .reply-meta strong { color: var(--ink); font-size: 14px; }
+  .reply-text { margin: 2px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 15px; }
+  .reply-form { border-top: 1px solid var(--line); padding-top: 12px; margin-bottom: 12px; }
+  .reply-form textarea { min-height: 64px; }
+  .reply-form .field { margin-bottom: 8px; }
+  .item-replies { font-size: 13px; color: var(--teal); font-weight: 600; margin-top: 4px; }
   .kbd-hint { font-size: 13px; color: var(--muted); margin-right: auto; align-self: center; }
 
   /* ---------- Sidebar ---------- */
@@ -937,7 +947,11 @@ const CONFIG = Object.assign({
 
     // ---------- Pins ----------
     const isResolved = (c) => c.status === "Resolved";
-    const isAnswer = (c) => !!(c && c.anchor && c.anchor.question);
+    const isReply = (c) => !!(c && c.anchor && c.anchor.replyTo);
+    const isAnswer = (c) => !isReply(c) && !!(c && c.anchor && c.anchor.question);
+    state.replies = [];
+    const repliesFor = (id) => state.replies.filter((r) => r.anchor.replyTo === id)
+      .sort((a, b) => String(a.created).localeCompare(String(b.created)));
     function visibleComments() {
       if (state.filter === "open") return state.comments.filter((c) => !isResolved(c));
       if (state.filter === "resolved") return state.comments.filter(isResolved);
@@ -1095,6 +1109,85 @@ const CONFIG = Object.assign({
       if (!state.points.get(c.id)) pop.appendChild(el("p", "card-note", "Not pinned: this part of the page has changed since the comment was left."));
       if (isResolved(c)) pop.appendChild(el("p", "card-note", "Resolved" + (c.resolvedBy ? " by " + c.resolvedBy : "")));
 
+      // ----- Replies -----
+      const replies = repliesFor(c.id);
+      pop.dataset.viewing = c.id;
+      pop.dataset.replyCount = String(replies.length);
+      if (replies.length) {
+        const box = el("div", "replies");
+        replies.forEach((r) => {
+          const item = el("div", "reply");
+          const meta = el("div", "reply-meta");
+          meta.appendChild(el("strong", null, r.name || "Someone"));
+          meta.appendChild(el("span", null, formatTime(r.created)));
+          if (r.mine) {
+            const del = el("button", "link-btn danger", "Delete"); del.type = "button";
+            let armed = false;
+            del.addEventListener("click", async () => {
+              if (!armed) { armed = true; del.textContent = "Select again to delete"; return; }
+              del.disabled = true;
+              try {
+                await apiPost({ action: "delete", id: r.id, author: authorKey });
+                state.replies = state.replies.filter((x) => x.id !== r.id);
+                openViewer(c); renderList();
+                toast("Reply deleted.");
+              } catch (e) { del.disabled = false; del.textContent = "Delete"; toast("The reply wasn’t deleted: " + e.message); }
+            });
+            meta.appendChild(del);
+          }
+          item.appendChild(meta);
+          item.appendChild(el("p", "reply-text", r.text || ""));
+          box.appendChild(item);
+        });
+        pop.appendChild(box);
+      }
+
+      const rForm = el("div", "reply-form");
+      const savedName = lsGet(LS_NAME) || "";
+      const rName = el("input"); rName.type = "text"; rName.maxLength = 80; rName.autocomplete = "name";
+      rName.value = savedName; rName.placeholder = "Your name"; rName.setAttribute("aria-label", "Your name");
+      const nameWrap = el("label", "field"); nameWrap.appendChild(rName);
+      nameWrap.hidden = !!savedName;
+      const rText = el("textarea"); rText.maxLength = 3000; rText.placeholder = "Reply…"; rText.setAttribute("aria-label", "Reply");
+      rText.className = "reply-input";
+      const rWrap = el("label", "field"); rWrap.appendChild(rText);
+      const rErr = el("p", "form-error");
+      const rRow = el("div", "actions");
+      const rBtn = el("button", "btn", "Reply"); rBtn.type = "button";
+      rRow.appendChild(rBtn);
+      if (savedName) {
+        const who = el("span", "kbd-hint", "Replying as " + savedName + " ");
+        const change = el("button", "link-btn", "Change"); change.type = "button";
+        change.addEventListener("click", () => { nameWrap.hidden = false; who.remove(); rName.focus(); });
+        who.appendChild(change);
+        rRow.insertBefore(who, rBtn);
+      }
+      rForm.append(nameWrap, rWrap, rErr, rRow);
+      pop.appendChild(rForm);
+      const sendReply = async () => {
+        const name = rName.value.trim(), text = rText.value.trim();
+        if (!name) { nameWrap.hidden = false; rErr.textContent = "Add your name so the team knows who replied."; rName.focus(); return; }
+        if (!text) { rErr.textContent = "Write a reply before sending."; rText.focus(); return; }
+        rErr.textContent = "";
+        lsSet(LS_NAME, name);
+        rBtn.disabled = true; rBtn.textContent = "Sending…";
+        try {
+          const data = await apiPost({
+            action: "add", page: pageKey, title: state.pageTitle, reviewLink: reviewLink,
+            section: ("Reply to comment " + c.n + ": " + (c.section || "")).slice(0, 120),
+            text, name, anchor: { replyTo: c.id }, author: authorKey,
+          });
+          state.replies = state.replies.concat([data.comment]);
+          openViewer(c); renderList();
+          toast("Reply sent.");
+        } catch (e) {
+          rBtn.disabled = false; rBtn.textContent = "Reply";
+          rErr.textContent = "The reply didn’t send: " + (e.message || "the sheet didn’t respond") + ". Select Reply to try again.";
+        }
+      };
+      rBtn.addEventListener("click", sendReply);
+      rText.addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); sendReply(); } });
+
       const actions = el("div", "actions");
       if (c.mine) {
         const del = el("button", "btn danger", "Delete"); del.type = "button";
@@ -1165,6 +1258,8 @@ const CONFIG = Object.assign({
       if (pop.hidden) return;
       if (pop.contains(e.target) || overlay.contains(e.target) || list.contains(e.target)) return;
       if (state.draft && state.draft.text) return;
+      const typing = pop.querySelector(".reply-input");
+      if (typing && typing.value.trim()) return; // keep an unsent reply
       state.draft = null; state.activeId = null; closePop(); render();
     });
 
@@ -1225,6 +1320,8 @@ const CONFIG = Object.assign({
         body.appendChild(el("div", "item-section", c.section || "Page"));
         body.appendChild(el("p", "item-text", c.text || ""));
         if (orphan) body.appendChild(el("div", "item-note", "Not pinned: this part of the page has changed"));
+        const rc = repliesFor(c.id).length;
+        if (rc) body.appendChild(el("div", "item-replies", rc + (rc === 1 ? " reply" : " replies")));
         if (isResolved(c)) body.appendChild(el("div", "item-note", "Resolved" + (c.resolvedBy ? " by " + c.resolvedBy : "")));
         b.appendChild(body);
         b.addEventListener("click", () => selectComment(c.id, true));
@@ -1412,8 +1509,13 @@ const CONFIG = Object.assign({
       if (!endpointSet) { setStatus("off", "Not connected"); applyQuestions(await txtQuestions()); render(); return; }
       try {
         const data = await apiGet({ action: "list", page: pageKey, author: authorKey });
+        state.replies = data.comments.filter(isReply);
         state.answers = data.comments.filter(isAnswer);
-        setComments(data.comments.filter((c) => !isAnswer(c)));
+        setComments(data.comments.filter((c) => !isAnswer(c) && !isReply(c)));
+        if (firstLoad && state.activeId) {
+          const r = state.replies.find((x) => x.id === state.activeId);
+          if (r) state.activeId = r.anchor.replyTo;
+        }
         applyQuestions(Array.isArray(data.questions) && data.questions.length ? data.questions : await txtQuestions());
         state.loaded = true;
         setStatus("live", "Synced " + new Date().toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }));
@@ -1422,6 +1524,12 @@ const CONFIG = Object.assign({
           if (!state.draft) closePop();
         }
         render();
+        // New replies from others: refresh an open thread unless a reply is being typed
+        if (!pop.hidden && !state.draft && pop.dataset.viewing && pop.dataset.viewing === state.activeId) {
+          const open = state.comments.find((c) => c.id === state.activeId);
+          const typing = pop.querySelector(".reply-input");
+          if (open && String(repliesFor(open.id).length) !== pop.dataset.replyCount && !(typing && typing.value.trim()) && document.activeElement !== typing) openViewer(open);
+        }
         if (firstLoad && state.activeId && state.answers.some((a) => a.id === state.activeId)) {
           const answerId = state.activeId;
           state.activeId = null;
