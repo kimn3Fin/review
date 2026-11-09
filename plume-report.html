@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>State plume report | Full Circle Future</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --band: #2A1D3D; --on-band: #F4EFE9;
+    --ink: #2A1D3D; --text: #2F2A36; --muted: #6B6377;
+    --teal: #0A8574; --on-teal: #FFFFFF;
+    --coral: #E6674F; --alert: #B23E29;
+    --page: #F4EFE9; --surface: #FFFFFF; --soft: #FAF7F3; --line: #E5DDD4;
+    --bar: #2A1D3D;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #F1EBF7; --text: #E4DEEA; --muted: #A79FB3;
+      --teal: #3FC1AC; --on-teal: #0F2420;
+      --coral: #F08A75; --alert: #F4A08F;
+      --page: #17111F; --surface: #221A2D; --soft: #2A2136; --line: #3A3046;
+      --bar: #B9A8D0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--text);
+    font-family: Alexandria, "Segoe UI", Arial, sans-serif; font-weight: 300;
+    font-size: 16px; line-height: 1.6;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  :focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+
+  /* Header */
+  .top { background: var(--band); color: var(--on-band); }
+  .top .wrap { padding-top: 22px; padding-bottom: 22px; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .org { margin: 0; font-size: 14px; font-weight: 400; opacity: .8; }
+  .app-title { margin: 0; font-size: 22px; font-weight: 700; }
+
+  /* Controls */
+  .controls { background: var(--surface); border-bottom: 1px solid var(--line); }
+  .controls .wrap { padding-top: 20px; padding-bottom: 20px; }
+  .connect h2 { margin: 0 0 4px; font-size: 20px; color: var(--ink); font-weight: 700; }
+  .connect p { margin: 0 0 16px; max-width: 70ch; color: var(--muted); }
+  .row, .form { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+  .field span { display: block; font-size: 13px; font-weight: 400; color: var(--muted); margin-bottom: 6px; }
+  .field.grow { flex: 1 1 320px; }
+  .field.grow input { width: 100%; }
+  select, input[type=date], input[type=password] {
+    font: inherit; font-size: 15px; font-weight: 400; color: var(--text);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    padding: 10px 12px; min-width: 180px;
+  }
+  .check { display: flex; gap: 8px; align-items: center; font-size: 14px; padding-bottom: 10px; }
+  .btn {
+    font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+    padding: 10px 20px; border-radius: 6px; border: 1px solid var(--teal);
+    background: transparent; color: var(--teal);
+  }
+  .btn.primary { background: var(--teal); color: var(--on-teal); }
+  .btn:disabled { opacity: .5; cursor: progress; }
+  .linkbtn { font: inherit; font-size: 14px; background: none; border: 0; padding: 0; color: var(--teal); text-decoration: underline; cursor: pointer; }
+  .meta { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; font-size: 14px; color: var(--muted); }
+  .status { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+  .status:empty { display: none; }
+  .status.error { color: var(--alert); font-weight: 400; }
+  .status.warn { color: var(--text); background: var(--soft); border-left: 3px solid var(--coral); padding: 10px 14px; }
+
+  /* Report */
+  .report { padding-bottom: 72px; }
+  .r-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; padding-top: 48px; }
+  .r-state { margin: 0; font-size: clamp(44px, 8vw, 84px); line-height: 1; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+  .r-sub { margin: 12px 0 0; font-size: 17px; color: var(--muted); font-weight: 400; }
+  .r-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .lead { font-size: 20px; line-height: 1.65; max-width: 62ch; margin: 28px 0 40px; color: var(--text); }
+  .lead strong { font-weight: 600; color: var(--ink); }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-top: 2px solid var(--ink); }
+  .stat { padding: 18px 20px 20px 0; border-bottom: 1px solid var(--line); }
+  .stat dt { font-size: 14px; color: var(--muted); font-weight: 400; }
+  .stat dd { margin: 4px 0 0; font-size: 34px; line-height: 1.15; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .stat dd.hot { color: var(--coral); }
+  .stat dd small { font-size: 16px; font-weight: 400; color: var(--muted); }
+  .stat .sub { display: block; margin-top: 4px; font-size: 13px; color: var(--muted); }
+
+  .split { display: grid; grid-template-columns: 1.45fr 1fr; gap: 32px; margin-top: 56px; align-items: start; }
+  .panel { background: var(--surface); border: 1px solid var(--line); }
+  .panel h3, .glance h3 { margin: 0 0 12px; font-size: 20px; color: var(--ink); font-weight: 700; }
+  .largest figure { margin: 0; border-bottom: 1px solid var(--line); background: var(--soft); }
+  .largest img { display: block; width: 100%; height: auto; }
+  .largest .body { padding: 20px 22px 22px; }
+  .rate-big { font-size: 40px; font-weight: 700; line-height: 1.1; color: var(--coral); margin: 0 0 4px; font-variant-numeric: tabular-nums; }
+  .rate-big small { font-size: 16px; color: var(--muted); font-weight: 400; }
+  .kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 16px 0 0; font-size: 15px; }
+  .kv dt { color: var(--muted); font-weight: 400; }
+  .kv dd { margin: 0; }
+
+  .glance { background: var(--soft); border: 1px solid var(--ink); padding: 20px 22px; }
+  .glance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; margin: 0; }
+  .glance-grid dt { font-size: 13px; color: var(--muted); font-weight: 400; }
+  .glance-grid dd { margin: 2px 0 0; font-size: 24px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .glance .record { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 15px; }
+
+  a { color: var(--teal); }
+  section.block { margin-top: 64px; }
+  section.block > h3 { margin: 0 0 6px; font-size: 24px; color: var(--ink); font-weight: 700; }
+  .note { margin: 0 0 18px; max-width: 70ch; color: var(--muted); font-size: 15px; }
+
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart .axis { stroke: var(--line); }
+  .chart .lbl { fill: var(--muted); font-size: 12px; font-family: inherit; }
+  .chart .cnt { fill: var(--text); font-size: 12px; font-weight: 600; font-family: inherit; }
+  .chart .b-other { fill: var(--bar); }
+  .chart .b-hot { fill: var(--coral); }
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; }
+
+  .clusters { display: grid; gap: 18px; }
+  .cluster { border-left: 3px solid var(--coral); padding: 4px 0 4px 18px; }
+  .cluster h4 { margin: 0; font-size: 17px; font-weight: 600; color: var(--ink); }
+  .cluster p { margin: 2px 0 8px; font-size: 14px; color: var(--muted); }
+  .cluster ul { margin: 0; padding: 0; list-style: none; font-size: 15px; }
+  .cluster li { padding: 2px 0; font-variant-numeric: tabular-nums; }
+
+  .tablewrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th { text-align: left; font-weight: 400; font-size: 13px; color: var(--muted); border-bottom: 2px solid var(--ink); padding: 8px 14px 8px 0; white-space: nowrap; }
+  th button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  th[aria-sort] button { color: var(--ink); font-weight: 600; }
+  td { padding: 10px 14px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.hot { color: var(--alert); font-weight: 600; }
+  td.plume a { word-break: break-all; }
+
+  .empty { margin-top: 32px; padding: 28px; background: var(--surface); border: 1px solid var(--line); max-width: 70ch; }
+  .empty h3 { margin: 0 0 6px; color: var(--ink); }
+  .empty p { margin: 0; }
+  .foot { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); max-width: 80ch; }
+  .start { padding: 64px 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
+
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .split { grid-template-columns: 1fr; }
+    .lead { font-size: 18px; }
+    select, input[type=date] { min-width: 0; width: 100%; }
+    .form .field { flex: 1 1 140px; }
+  }
+  @media print {
+    :root {
+      --ink: #2A1D3D; --text: #2F2A36; --muted: #5C5566; --teal: #0A8574;
+      --coral: #E6674F; --alert: #B23E29; --page: #fff; --surface: #fff; --soft: #FAF7F3; --line: #DDD4CA; --bar: #2A1D3D;
+      color-scheme: light;
+    }
+    body { background: #fff; }
+    .controls, .noprint { display: none !important; }
+    .top { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .r-head { padding-top: 16px; }
+    .split, .cluster, .stat, tr { break-inside: avoid; }
+    section.block { margin-top: 36px; }
+    a { color: var(--text); text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="org">Full Circle Future</p>
+    <h1 class="app-title">State plume report</h1>
+  </div>
+</header>
+
+<section class="controls" aria-label="Report settings">
+  <div class="wrap">
+    <div id="connect" class="connect" hidden>
+      <h2>Connect to Airtable</h2>
+      <p>Paste a read-only Airtable personal access token for the Full Circle Future Matching base. It’s kept in this browser only and is sent nowhere except Airtable.</p>
+      <div class="row">
+        <label class="field grow"><span>Personal access token</span>
+          <input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="pat…">
+        </label>
+        <label class="check"><input id="remember" type="checkbox" checked> Remember on this computer</label>
+        <button id="connectBtn" class="btn primary" type="button">Connect</button>
+      </div>
+    </div>
+
+    <form id="form" class="form" hidden>
+      <label class="field"><span>State</span><select id="state" required></select></label>
+      <label class="field"><span>Period</span>
+        <select id="preset">
+          <option value="30">Last 30 days</option>
+          <option value="90" selected>Last 90 days</option>
+          <option value="ytd">Year to date</option>
+          <option value="365">Last 12 months</option>
+          <option value="all">All plumes on record</option>
+          <option value="custom">Custom dates</option>
+        </select>
+      </label>
+      <label class="field custom" hidden><span>From</span><input type="date" id="from"></label>
+      <label class="field custom" hidden><span>To</span><input type="date" id="to"></label>
+      <button class="btn primary" type="submit" id="buildBtn">Build report</button>
+    </form>
+
+    <div id="meta" class="meta" hidden>
+      <span id="dataInfo"></span>
+      <button type="button" class="linkbtn" id="reload">Reload data</button>
+      <button type="button" class="linkbtn" id="disconnect">Disconnect</button>
+    </div>
+    <p id="status" class="status" role="status"></p>
+  </div>
+</section>
+
+<main id="report" class="wrap report" aria-live="polite"></main>
+
+<script>
+/* =====================================================================
+   CONFIG — the only part you should ever need to edit.
+   Field names must match Airtable exactly. Where a list is given,
+   the first name that exists is used.
+   ===================================================================== */
+const CONFIG = {
+  baseId: 'appk5Pi5OJRT6VtTv',          // Full Circle Future Matching base
+  plumeTable: 'tblryheIH0yGwHN32',      // Plume data
+  stateTable: 'tblFkWUzMnhkkAyJf',      // State Data
+
+  plumeFields: {
+    name:         ['Name', 'plume_id'],
+    datetime:     ['datetime'],
+    emissions:    ['Emissions Auto'],
+    uncertainty:  ['emission_uncertainty_auto'],
+    platform:     ['platform'],
+    landfillLink: ['Landfill Link'],
+    landfillName: ['Landfill Name (from Landfill Link)'],
+    owner:        ['Landfill Owner Organization(s) (from Landfill Link)'],
+    stateLink:    ['State Link'],
+    stateName:    ['state name'],
+    mapUrl:       ['Plume Map URL'],
+    png:          ['plume_png'],
+  },
+
+  stateFields: {
+    name:         ['Name', 'State', 'State Name', 'state name'],
+    wasteInPlace: ['Waste in Place'],
+    rank:         ['State Emissions Rank'],
+    pop:          ['Population within 5 miles'],
+    pct:          ['% Population near landfill'],
+    witUrl:       ['WIT URL'],
+  },
+
+  superEmitterKgHr: 100,
+  portalUrl: id => `https://data.carbonmapper.org/?plume_id=${encodeURIComponent(id)}`,
+};
+/* ===================================================================== */
+
+const $ = s => document.querySelector(s);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+};
+const TOKEN_KEY = 'fcf_plume_report_token';
+
+let token = null, STATES = [], PLUMES = [], CURRENT = null;
+
+/* ---------- small helpers ---------- */
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function pick(fields, names) { for (const n of names) if (fields[n] !== undefined) return fields[n]; return undefined; }
+function arr(v) { return v == null ? [] : Array.isArray(v) ? v : [v]; }
+function first(v) { return Array.isArray(v) ? v[0] : v; }
+function text(v) {
+  if (v == null) return '';
+  if (Array.isArray(v)) return v.map(text).filter(Boolean).join(', ');
+  if (typeof v === 'object') return v.name || v.url || '';
+  return String(v).trim();
+}
+function num(v) {
+  v = first(v);
+  if (v == null || v === '') return null;
+  const n = Number(String(v).replace(/,/g, ''));
+  return Number.isFinite(n) ? n : null;
+}
+function url(v) {
+  v = first(v);
+  if (!v) return '';
+  const s = typeof v === 'object' ? (v.url || '') : String(v).trim();
+  return /^https?:\/\//i.test(s) ? s : '';
+}
+function parseDate(v) {
+  v = first(v);
+  if (!v) return null;
+  let s = String(v).trim();
+  if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(s)) s = s.replace(' ', 'T') + 'Z'; // Carbon Mapper times are UTC
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+const startOfDay = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const endOfDay = d => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const fmtDate = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const fmtDateTime = d => d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+const fmtInt = n => n == null ? '—' : Math.round(n).toLocaleString('en-US');
+const fmtRate = r => r == null ? 'Not yet quantified' : r.toLocaleString('en-US', { maximumFractionDigits: 1 }) + ' kg/hr';
+const fmtRateNum = r => r == null ? '—' : r.toLocaleString('en-US', { maximumFractionDigits: 1 });
+const plural = (n, one, many) => `${n.toLocaleString('en-US')} ${n === 1 ? one : (many || one + 's')}`;
+const isHot = p => p.rate != null && p.rate >= CONFIG.superEmitterKgHr;
+
+function setStatus(msg, kind) {
+  const el = $('#status');
+  el.className = 'status' + (kind ? ' ' + kind : '');
+  el.textContent = msg || '';
+}
+
+/* ---------- Airtable ---------- */
+async function fetchAll(tableId, label) {
+  const out = [];
+  let offset = '';
+  for (;;) {
+    const u = new URL(`https://api.airtable.com/v0/${CONFIG.baseId}/${tableId}`);
+    u.searchParams.set('pageSize', '100');
+    if (offset) u.searchParams.set('offset', offset);
+    let res;
+    try {
+      res = await fetch(u, { headers: { Authorization: 'Bearer ' + token } });
+    } catch (e) {
+      throw new Error('Couldn’t reach Airtable. Check your internet connection and try again.');
+    }
+    if (res.status === 429) { setStatus('Airtable asked for a pause. Waiting 30 seconds, then continuing…'); await sleep(30000); continue; }
+    if (res.status === 401) { const e = new Error('Airtable rejected this token. Paste it again, or create a new one.'); e.badToken = true; throw e; }
+    if (res.status === 403 || res.status === 404) {
+      const e = new Error(`This token can’t read the ${label} table. In Airtable’s token settings, give it the data.records:read scope and add the Full Circle Future Matching base under Access.`);
+      e.badToken = true; throw e;
+    }
+    if (!res.ok) throw new Error(`Airtable returned error ${res.status} while loading ${label}. Try Reload data.`);
+    const data = await res.json();
+    out.push(...data.records);
+    setStatus(`Loading ${label}: ${out.length.toLocaleString('en-US')} records…`);
+    if (!data.offset) break;
+    offset = data.offset;
+    await sleep(220); // stay under Airtable's 5 requests/second limit
+  }
+  return out;
+}
+
+function normState(r) {
+  const f = r.fields, S = CONFIG.stateFields;
+  let name = text(first(pick(f, S.name)));
+  if (!name) name = Object.values(f).find(v => typeof v === 'string' && v.length < 40) || '';
+  return {
+    id: r.id, name,
+    waste: num(pick(f, S.wasteInPlace)),
+    rank: num(pick(f, S.rank)),
+    pop: num(pick(f, S.pop)),
+    pct: num(pick(f, S.pct)),
+    wit: url(pick(f, S.witUrl)),
+  };
+}
+
+function normPlume(r) {
+  const f = r.fields, P = CONFIG.plumeFields;
+  const name = text(first(pick(f, P.name))) || r.id;
+  const landfill = text(first(pick(f, P.landfillName)));
+  const lfId = arr(pick(f, P.landfillLink)).find(x => typeof x === 'string') || '';
+  const rate = num(pick(f, P.emissions));
+  const unc = num(pick(f, P.uncertainty));
+  const stateKeys = [...arr(pick(f, P.stateLink)), ...arr(pick(f, P.stateName))]
+    .map(x => (x && typeof x === 'object' ? (x.id || x.name || '') : String(x ?? '')).trim().toLowerCase())
+    .filter(Boolean);
+  return {
+    id: r.id, name,
+    scene: name.replace(/-[A-Z]{1,2}$/i, ''),
+    date: parseDate(pick(f, P.datetime)),
+    rate: rate > 0 ? rate : null,          // 0 or blank = not yet quantified
+    unc: unc > 0 ? unc : null,
+    platform: text(first(pick(f, P.platform))),
+    landfill: landfill || 'Unmatched landfill',
+    landfillKey: lfId || landfill.toLowerCase() || 'unmatched',
+    owner: text(pick(f, P.owner)),
+    stateKeys,
+    image: url(pick(f, P.mapUrl)) || url(pick(f, P.png)),
+    png: url(pick(f, P.png)),
+    portal: CONFIG.portalUrl(name),
+  };
+}
+
+function missingFields(records, groups, optionalKeys) {
+  const seen = new Set();
+  records.forEach(r => Object.keys(r.fields).forEach(k => seen.add(k)));
+  return Object.entries(groups)
+    .filter(([key, names]) => !optionalKeys.includes(key) && !names.some(n => seen.has(n)))
+    .map(([, names]) => names[0]);
+}
+
+async function loadData() {
+  $('#connect').hidden = true;
+  $('#form').hidden = true;
+  $('#meta').hidden = true;
+  setStatus('Connecting to Airtable…');
+  try {
+    const stateRecs = await fetchAll(CONFIG.stateTable, 'State Data');
+    const plumeRecs = await fetchAll(CONFIG.plumeTable, 'Plume data');
+
+    STATES = stateRecs.map(normState).filter(s => s.name).sort((a, b) => a.name.localeCompare(b.name));
+    const all = plumeRecs.map(normPlume);
+    PLUMES = all.filter(p => p.date);
+    const undated = all.length - PLUMES.length;
+
+    const sel = $('#state');
+    sel.innerHTML = '<option value="">Choose a state…</option>' +
+      STATES.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
+    const saved = store.get('fcf_plume_report_state');
+    if (saved && STATES.some(s => s.id === saved)) sel.value = saved;
+
+    $('#form').hidden = false;
+    $('#meta').hidden = false;
+    $('#dataInfo').textContent = `${PLUMES.length.toLocaleString('en-US')} plumes loaded at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+
+    const warnings = [];
+    const missP = missingFields(plumeRecs, CONFIG.plumeFields, ['stateName', 'uncertainty', 'mapUrl', 'owner', 'platform']);
+    const missS = missingFields(stateRecs, CONFIG.stateFields, ['name']);
+    if (missP.length) warnings.push(`Not found in Plume data: ${missP.join(', ')}.`);
+    if (missS.length) warnings.push(`Not found in State Data: ${missS.join(', ')}.`);
+    if (undated) warnings.push(`${plural(undated, 'plume')} had no readable date and ${undated === 1 ? 'is' : 'are'} left out.`);
+    if (warnings.length) setStatus(warnings.join(' ') + ' Check these names in the CONFIG section of the page.', 'warn');
+    else setStatus('');
+
+    if (sel.value) buildReport();
+    else if (!CURRENT) $('#report').innerHTML = '<p class="start">Choose a state and a period to build a report.</p>';
+  } catch (e) {
+    setStatus(e.message, 'error');
+    if (e.badToken) { store.del(TOKEN_KEY); token = null; $('#connect').hidden = false; }
+    else { $('#meta').hidden = false; $('#form').hidden = !STATES.length; }
+  }
+}
+
+/* ---------- report ---------- */
+function matchesState(p, st) {
+  return p.stateKeys.includes(st.id.toLowerCase()) || p.stateKeys.includes(st.name.toLowerCase());
+}
+
+function getRange(statePlumes) {
+  const preset = $('#preset').value;
+  const now = new Date();
+  let start, end = endOfDay(now);
+  if (preset === 'custom') {
+    const a = $('#from').value, b = $('#to').value;
+    if (!a || !b) throw new Error('Pick both a From and a To date.');
+    start = new Date(a + 'T00:00:00');
+    end = new Date(b + 'T23:59:59.999');
+    if (start > end) throw new Error('The From date is after the To date.');
+  } else if (preset === 'ytd') {
+    start = new Date(now.getFullYear(), 0, 1);
+  } else if (preset === 'all') {
+    const dates = statePlumes.map(p => p.date.getTime());
+    start = dates.length ? startOfDay(new Date(Math.min(...dates))) : startOfDay(now);
+  } else {
+    start = addDays(startOfDay(now), -(Number(preset) - 1));
+  }
+  const days = preset === 'all' ? null : Math.round((end - start) / 864e5);
+  return { start, end, days };
+}
+
+function median(xs) {
+  if (!xs.length) return null;
+  const s = [...xs].sort((a, b) => a - b), m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+function buildReport() {
+  const st = STATES.find(s => s.id === $('#state').value);
+  if (!st) { setStatus('Choose a state first.', 'error'); return; }
+  const statePlumes = PLUMES.filter(p => matchesState(p, st));
+  let range;
+  try { range = getRange(statePlumes); } catch (e) { setStatus(e.message, 'error'); return; }
+  if ($('#status').classList.contains('error')) setStatus('');
+  const { start, end, days } = range;
+
+  const plumes = statePlumes.filter(p => p.date >= start && p.date <= end).sort((a, b) => b.date - a.date);
+  const prevCount = days ? statePlumes.filter(p => p.date >= addDays(start, -days) && p.date < start).length : null;
+
+  // landfills
+  const lfMap = new Map();
+  plumes.forEach(p => {
+    if (!lfMap.has(p.landfillKey)) lfMap.set(p.landfillKey, { name: p.landfill, owner: p.owner, plumes: [], scenes: new Set() });
+    const l = lfMap.get(p.landfillKey);
+    l.plumes.push(p); l.scenes.add(p.scene);
+  });
+  const landfills = [...lfMap.values()].map(l => ({
+    ...l, count: l.plumes.length,
+    largest: Math.max(...l.plumes.map(p => p.rate ?? -1)),
+    latest: new Date(Math.max(...l.plumes.map(p => p.date.getTime()))),
+  })).map(l => ({ ...l, largest: l.largest < 0 ? null : l.largest }));
+  const repeat = landfills.filter(l => l.scenes.size > 1).length;
+
+  // clusters: same scene ID + same landfill, 2+ plumes
+  const cMap = new Map();
+  plumes.forEach(p => { const k = p.scene + '|' + p.landfillKey; if (!cMap.has(k)) cMap.set(k, []); cMap.get(k).push(p); });
+  const clusters = [...cMap.values()].filter(g => g.length > 1)
+    .map(g => g.sort((a, b) => a.name.localeCompare(b.name)))
+    .sort((a, b) => b[0].date - a[0].date);
+
+  const quantified = plumes.filter(p => p.rate != null);
+  const hot = plumes.filter(isHot);
+  const largest = quantified.length ? quantified.reduce((a, b) => (b.rate > a.rate ? b : a)) : null;
+  const med = median(quantified.map(p => p.rate));
+  const unq = plumes.length - quantified.length;
+
+  CURRENT = { st, start, end, plumes };
+  store.set('fcf_plume_report_state', st.id);
+
+  const periodText = `${fmtDate(start)} to ${fmtDate(end)}`;
+  const head = `
+    <div class="r-head">
+      <div>
+        <h2 class="r-state">${esc(st.name)}</h2>
+        <p class="r-sub">Landfill methane plumes, ${esc(periodText)}</p>
+      </div>
+      <div class="r-actions noprint">
+        <button type="button" class="btn" id="csvBtn" ${plumes.length ? '' : 'disabled'}>Download CSV</button>
+        <button type="button" class="btn" id="printBtn">Print or save as PDF</button>
+      </div>
+    </div>`;
+
+  const glance = glanceHTML(st, statePlumes);
+  const foot = `<p class="foot">Plume data from Carbon Mapper, matched to landfills in Full Circle Future’s Airtable. Carbon Mapper doesn’t observe every area every day, so a period with few or no plumes may reflect limited satellite coverage rather than low emissions. The 100 kg/hr super-emitter threshold is the EPA’s definition for oil and gas methane emissions. Report built ${esc(fmtDateTime(new Date()))}.</p>`;
+
+  if (!plumes.length) {
+    $('#report').innerHTML = head + `
+      <div class="empty">
+        <h3>No landfill plumes in this period</h3>
+        <p>Carbon Mapper didn’t publish any landfill plumes for ${esc(st.name)} between ${esc(periodText)}. Try a longer period. ${statePlumes.length ? `There are ${plural(statePlumes.length, 'plume')} on record for ${esc(st.name)} overall.` : ''}</p>
+      </div>
+      <div class="split">${'<div></div>'}${glance}</div>` + foot;
+    wireActions();
+    return;
+  }
+
+  // lead sentence
+  let lead = `Between ${esc(fmtDate(start))} and ${esc(fmtDate(end))}, Carbon Mapper detected <strong>${plural(plumes.length, 'methane plume')}</strong> from <strong>${plural(landfills.length, 'landfill')}</strong> in ${esc(st.name)}.`;
+  if (hot.length) lead += ` <strong>${hot.length.toLocaleString('en-US')}</strong> ${hot.length === 1 ? 'was' : 'were'} at or above the ${CONFIG.superEmitterKgHr} kg/hr super-emitter threshold.`;
+  if (largest) lead += ` The largest was at ${esc(largest.landfill)} on ${esc(fmtDate(largest.date))}, at an estimated <strong>${esc(fmtRate(largest.rate))}</strong>.`;
+  if (clusters.length) lead += ` ${clusters.length === 1 ? 'One pass' : clusters.length + ' passes'} caught multiple plumes rising from the same landfill at once.`;
+
+  const prevSub = prevCount == null ? 'all plumes on record' : `${prevCount.toLocaleString('en-US')} in the previous ${days} days`;
+  const stats = `
+    <dl class="stats">
+      <div class="stat"><dt>Plumes detected</dt><dd>${plumes.length.toLocaleString('en-US')}</dd><span class="sub">${esc(prevSub)}</span></div>
+      <div class="stat"><dt>Landfills with plumes</dt><dd>${landfills.length.toLocaleString('en-US')}</dd><span class="sub">${repeat ? plural(repeat, 'detected', 'detected') + ' on more than one pass' : 'none detected on more than one pass'}</span></div>
+      <div class="stat"><dt>Super-emitter plumes</dt><dd class="${hot.length ? 'hot' : ''}">${hot.length.toLocaleString('en-US')}</dd><span class="sub">${CONFIG.superEmitterKgHr} kg/hr or more</span></div>
+      <div class="stat"><dt>Largest plume</dt><dd class="${largest && isHot(largest) ? 'hot' : ''}">${largest ? fmtRateNum(largest.rate) + ' <small>kg/hr</small>' : '—'}</dd><span class="sub">${largest ? esc(largest.landfill) : 'none quantified yet'}</span></div>
+      <div class="stat"><dt>Median plume</dt><dd>${med == null ? '—' : fmtRateNum(med) + ' <small>kg/hr</small>'}</dd><span class="sub">${quantified.length} quantified${unq ? `, ${unq} not yet quantified` : ''}</span></div>
+      <div class="stat"><dt>Plume clusters</dt><dd>${clusters.length.toLocaleString('en-US')}</dd><span class="sub">${clusters.length ? plural(clusters.reduce((n, c) => n + c.length, 0), 'plume') + ' in clusters' : 'one plume per pass'}</span></div>
+    </dl>`;
+
+  const largestHTML = largest ? `
+    <article class="panel largest">
+      ${largest.image ? `<figure><img src="${esc(largest.image)}" alt="Methane plume at ${esc(largest.landfill)}" data-fallback="${esc(largest.png)}" onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else{this.parentNode.remove()}"></figure>` : ''}
+      <div class="body">
+        <h3>Largest plume</h3>
+        <p class="rate-big">${fmtRateNum(largest.rate)} <small>kg/hr${largest.unc ? ' ± ' + fmtRateNum(largest.unc) : ''}</small></p>
+        <dl class="kv">
+          <dt>Landfill</dt><dd>${esc(largest.landfill)}</dd>
+          ${largest.owner ? `<dt>Owner</dt><dd>${esc(largest.owner)}</dd>` : ''}
+          <dt>Detected</dt><dd>${esc(fmtDateTime(largest.date))}</dd>
+          ${largest.platform ? `<dt>Instrument</dt><dd>${esc(largest.platform)}</dd>` : ''}
+          <dt>Plume</dt><dd><a href="${esc(largest.portal)}" target="_blank" rel="noopener">${esc(largest.name)}</a></dd>
+        </dl>
+      </div>
+    </article>` : `<article class="panel largest"><div class="body"><h3>Largest plume</h3><p>None of these plumes has an emissions estimate from Carbon Mapper yet.</p></div></article>`;
+
+  const chart = `
+    <section class="block chart">
+      <h3>Plumes over time</h3>
+      <p class="note">${(end - start) / 864e5 <= 62 ? 'Plumes detected each week.' : 'Plumes detected each month.'}</p>
+      ${chartSVG(plumes, start, end)}
+      <div class="legend"><span><i style="background:var(--coral)"></i>${CONFIG.superEmitterKgHr} kg/hr or more</span><span><i style="background:var(--bar)"></i>Other plumes</span></div>
+    </section>`;
+
+  const clusterHTML = `
+    <section class="block">
+      <h3>Plume clusters</h3>
+      <p class="note">A cluster is two or more plumes captured in the same Carbon Mapper scene at the same landfill, which points to more than one leak source. Each plume’s rate is listed on its own rather than added together.</p>
+      ${clusters.length ? `<div class="clusters">${clusters.map(c => `
+        <div class="cluster">
+          <h4>${esc(c[0].landfill)}: ${plural(c.length, 'plume')}</h4>
+          <p>${esc(fmtDate(c[0].date))}, scene ${esc(c[0].scene)}</p>
+          <ul>${c.map(p => `<li><a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a>: ${esc(fmtRate(p.rate))}</li>`).join('')}</ul>
+        </div>`).join('')}</div>` : `<p>No clusters in this period.</p>`}
+    </section>`;
+
+  $('#report').innerHTML = head +
+    `<p class="lead">${lead}</p>` + stats +
+    `<div class="split">${largestHTML}${glance}</div>` +
+    chart + clusterHTML +
+    `<section class="block"><h3>Landfills with plumes</h3><p class="note">Sorted by number of plumes. Select a column heading to re-sort.</p><div class="tablewrap" id="lfTable"></div></section>` +
+    `<section class="block"><h3>All plumes</h3><p class="note">Plume IDs link to the Carbon Mapper data portal.</p><div class="tablewrap" id="plumeTable"></div></section>` +
+    foot;
+
+  sortableTable($('#lfTable'), [
+    { key: 'name', label: 'Landfill', value: l => l.name.toLowerCase(), html: l => esc(l.name) },
+    { key: 'owner', label: 'Owner', value: l => (l.owner || '').toLowerCase(), html: l => esc(l.owner || '—') },
+    { key: 'count', label: 'Plumes', num: true, value: l => l.count, html: l => l.count },
+    { key: 'largest', label: 'Largest (kg/hr)', num: true, value: l => l.largest ?? -1, html: l => fmtRateNum(l.largest), hot: l => l.largest != null && l.largest >= CONFIG.superEmitterKgHr },
+    { key: 'latest', label: 'Most recent', num: true, value: l => l.latest.getTime(), html: l => esc(fmtDate(l.latest)) },
+  ], landfills, 'count', 'desc');
+
+  sortableTable($('#plumeTable'), [
+    { key: 'date', label: 'Detected', value: p => p.date.getTime(), html: p => esc(fmtDate(p.date)) },
+    { key: 'landfill', label: 'Landfill', value: p => p.landfill.toLowerCase(), html: p => esc(p.landfill) },
+    { key: 'rate', label: 'Emissions (kg/hr)', num: true, value: p => p.rate ?? -1, html: p => p.rate == null ? 'Not yet quantified' : fmtRateNum(p.rate) + (p.unc ? ' ± ' + fmtRateNum(p.unc) : ''), hot: isHot },
+    { key: 'platform', label: 'Instrument', value: p => p.platform.toLowerCase(), html: p => esc(p.platform || '—') },
+    { key: 'name', label: 'Plume', value: p => p.name, html: p => `<a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a>`, cls: 'plume' },
+  ], plumes, 'date', 'desc');
+
+  wireActions();
+}
+
+function glanceHTML(st, statePlumes) {
+  let pct = st.pct;
+  if (pct != null && pct <= 1) pct = pct * 100; // Airtable percent fields come through as fractions
+  const earliest = statePlumes.length ? new Date(Math.min(...statePlumes.map(p => p.date.getTime()))) : null;
+  return `
+    <aside class="glance">
+      <h3>${esc(st.name)} at a glance</h3>
+      <dl class="glance-grid">
+        <div><dt>Waste in place</dt><dd>${st.waste == null ? '—' : fmtInt(st.waste)}</dd><dt>metric tons</dt></div>
+        <div><dt>Emissions ranking</dt><dd>${st.rank == null ? '—' : '#' + fmtInt(st.rank)}</dd><dt>out of 53</dt></div>
+        <div><dt>People within 5 miles of a landfill</dt><dd>${st.pop == null ? '—' : fmtInt(st.pop)}</dd></div>
+        <div><dt>Share of state population</dt><dd>${pct == null ? '—' : pct.toLocaleString('en-US', { maximumFractionDigits: 1 }) + '%'}</dd></div>
+      </dl>
+      <p class="record">${earliest ? `${plural(statePlumes.length, 'landfill plume')} on record since ${esc(fmtDate(earliest))}.` : 'No landfill plumes on record yet.'}
+      ${st.wit ? `<br><a href="${esc(st.wit)}" target="_blank" rel="noopener">View ${esc(st.name)} on Waste Impact Tracker</a>` : ''}</p>
+    </aside>`;
+}
+
+function chartSVG(plumes, start, end) {
+  const weekly = (end - start) / 864e5 <= 62;
+  const buckets = [];
+  if (weekly) {
+    for (let d = startOfDay(start); d <= end; d = addDays(d, 7)) buckets.push({ from: d, to: addDays(d, 7), label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) });
+  } else {
+    let d = new Date(start.getFullYear(), start.getMonth(), 1);
+    const multiYear = start.getFullYear() !== end.getFullYear();
+    while (d <= end) {
+      const next = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+      const m = d.toLocaleDateString('en-US', { month: 'short' });
+      buckets.push({ from: d, to: next, label: multiYear && (d.getMonth() === 0 || !buckets.length) ? `${m} ${d.getFullYear()}` : m });
+      d = next;
+    }
+  }
+  buckets.forEach(b => {
+    const inB = plumes.filter(p => p.date >= b.from && p.date < b.to);
+    b.hot = inB.filter(isHot).length;
+    b.other = inB.length - b.hot;
+  });
+  const W = 720, H = 230, L = 8, R = 8, T = 20, B = 28;
+  const n = buckets.length, slot = (W - L - R) / n, bw = Math.min(56, slot * 0.66);
+  const max = Math.max(1, ...buckets.map(b => b.hot + b.other));
+  const y = v => (H - B) - (v / max) * (H - B - T);
+  const every = Math.ceil(n / 12);
+  let g = `<line class="axis" x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}"/>`;
+  buckets.forEach((b, i) => {
+    const x = L + i * slot + (slot - bw) / 2, total = b.hot + b.other;
+    if (b.other) g += `<rect class="b-other" x="${x}" y="${y(b.other)}" width="${bw}" height="${(H - B) - y(b.other)}"/>`;
+    if (b.hot) g += `<rect class="b-hot" x="${x}" y="${y(total)}" width="${bw}" height="${y(b.other) - y(total)}"/>`;
+    if (total && n <= 26) g += `<text class="cnt" x="${x + bw / 2}" y="${y(total) - 6}" text-anchor="middle">${total}</text>`;
+    if (i % every === 0) g += `<text class="lbl" x="${x + bw / 2}" y="${H - 8}" text-anchor="middle">${esc(b.label)}</text>`;
+  });
+  const summary = buckets.map(b => `${b.label}: ${b.hot + b.other}`).join(', ');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Plumes per ${weekly ? 'week' : 'month'}. ${esc(summary)}">${g}</svg>`;
+}
+
+function sortableTable(container, cols, rows, key, dir) {
+  function render() {
+    const c = cols.find(c => c.key === key);
+    const sorted = [...rows].sort((a, b) => {
+      const va = c.value(a), vb = c.value(b);
+      const r = va < vb ? -1 : va > vb ? 1 : 0;
+      return dir === 'asc' ? r : -r;
+    });
+    container.innerHTML = `<table><thead><tr>${cols.map(c => `
+      <th class="${c.num ? 'num' : ''}" ${c.key === key ? `aria-sort="${dir === 'asc' ? 'ascending' : 'descending'}"` : ''}>
+        <button type="button" data-key="${c.key}">${esc(c.label)}${c.key === key ? (dir === 'asc' ? ' ▲' : ' ▼') : ''}</button>
+      </th>`).join('')}</tr></thead>
+      <tbody>${sorted.map(r => `<tr>${cols.map(c => `<td class="${[c.num ? 'num' : '', c.cls || '', c.hot && c.hot(r) ? 'hot' : ''].join(' ').trim()}">${c.html(r)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+    container.querySelectorAll('th button').forEach(btn => btn.addEventListener('click', () => {
+      const k = btn.dataset.key;
+      if (k === key) dir = dir === 'asc' ? 'desc' : 'asc';
+      else { key = k; dir = cols.find(c => c.key === k).num || k === 'date' ? 'desc' : 'asc'; }
+      render();
+      container.querySelector(`th button[data-key="${k}"]`).focus();
+    }));
+  }
+  render();
+}
+
+function wireActions() {
+  $('#printBtn')?.addEventListener('click', () => window.print());
+  $('#csvBtn')?.addEventListener('click', downloadCSV);
+}
+
+function downloadCSV() {
+  if (!CURRENT) return;
+  const { st, start, end, plumes } = CURRENT;
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const rows = [['plume_id', 'detected_utc', 'landfill', 'owner', 'emissions_kg_hr', 'uncertainty_kg_hr', 'instrument', 'scene_id', 'carbon_mapper_url']]
+    .concat(plumes.map(p => [p.name, p.date.toISOString(), p.landfill, p.owner, p.rate ?? '', p.unc ?? '', p.platform, p.scene, p.portal]));
+  const blob = new Blob([rows.map(r => r.map(q).join(',')).join('\r\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${st.name.replace(/[^a-z0-9]+/gi, '_')}_plumes_${ymd(start)}_to_${ymd(end)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ---------- start-up ---------- */
+function toggleCustom() {
+  const custom = $('#preset').value === 'custom';
+  document.querySelectorAll('.field.custom').forEach(el => { el.hidden = !custom; });
+}
+
+(function init() {
+  const today = new Date();
+  $('#to').value = ymd(today);
+  $('#from').value = ymd(addDays(today, -89));
+  const savedPreset = store.get('fcf_plume_report_preset');
+  if (savedPreset && [...$('#preset').options].some(o => o.value === savedPreset)) $('#preset').value = savedPreset;
+  toggleCustom();
+
+  $('#preset').addEventListener('change', () => {
+    toggleCustom();
+    store.set('fcf_plume_report_preset', $('#preset').value);
+    if ($('#preset').value !== 'custom' && $('#state').value) buildReport();
+  });
+  $('#state').addEventListener('change', () => { if ($('#state').value) buildReport(); });
+  $('#form').addEventListener('submit', e => { e.preventDefault(); buildReport(); });
+
+  $('#connectBtn').addEventListener('click', () => {
+    const t = $('#token').value.trim();
+    if (!t) { setStatus('Paste your Airtable token first.', 'error'); return; }
+    token = t;
+    if ($('#remember').checked) store.set(TOKEN_KEY, t);
+    $('#token').value = '';
+    loadData();
+  });
+  $('#token').addEventListener('keydown', e => { if (e.key === 'Enter') $('#connectBtn').click(); });
+  $('#reload').addEventListener('click', loadData);
+  $('#disconnect').addEventListener('click', () => {
+    store.del(TOKEN_KEY); token = null; STATES = []; PLUMES = []; CURRENT = null;
+    $('#form').hidden = true; $('#meta').hidden = true; $('#connect').hidden = false;
+    $('#report').innerHTML = '';
+    setStatus('Disconnected. The token was removed from this browser.');
+  });
+
+  token = store.get(TOKEN_KEY);
+  if (token) loadData();
+  else $('#connect').hidden = false;
+})();
+</script>
+</body>
+</html>
