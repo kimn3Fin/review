@@ -131,6 +131,20 @@
   .cluster ul { margin: 0; padding: 0; list-style: none; font-size: 15px; }
   .cluster li { padding: 2px 0; font-variant-numeric: tabular-nums; }
 
+  .cl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 4px; }
+  .cl-fig { margin: 0; background: var(--surface); border: 1px solid var(--line); }
+  .cl-fig img { display: block; width: 100%; height: auto; border-bottom: 1px solid var(--line); }
+  .cl-fig.noimg img { display: none; }
+  .cl-fig figcaption { padding: 8px 10px 10px; font-size: 14px; line-height: 1.5; word-break: break-all; }
+  .cl-fig .rate { word-break: normal; font-weight: 600; color: var(--ink); }
+  .cl-fig .rate.hot { color: var(--alert); }
+  .largest figure.noimg { display: none; }
+  .glance-note { margin: -6px 0 14px; font-size: 14px; color: var(--muted); }
+  .tops { margin: 0; padding-left: 22px; display: grid; gap: 12px; }
+  .tops li { padding-left: 4px; }
+  .tops .t-name { font-weight: 600; color: var(--ink); }
+  .tops .t-count { color: var(--muted); font-size: 14px; }
+  .tops .t-big { font-size: 14px; }
   .tablewrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 15px; }
   th { text-align: left; font-weight: 400; font-size: 13px; color: var(--muted); border-bottom: 2px solid var(--ink); padding: 8px 14px 8px 0; white-space: nowrap; }
@@ -253,6 +267,7 @@ const CONFIG = {
   baseId: 'appk5Pi5OJRT6VtTv',          // Full Circle Future Matching base
   plumeTable: 'tblryheIH0yGwHN32',      // Plume data
   stateTable: 'tblFkWUzMnhkkAyJf',      // State Data
+  landfillTable: 'tbloc4wt62OvoNnQe',   // Landfill Reference
 
   plumeFields: {
     name:         ['Name', 'plume_id'],
@@ -267,7 +282,20 @@ const CONFIG = {
     stateName:    ['state name'],
     mapUrl:       ['Plume Map URL'],
     png:          ['plume_png'],
+    // landfill lookups on Plume data (used if Landfill Reference doesn't have the value)
+    lfPop:        ['Population (from Landfill Reference)'],
+    lfWaste:      ['Waste in Place'],
+    lfWit:        ['WIT URL'],
   },
+
+  landfillFields: {                     // fields in Landfill Reference
+    status:       ['Current Landfill Status', 'Landfill Status', 'Status', 'Open/Closed'],
+    ghgrp:        ['GHGRP Emissions', 'GHGRP Reported Emissions', 'GHGRP Methane Emissions', 'GHGRP Emissions (MT CO2e)'],
+    pop:          ['Population', 'Population Within 5 Miles', 'Population within 5 miles'],
+    waste:        ['Waste in Place', 'Waste in Place (tons)', 'Waste in Place (MT)'],
+    wit:          ['WIT URL'],
+  },
+  ghgrpLabel: 'GHGRP emissions',
 
   stateFields: {
     name:         ['Name', 'State', 'State Name', 'state name'],
@@ -367,12 +395,13 @@ function setStatus(msg, kind) {
 }
 
 /* ---------- Airtable ---------- */
-async function fetchAll(tableId, label) {
+async function fetchAll(tableId, label, params = {}) {
   const out = [];
   let offset = '';
   for (;;) {
     const u = new URL(`https://api.airtable.com/v0/${CONFIG.baseId}/${tableId}`);
     u.searchParams.set('pageSize', '100');
+    for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
     if (offset) u.searchParams.set('offset', offset);
     let res;
     try {
@@ -435,6 +464,10 @@ function normPlume(r) {
     image: url(pick(f, P.mapUrl)) || url(pick(f, P.png)),
     png: url(pick(f, P.png)),
     portal: CONFIG.portalUrl(name),
+    lfId,
+    lfPop: num(pick(f, P.lfPop)),
+    lfWaste: num(pick(f, P.lfWaste)),
+    lfWit: url(pick(f, P.lfWit)),
   };
 }
 
@@ -444,6 +477,49 @@ function missingFields(records, groups, optionalKeys) {
   return Object.entries(groups)
     .filter(([key, names]) => !optionalKeys.includes(key) && !names.some(n => seen.has(n)))
     .map(([, names]) => names[0]);
+}
+
+const NATIONAL = '__national';
+let LANDFILLS = new Map(), LF_TOTALS = new Map();
+
+function normLandfill(r) {
+  const f = r.fields, L = CONFIG.landfillFields;
+  return {
+    status: text(first(pick(f, L.status))),
+    ghgrp: num(pick(f, L.ghgrp)),
+    pop: num(pick(f, L.pop)),
+    waste: num(pick(f, L.waste)),
+    wit: url(pick(f, L.wit)),
+  };
+}
+
+function landfillInfo(p) {
+  const r = LANDFILLS.get(p.lfId) || {};
+  return {
+    status: r.status || '',
+    ghgrp: r.ghgrp ?? null,
+    pop: r.pop ?? p.lfPop,
+    waste: r.waste ?? p.lfWaste,
+    wit: r.wit || p.lfWit,
+  };
+}
+
+function seenFields(records) {
+  const seen = new Set();
+  records.forEach(r => Object.keys(r.fields).forEach(k => seen.add(k)));
+  return seen;
+}
+
+async function fetchByIds(tableId, label, ids) {
+  const out = [];
+  for (let i = 0; i < ids.length; i += 40) {
+    const chunk = ids.slice(i, i + 40);
+    const recs = await fetchAll(tableId, label, { filterByFormula: 'OR(' + chunk.map(id => `RECORD_ID()='${id}'`).join(',') + ')' });
+    out.push(...recs);
+    setStatus(`Loading ${label}: ${out.length.toLocaleString('en-US')} of ${ids.length.toLocaleString('en-US')} landfills…`);
+    await sleep(220);
+  }
+  return out;
 }
 
 async function loadData() {
@@ -459,28 +535,56 @@ async function loadData() {
     const all = plumeRecs.map(normPlume);
     PLUMES = all.filter(p => p.date);
     const undated = all.length - PLUMES.length;
+    PLUMES.forEach(p => {
+      const st = STATES.find(s => matchesState(p, s));
+      p.stateId = st ? st.id : '';
+      p.stateName = st ? st.name : 'Unknown state';
+    });
+    LF_TOTALS = new Map();
+    PLUMES.forEach(p => LF_TOTALS.set(p.landfillKey, (LF_TOTALS.get(p.landfillKey) || 0) + 1));
+
+    const warnings = [], missingNames = [];
+    LANDFILLS = new Map();
+    let lfRecs = [];
+    const lfIds = [...new Set(PLUMES.map(p => p.lfId).filter(Boolean))];
+    try {
+      lfRecs = await fetchByIds(CONFIG.landfillTable, 'Landfill Reference', lfIds);
+      lfRecs.forEach(r => LANDFILLS.set(r.id, normLandfill(r)));
+    } catch (e) {
+      warnings.push('Couldn’t read the Landfill Reference table, so landfill status and GHGRP emissions are blank.');
+    }
 
     const sel = $('#state');
     sel.innerHTML = '<option value="">Choose a state…</option>' +
+      `<option value="${NATIONAL}">All states (national)</option>` +
       STATES.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
     const saved = store.get('fcf_plume_report_state');
-    if (saved && STATES.some(s => s.id === saved)) sel.value = saved;
+    if (saved && (saved === NATIONAL || STATES.some(s => s.id === saved))) sel.value = saved;
 
     $('#form').hidden = false;
     $('#meta').hidden = false;
     $('#dataInfo').textContent = `${PLUMES.length.toLocaleString('en-US')} plumes loaded at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
 
-    const warnings = [];
-    const missP = missingFields(plumeRecs, CONFIG.plumeFields, ['stateName', 'uncertainty', 'mapUrl', 'owner', 'platform']);
+    const plumeSeen = seenFields(plumeRecs);
+    const missP = missingFields(plumeRecs, CONFIG.plumeFields, ['stateName', 'uncertainty', 'mapUrl', 'owner', 'platform', 'lfPop', 'lfWaste', 'lfWit']);
     const missS = missingFields(stateRecs, CONFIG.stateFields, ['name']);
-    if (missP.length) warnings.push(`Not found in Plume data: ${missP.join(', ')}.`);
-    if (missS.length) warnings.push(`Not found in State Data: ${missS.join(', ')}.`);
+    if (missP.length) missingNames.push(`Not found in Plume data: ${missP.join(', ')}.`);
+    if (missS.length) missingNames.push(`Not found in State Data: ${missS.join(', ')}.`);
+    if (lfRecs.length) {
+      const lfSeen = seenFields(lfRecs);
+      const fallback = { pop: 'lfPop', waste: 'lfWaste', wit: 'lfWit' };
+      const missL = Object.entries(CONFIG.landfillFields)
+        .filter(([k, names]) => !names.some(n => lfSeen.has(n)) &&
+          !(fallback[k] && CONFIG.plumeFields[fallback[k]].some(n => plumeSeen.has(n))))
+        .map(([, names]) => names[0]);
+      if (missL.length) missingNames.push(`Not found in Landfill Reference: ${missL.join(', ')}.`);
+    }
     if (undated) warnings.push(`${plural(undated, 'plume')} had no readable date and ${undated === 1 ? 'is' : 'are'} left out.`);
-    if (warnings.length) setStatus(warnings.join(' ') + ' Check these names in the CONFIG section of the page.', 'warn');
-    else setStatus('');
+    const msg = [...missingNames, ...warnings].join(' ') + (missingNames.length ? ' Check these names in the CONFIG section of the page.' : '');
+    setStatus(msg.trim(), msg.trim() ? 'warn' : '');
 
     if (sel.value) buildReport();
-    else if (!CURRENT) $('#report').innerHTML = '<p class="start">Choose a state and a period to build a report.</p>';
+    else if (!CURRENT) $('#report').innerHTML = '<p class="start">Choose a state, or all states, and a period to build a report.</p>';
   } catch (e) {
     setStatus(e.message, 'error');
     if (e.badToken) {
@@ -524,30 +628,39 @@ function median(xs) {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 }
 
+function imgTag(p, alt) {
+  if (!p.image) return '';
+  return `<img src="${esc(p.image)}" alt="${esc(alt)}" loading="lazy" data-fallback="${esc(p.png)}" onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else{this.closest('figure').classList.add('noimg')}">`;
+}
+function lfLink(name, wit) {
+  return wit ? `<a href="${esc(wit)}" target="_blank" rel="noopener">${esc(name)}</a>` : esc(name);
+}
+
 function buildReport() {
-  const st = STATES.find(s => s.id === $('#state').value);
+  const sel = $('#state').value;
+  const national = sel === NATIONAL;
+  const st = national ? { id: NATIONAL, name: 'United States' } : STATES.find(s => s.id === sel);
   if (!st) { setStatus('Choose a state first.', 'error'); return; }
-  const statePlumes = PLUMES.filter(p => matchesState(p, st));
+  const scope = national ? PLUMES : PLUMES.filter(p => p.stateId === st.id);
   let range;
-  try { range = getRange(statePlumes); } catch (e) { setStatus(e.message, 'error'); return; }
+  try { range = getRange(scope); } catch (e) { setStatus(e.message, 'error'); return; }
   if ($('#status').classList.contains('error')) setStatus('');
   const { start, end, days } = range;
 
-  const plumes = statePlumes.filter(p => p.date >= start && p.date <= end).sort((a, b) => b.date - a.date);
-  const prevCount = days ? statePlumes.filter(p => p.date >= addDays(start, -days) && p.date < start).length : null;
+  const plumes = scope.filter(p => p.date >= start && p.date <= end).sort((a, b) => b.date - a.date);
+  const prevCount = days ? scope.filter(p => p.date >= addDays(start, -days) && p.date < start).length : null;
 
   // landfills
   const lfMap = new Map();
   plumes.forEach(p => {
-    if (!lfMap.has(p.landfillKey)) lfMap.set(p.landfillKey, { name: p.landfill, owner: p.owner, plumes: [], scenes: new Set() });
+    if (!lfMap.has(p.landfillKey)) lfMap.set(p.landfillKey, { key: p.landfillKey, name: p.landfill, state: p.stateName, owner: p.owner, info: landfillInfo(p), plumes: [], scenes: new Set() });
     const l = lfMap.get(p.landfillKey);
     l.plumes.push(p); l.scenes.add(p.scene);
   });
-  const landfills = [...lfMap.values()].map(l => ({
-    ...l, count: l.plumes.length,
-    largest: Math.max(...l.plumes.map(p => p.rate ?? -1)),
-    latest: new Date(Math.max(...l.plumes.map(p => p.date.getTime()))),
-  })).map(l => ({ ...l, largest: l.largest < 0 ? null : l.largest }));
+  const landfills = [...lfMap.values()].map(l => {
+    const q = l.plumes.filter(p => p.rate != null).map(p => p.rate);
+    return { ...l, ...l.info, count: l.plumes.length, total: LF_TOTALS.get(l.key) || l.plumes.length, largest: q.length ? Math.max(...q) : null };
+  });
   const repeat = landfills.filter(l => l.scenes.size > 1).length;
 
   // clusters: same scene ID + same landfill, 2+ plumes
@@ -563,15 +676,34 @@ function buildReport() {
   const med = median(quantified.map(p => p.rate));
   const unq = plumes.length - quantified.length;
 
-  CURRENT = { st, start, end, plumes };
-  store.set('fcf_plume_report_state', st.id);
+  // states (national only)
+  let statesAgg = [];
+  if (national) {
+    const sMap = new Map();
+    plumes.forEach(p => {
+      if (!sMap.has(p.stateName)) sMap.set(p.stateName, { name: p.stateName, plumes: [], lfs: new Set() });
+      const s = sMap.get(p.stateName); s.plumes.push(p); s.lfs.add(p.landfillKey);
+    });
+    statesAgg = [...sMap.values()].map(s => {
+      const q = s.plumes.filter(p => p.rate != null);
+      return {
+        name: s.name, count: s.plumes.length, landfills: s.lfs.size, hot: s.plumes.filter(isHot).length,
+        top: q.length ? q.reduce((a, b) => (b.rate > a.rate ? b : a)) : null,
+        clusters: clusters.filter(c => c[0].stateName === s.name).length,
+      };
+    }).sort((a, b) => b.count - a.count || ((b.top?.rate ?? -1) - (a.top?.rate ?? -1)));
+  }
+  const stateCount = statesAgg.filter(s => s.name !== 'Unknown state').length;
+
+  CURRENT = { st, start, end, plumes, national };
+  store.set('fcf_plume_report_state', sel);
 
   const periodText = `${fmtDate(start)} to ${fmtDate(end)}`;
   const head = `
     <div class="r-head">
       <div>
         <h2 class="r-state">${esc(st.name)}</h2>
-        <p class="r-sub">Landfill methane plumes, ${esc(periodText)}</p>
+        <p class="r-sub">${national ? 'Landfill methane plumes in all states' : 'Landfill methane plumes'}, ${esc(periodText)}</p>
       </div>
       <div class="r-actions noprint">
         <button type="button" class="btn" id="csvBtn" ${plumes.length ? '' : 'disabled'}>Download CSV</button>
@@ -579,45 +711,48 @@ function buildReport() {
       </div>
     </div>`;
 
-  const glance = glanceHTML(st, statePlumes);
   const foot = `<p class="foot">Plume data from Carbon Mapper, matched to landfills in Full Circle Future’s Airtable. Carbon Mapper doesn’t observe every area every day, so a period with few or no plumes may reflect limited satellite coverage rather than low emissions. The 100 kg/hr super-emitter threshold is the EPA’s definition for oil and gas methane emissions. Report built ${esc(fmtDateTime(new Date()))}.</p>`;
 
   if (!plumes.length) {
     $('#report').innerHTML = head + `
       <div class="empty">
         <h3>No landfill plumes in this period</h3>
-        <p>Carbon Mapper didn’t publish any landfill plumes for ${esc(st.name)} between ${esc(periodText)}. Try a longer period. ${statePlumes.length ? `There are ${plural(statePlumes.length, 'plume')} on record for ${esc(st.name)} overall.` : ''}</p>
+        <p>Carbon Mapper didn’t publish any landfill plumes ${national ? 'in any state' : 'for ' + esc(st.name)} between ${esc(periodText)}. Try a longer period. ${scope.length ? `There are ${plural(scope.length, 'plume')} on record ${national ? 'nationally' : 'for ' + esc(st.name)} overall.` : ''}</p>
       </div>
-      <div class="split">${'<div></div>'}${glance}</div>` + foot;
+      ${national ? '' : `<div class="split"><div></div>${glanceHTML(st, scope)}</div>`}` + foot;
     wireActions();
     return;
   }
 
-  // lead sentence
-  let lead = `Between ${esc(fmtDate(start))} and ${esc(fmtDate(end))}, Carbon Mapper detected <strong>${plural(plumes.length, 'methane plume')}</strong> from <strong>${plural(landfills.length, 'landfill')}</strong> in ${esc(st.name)}.`;
+  // lead
+  let lead = `Between ${esc(fmtDate(start))} and ${esc(fmtDate(end))}, Carbon Mapper detected <strong>${plural(plumes.length, 'methane plume')}</strong> from <strong>${plural(landfills.length, 'landfill')}</strong> ${national ? `in <strong>${plural(stateCount, 'state')}</strong>` : 'in ' + esc(st.name)}.`;
   if (hot.length) lead += ` <strong>${hot.length.toLocaleString('en-US')}</strong> ${hot.length === 1 ? 'was' : 'were'} at or above the ${CONFIG.superEmitterKgHr} kg/hr super-emitter threshold.`;
-  if (largest) lead += ` The largest was at ${esc(largest.landfill)} on ${esc(fmtDate(largest.date))}, at an estimated <strong>${esc(fmtRate(largest.rate))}</strong>.`;
+  if (largest) lead += ` The largest was at ${esc(largest.landfill)}${national ? ', ' + esc(largest.stateName) + ',' : ''} on ${esc(fmtDate(largest.date))}, at an estimated <strong>${esc(fmtRate(largest.rate))}</strong>.`;
   if (clusters.length) lead += ` ${clusters.length === 1 ? 'One pass' : clusters.length + ' passes'} caught multiple plumes rising from the same landfill at once.`;
 
   const prevSub = prevCount == null ? 'all plumes on record' : `${prevCount.toLocaleString('en-US')} in the previous ${days} days`;
+  const fifth = national
+    ? `<div class="stat"><dt>States with plumes</dt><dd>${stateCount.toLocaleString('en-US')}</dd><span class="sub">${statesAgg[0] ? 'most in ' + esc(statesAgg[0].name) : ''}</span></div>`
+    : `<div class="stat"><dt>Median plume</dt><dd>${med == null ? '—' : fmtRateNum(med) + ' <small>kg/hr</small>'}</dd><span class="sub">${quantified.length} quantified${unq ? `, ${unq} not yet quantified` : ''}</span></div>`;
   const stats = `
     <dl class="stats">
       <div class="stat"><dt>Plumes detected</dt><dd>${plumes.length.toLocaleString('en-US')}</dd><span class="sub">${esc(prevSub)}</span></div>
       <div class="stat"><dt>Landfills with plumes</dt><dd>${landfills.length.toLocaleString('en-US')}</dd><span class="sub">${repeat ? plural(repeat, 'detected', 'detected') + ' on more than one pass' : 'none detected on more than one pass'}</span></div>
       <div class="stat"><dt>Super-emitter plumes</dt><dd class="${hot.length ? 'hot' : ''}">${hot.length.toLocaleString('en-US')}</dd><span class="sub">${CONFIG.superEmitterKgHr} kg/hr or more</span></div>
-      <div class="stat"><dt>Largest plume</dt><dd class="${largest && isHot(largest) ? 'hot' : ''}">${largest ? fmtRateNum(largest.rate) + ' <small>kg/hr</small>' : '—'}</dd><span class="sub">${largest ? esc(largest.landfill) : 'none quantified yet'}</span></div>
-      <div class="stat"><dt>Median plume</dt><dd>${med == null ? '—' : fmtRateNum(med) + ' <small>kg/hr</small>'}</dd><span class="sub">${quantified.length} quantified${unq ? `, ${unq} not yet quantified` : ''}</span></div>
+      <div class="stat"><dt>Largest plume</dt><dd class="${largest && isHot(largest) ? 'hot' : ''}">${largest ? fmtRateNum(largest.rate) + ' <small>kg/hr</small>' : '—'}</dd><span class="sub">${largest ? esc(largest.landfill) + (national ? ', ' + esc(largest.stateName) : '') : 'none quantified yet'}</span></div>
+      ${fifth}
       <div class="stat"><dt>Plume clusters</dt><dd>${clusters.length.toLocaleString('en-US')}</dd><span class="sub">${clusters.length ? plural(clusters.reduce((n, c) => n + c.length, 0), 'plume') + ' in clusters' : 'one plume per pass'}</span></div>
     </dl>`;
 
+  const lgInfo = largest ? landfillInfo(largest) : null;
   const largestHTML = largest ? `
     <article class="panel largest">
-      ${largest.image ? `<figure><img src="${esc(largest.image)}" alt="Methane plume at ${esc(largest.landfill)}" data-fallback="${esc(largest.png)}" onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else{this.parentNode.remove()}"></figure>` : ''}
+      ${largest.image ? `<figure>${imgTag(largest, 'Methane plume at ' + largest.landfill)}</figure>` : ''}
       <div class="body">
         <h3>Largest plume</h3>
         <p class="rate-big">${fmtRateNum(largest.rate)} <small>kg/hr${largest.unc ? ' ± ' + fmtRateNum(largest.unc) : ''}</small></p>
         <dl class="kv">
-          <dt>Landfill</dt><dd>${esc(largest.landfill)}</dd>
+          <dt>Landfill</dt><dd>${lfLink(largest.landfill, lgInfo.wit)}${national ? ', ' + esc(largest.stateName) : ''}</dd>
           ${largest.owner ? `<dt>Owner</dt><dd>${esc(largest.owner)}</dd>` : ''}
           <dt>Detected</dt><dd>${esc(fmtDateTime(largest.date))}</dd>
           ${largest.platform ? `<dt>Instrument</dt><dd>${esc(largest.platform)}</dd>` : ''}
@@ -640,37 +775,70 @@ function buildReport() {
       <p class="note">A cluster is two or more plumes captured in the same Carbon Mapper scene at the same landfill, which points to more than one leak source. Each plume’s rate is listed on its own rather than added together.</p>
       ${clusters.length ? `<div class="clusters">${clusters.map(c => `
         <div class="cluster">
-          <h4>${esc(c[0].landfill)}: ${plural(c.length, 'plume')}</h4>
+          <h4>${lfLink(c[0].landfill, landfillInfo(c[0]).wit)}${national ? ', ' + esc(c[0].stateName) : ''}: ${plural(c.length, 'plume')}</h4>
           <p>${esc(fmtDate(c[0].date))}, scene ${esc(c[0].scene)}</p>
-          <ul>${c.map(p => `<li><a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a>: ${esc(fmtRate(p.rate))}</li>`).join('')}</ul>
+          <div class="cl-grid">${c.map(p => `
+            <figure class="cl-fig${p.image ? '' : ' noimg'}">${imgTag(p, 'Plume ' + p.name + ' at ' + p.landfill)}
+              <figcaption><a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a><br><span class="rate${isHot(p) ? ' hot' : ''}">${esc(fmtRate(p.rate))}</span></figcaption>
+            </figure>`).join('')}</div>
         </div>`).join('')}</div>` : `<p>No clusters in this period.</p>`}
     </section>`;
 
+  const statesSection = national ? `<section class="block"><h3>States</h3><p class="note">Sorted by number of plumes. Select a column heading to re-sort.</p><div class="tablewrap" id="stTable"></div></section>` : '';
+
   $('#report').innerHTML = head +
     `<p class="lead">${lead}</p>` + stats +
-    `<div class="split">${largestHTML}${glance}</div>` +
-    chart + clusterHTML +
-    `<section class="block"><h3>Landfills with plumes</h3><p class="note">Sorted by number of plumes. Select a column heading to re-sort.</p><div class="tablewrap" id="lfTable"></div></section>` +
+    `<div class="split">${largestHTML}${national ? topStatesHTML(statesAgg) : glanceHTML(st, scope)}</div>` +
+    chart + clusterHTML + statesSection +
+    `<section class="block"><h3>Landfills with plumes</h3><p class="note">Sorted by plumes in this period. “Plumes on record” counts every plume in FCF’s records for that landfill. Landfill names link to Waste Impact Tracker.</p><div class="tablewrap" id="lfTable"></div></section>` +
     `<section class="block"><h3>All plumes</h3><p class="note">Plume IDs link to the Carbon Mapper data portal.</p><div class="tablewrap" id="plumeTable"></div></section>` +
     foot;
 
+  if (national) sortableTable($('#stTable'), [
+    { key: 'name', label: 'State', value: s => s.name.toLowerCase(), html: s => esc(s.name) },
+    { key: 'count', label: 'Plumes', num: true, value: s => s.count, html: s => s.count },
+    { key: 'landfills', label: 'Landfills', num: true, value: s => s.landfills, html: s => s.landfills },
+    { key: 'hot', label: 'Super-emitters', num: true, value: s => s.hot, html: s => s.hot },
+    { key: 'top', label: 'Largest (kg/hr)', num: true, value: s => s.top?.rate ?? -1, html: s => fmtRateNum(s.top?.rate ?? null), hot: s => s.top != null && isHot(s.top) },
+    { key: 'clusters', label: 'Clusters', num: true, value: s => s.clusters, html: s => s.clusters },
+  ], statesAgg, 'count', 'desc');
+
   sortableTable($('#lfTable'), [
-    { key: 'name', label: 'Landfill', value: l => l.name.toLowerCase(), html: l => esc(l.name) },
+    { key: 'name', label: 'Landfill', value: l => l.name.toLowerCase(), html: l => lfLink(l.name, l.wit) },
+    ...(national ? [{ key: 'state', label: 'State', value: l => l.state.toLowerCase(), html: l => esc(l.state) }] : []),
     { key: 'owner', label: 'Owner', value: l => (l.owner || '').toLowerCase(), html: l => esc(l.owner || '—') },
-    { key: 'count', label: 'Plumes', num: true, value: l => l.count, html: l => l.count },
+    { key: 'status', label: 'Status', value: l => (l.status || '').toLowerCase(), html: l => esc(l.status || '—') },
+    { key: 'pop', label: 'People within 5 mi', num: true, value: l => l.pop ?? -1, html: l => fmtInt(l.pop) },
+    { key: 'waste', label: 'Waste in place', num: true, value: l => l.waste ?? -1, html: l => fmtInt(l.waste) },
+    { key: 'ghgrp', label: CONFIG.ghgrpLabel, num: true, value: l => l.ghgrp ?? -1, html: l => fmtInt(l.ghgrp) },
+    { key: 'count', label: 'Plumes in period', num: true, value: l => l.count, html: l => l.count },
+    { key: 'total', label: 'Plumes on record', num: true, value: l => l.total, html: l => l.total },
     { key: 'largest', label: 'Largest (kg/hr)', num: true, value: l => l.largest ?? -1, html: l => fmtRateNum(l.largest), hot: l => l.largest != null && l.largest >= CONFIG.superEmitterKgHr },
-    { key: 'latest', label: 'Most recent', num: true, value: l => l.latest.getTime(), html: l => esc(fmtDate(l.latest)) },
   ], landfills, 'count', 'desc');
 
   sortableTable($('#plumeTable'), [
     { key: 'date', label: 'Detected', value: p => p.date.getTime(), html: p => esc(fmtDate(p.date)) },
-    { key: 'landfill', label: 'Landfill', value: p => p.landfill.toLowerCase(), html: p => esc(p.landfill) },
+    { key: 'landfill', label: 'Landfill', value: p => p.landfill.toLowerCase(), html: p => lfLink(p.landfill, landfillInfo(p).wit) },
+    ...(national ? [{ key: 'state', label: 'State', value: p => p.stateName.toLowerCase(), html: p => esc(p.stateName) }] : []),
     { key: 'rate', label: 'Emissions (kg/hr)', num: true, value: p => p.rate ?? -1, html: p => p.rate == null ? 'Not yet quantified' : fmtRateNum(p.rate) + (p.unc ? ' ± ' + fmtRateNum(p.unc) : ''), hot: isHot },
     { key: 'platform', label: 'Instrument', value: p => p.platform.toLowerCase(), html: p => esc(p.platform || '—') },
     { key: 'name', label: 'Plume', value: p => p.name, html: p => `<a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a>`, cls: 'plume' },
   ], plumes, 'date', 'desc');
 
   wireActions();
+}
+
+function topStatesHTML(statesAgg) {
+  const top = statesAgg.filter(s => s.name !== 'Unknown state').slice(0, 5);
+  return `
+    <aside class="glance">
+      <h3>Top states</h3>
+      <p class="glance-note">Most plumes in this period, with the largest plume in each.</p>
+      <ol class="tops">${top.map(s => `
+        <li><span class="t-name">${esc(s.name)}</span> <span class="t-count">${plural(s.count, 'plume')}</span><br>
+          <span class="t-big">Largest: ${s.top ? `${lfLink(s.top.landfill, landfillInfo(s.top).wit)}, ${esc(fmtRate(s.top.rate))}` : 'not yet quantified'}</span></li>`).join('')}
+      </ol>
+    </aside>`;
 }
 
 function glanceHTML(st, statePlumes) {
@@ -761,12 +929,12 @@ function downloadCSV() {
   if (!CURRENT) return;
   const { st, start, end, plumes } = CURRENT;
   const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const rows = [['plume_id', 'detected_utc', 'landfill', 'owner', 'emissions_kg_hr', 'uncertainty_kg_hr', 'instrument', 'scene_id', 'carbon_mapper_url']]
-    .concat(plumes.map(p => [p.name, p.date.toISOString(), p.landfill, p.owner, p.rate ?? '', p.unc ?? '', p.platform, p.scene, p.portal]));
+  const rows = [['plume_id', 'detected_utc', 'state', 'landfill', 'owner', 'landfill_status', 'emissions_kg_hr', 'uncertainty_kg_hr', 'instrument', 'scene_id', 'carbon_mapper_url', 'wit_url']]
+    .concat(plumes.map(p => { const i = landfillInfo(p); return [p.name, p.date.toISOString(), p.stateName, p.landfill, p.owner, i.status, p.rate ?? '', p.unc ?? '', p.platform, p.scene, p.portal, i.wit]; }));
   const blob = new Blob([rows.map(r => r.map(q).join(',')).join('\r\n')], { type: 'text/csv' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `${st.name.replace(/[^a-z0-9]+/gi, '_')}_plumes_${ymd(start)}_to_${ymd(end)}.csv`;
+  a.download = `${(CURRENT.national ? 'National' : st.name).replace(/[^a-z0-9]+/gi, '_')}_plumes_${ymd(start)}_to_${ymd(end)}.csv`;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
