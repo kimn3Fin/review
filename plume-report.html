@@ -56,6 +56,10 @@
     background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
     padding: 10px 12px; min-width: 180px;
   }
+  textarea {
+    font: inherit; font-size: 13px; font-weight: 400; color: var(--text); width: 100%;
+    background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; word-break: break-all; resize: vertical;
+  }
   .check { display: flex; gap: 8px; align-items: center; font-size: 14px; padding-bottom: 10px; }
   .btn {
     font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
@@ -178,14 +182,32 @@
 <section class="controls" aria-label="Report settings">
   <div class="wrap">
     <div id="connect" class="connect" hidden>
-      <h2>Connect to Airtable</h2>
-      <p>Paste a read-only Airtable personal access token for the Full Circle Future Matching base. It’s kept in this browser only and is sent nowhere except Airtable.</p>
+      <h2 id="connectTitle">Connect to Airtable</h2>
+      <p id="connectHelp"></p>
       <div class="row">
-        <label class="field grow"><span>Personal access token</span>
-          <input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="pat…">
+        <label class="field grow"><span id="secretLabel">Personal access token</span>
+          <input id="token" type="password" autocomplete="off" spellcheck="false">
         </label>
         <label class="check"><input id="remember" type="checkbox" checked> Remember on this computer</label>
         <button id="connectBtn" class="btn primary" type="button">Connect</button>
+      </div>
+      <div class="meta"><button type="button" class="linkbtn" id="modeSwitch" hidden></button></div>
+    </div>
+
+    <div id="setup" class="connect" hidden>
+      <h2>Set up the team password</h2>
+      <p>This locks your Airtable token with a team password so it can be stored in the page. Nothing you type here is saved or sent anywhere except a quick check with Airtable that the token works.</p>
+      <div class="row">
+        <label class="field grow"><span>Airtable token (read-only)</span><input id="setupToken" type="password" autocomplete="off" spellcheck="false"></label>
+        <label class="field"><span>Team password (12+ characters)</span><input id="setupPw" type="password" autocomplete="new-password"></label>
+        <label class="field"><span>Type the password again</span><input id="setupPw2" type="password" autocomplete="new-password"></label>
+        <button id="setupBtn" class="btn primary" type="button">Lock token</button>
+      </div>
+      <div id="setupResult" hidden style="margin-top:18px">
+        <label class="field grow"><span>Locked token: paste this between the quotes on the encryptedToken line in CONFIG</span>
+          <textarea id="setupOut" rows="3" readonly></textarea>
+        </label>
+        <div class="row" style="margin-top:10px"><button id="copyBtn" class="btn" type="button">Copy locked token</button></div>
       </div>
     </div>
 
@@ -224,6 +246,10 @@
    the first name that exists is used.
    ===================================================================== */
 const CONFIG = {
+  // Locked team token. Create it at this page's address + #setup, then paste it here.
+  // Leave as '' to make everyone paste their own Airtable token instead.
+  encryptedToken: '',
+
   baseId: 'appk5Pi5OJRT6VtTv',          // Full Circle Future Matching base
   plumeTable: 'tblryheIH0yGwHN32',      // Plume data
   stateTable: 'tblFkWUzMnhkkAyJf',      // State Data
@@ -267,6 +293,27 @@ const store = {
 const TOKEN_KEY = 'fcf_plume_report_token';
 
 let token = null, STATES = [], PLUMES = [], CURRENT = null;
+let usePassword = !!CONFIG.encryptedToken;
+
+/* ---------- team password lock (AES-GCM, key from PBKDF2) ---------- */
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function deriveKey(password, salt) {
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 310000, hash: 'SHA-256' },
+    base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+}
+async function lockToken(tok, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await deriveKey(password, salt), new TextEncoder().encode(tok));
+  return ['v1', b64(salt), b64(iv), b64(ct)].join('.');
+}
+async function unlockToken(blob, password) {
+  const [v, s, i, c] = blob.trim().split('.');
+  if (v !== 'v1' || !c) throw new Error('format');
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(i) }, await deriveKey(password, unb64(s)), unb64(c));
+  return new TextDecoder().decode(pt);
+}
 
 /* ---------- small helpers ---------- */
 function esc(s) {
@@ -436,7 +483,10 @@ async function loadData() {
     else if (!CURRENT) $('#report').innerHTML = '<p class="start">Choose a state and a period to build a report.</p>';
   } catch (e) {
     setStatus(e.message, 'error');
-    if (e.badToken) { store.del(TOKEN_KEY); token = null; $('#connect').hidden = false; }
+    if (e.badToken) {
+      store.del(TOKEN_KEY); token = null; showConnect();
+      if (usePassword) setStatus(e.message + ' If the team password worked, the team token itself may have expired or been deleted, and needs replacing through the #setup page.', 'error');
+    }
     else { $('#meta').hidden = false; $('#form').hidden = !STATES.length; }
   }
 }
@@ -722,6 +772,19 @@ function downloadCSV() {
 }
 
 /* ---------- start-up ---------- */
+function showConnect() {
+  $('#connect').hidden = false;
+  $('#connectTitle').textContent = usePassword ? 'Unlock the report' : 'Connect to Airtable';
+  $('#connectHelp').textContent = usePassword
+    ? 'Type the team password. Ask Kim if you don’t have it.'
+    : 'Paste a read-only Airtable personal access token for the Full Circle Future Matching base. It’s kept in this browser only and is sent nowhere except Airtable.';
+  $('#secretLabel').textContent = usePassword ? 'Team password' : 'Personal access token';
+  $('#token').placeholder = usePassword ? '' : 'pat…';
+  $('#token').autocomplete = usePassword ? 'current-password' : 'off';
+  $('#modeSwitch').hidden = !CONFIG.encryptedToken;
+  $('#modeSwitch').textContent = usePassword ? 'Use my own Airtable token instead' : 'Use the team password instead';
+}
+
 function toggleCustom() {
   const custom = $('#preset').value === 'custom';
   document.querySelectorAll('.field.custom').forEach(el => { el.hidden = !custom; });
@@ -743,26 +806,54 @@ function toggleCustom() {
   $('#state').addEventListener('change', () => { if ($('#state').value) buildReport(); });
   $('#form').addEventListener('submit', e => { e.preventDefault(); buildReport(); });
 
-  $('#connectBtn').addEventListener('click', () => {
-    const t = $('#token').value.trim();
-    if (!t) { setStatus('Paste your Airtable token first.', 'error'); return; }
-    token = t;
-    if ($('#remember').checked) store.set(TOKEN_KEY, t);
+  $('#connectBtn').addEventListener('click', async () => {
+    const v = $('#token').value.trim();
+    if (!v) { setStatus(usePassword ? 'Type the team password first.' : 'Paste your Airtable token first.', 'error'); return; }
+    if (usePassword) {
+      setStatus('Unlocking…');
+      try { token = await unlockToken(CONFIG.encryptedToken, v); }
+      catch (e) { setStatus('That password didn’t work. Check it and try again.', 'error'); $('#token').select(); return; }
+    } else {
+      token = v;
+    }
+    if ($('#remember').checked) store.set(TOKEN_KEY, token);
     $('#token').value = '';
     loadData();
+  });
+  $('#modeSwitch').addEventListener('click', () => { usePassword = !usePassword; setStatus(''); showConnect(); });
+
+  $('#setupBtn').addEventListener('click', async () => {
+    const tok = $('#setupToken').value.trim(), pw = $('#setupPw').value, pw2 = $('#setupPw2').value;
+    if (!tok) { setStatus('Paste the Airtable token first.', 'error'); return; }
+    if (pw.length < 12) { setStatus('Use a team password of at least 12 characters. Four random words works well.', 'error'); return; }
+    if (pw !== pw2) { setStatus('The two passwords don’t match.', 'error'); return; }
+    setStatus('Checking the token with Airtable…');
+    try {
+      const res = await fetch(`https://api.airtable.com/v0/${CONFIG.baseId}/${CONFIG.stateTable}?pageSize=1`, { headers: { Authorization: 'Bearer ' + tok } });
+      if (!res.ok) { setStatus(`Airtable didn’t accept this token (error ${res.status}). Check it has data.records:read and access to the Full Circle Future Matching base.`, 'error'); return; }
+    } catch (e) { setStatus('Couldn’t reach Airtable to check the token. Check your connection and try again.', 'error'); return; }
+    $('#setupOut').value = await lockToken(tok, pw);
+    $('#setupResult').hidden = false;
+    $('#setupToken').value = ''; $('#setupPw').value = ''; $('#setupPw2').value = '';
+    setStatus('Token works and is locked. Copy the locked token into CONFIG.');
+  });
+  $('#copyBtn').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText($('#setupOut').value); setStatus('Locked token copied.'); }
+    catch (e) { $('#setupOut').select(); setStatus('Press Ctrl+C (or Cmd+C) to copy the selected text.'); }
   });
   $('#token').addEventListener('keydown', e => { if (e.key === 'Enter') $('#connectBtn').click(); });
   $('#reload').addEventListener('click', loadData);
   $('#disconnect').addEventListener('click', () => {
     store.del(TOKEN_KEY); token = null; STATES = []; PLUMES = []; CURRENT = null;
-    $('#form').hidden = true; $('#meta').hidden = true; $('#connect').hidden = false;
+    $('#form').hidden = true; $('#meta').hidden = true; showConnect();
     $('#report').innerHTML = '';
     setStatus('Disconnected. The token was removed from this browser.');
   });
 
+  if (location.hash === '#setup') { $('#setup').hidden = false; return; }
   token = store.get(TOKEN_KEY);
   if (token) loadData();
-  else $('#connect').hidden = false;
+  else showConnect();
 })();
 </script>
 </body>
