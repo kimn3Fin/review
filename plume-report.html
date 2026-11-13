@@ -48,10 +48,10 @@
   .connect h2 { margin: 0 0 4px; font-size: 20px; color: var(--ink); font-weight: 700; }
   .connect p { margin: 0 0 16px; max-width: 70ch; color: var(--muted); }
   .row, .form { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
-  .field span { display: block; font-size: 13px; font-weight: 400; color: var(--muted); margin-bottom: 6px; }
+  .field > span { display: block; font-size: 13px; font-weight: 400; color: var(--muted); margin-bottom: 6px; }
   .field.grow { flex: 1 1 320px; }
   .field.grow input { width: 100%; }
-  select, input[type=date], input[type=password] {
+  select, input[type=date], input[type=password], input[type=search] {
     font: inherit; font-size: 15px; font-weight: 400; color: var(--text);
     background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
     padding: 10px 12px; min-width: 180px;
@@ -139,12 +139,99 @@
   .cl-fig .rate { word-break: normal; font-weight: 600; color: var(--ink); }
   .cl-fig .rate.hot { color: var(--alert); }
   .largest figure.noimg { display: none; }
+  .cl-map { margin: 6px 0 12px; max-width: 760px; border: 1px solid var(--line); background: var(--soft); }
+  .cl-map img { display: block; width: 100%; height: auto; }
+  .cl-list { margin: 0; padding: 0; list-style: none; font-size: 15px; max-width: 760px; }
+  .cl-list li { padding: 5px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .cl-list .rate { font-weight: 600; color: var(--ink); }
+  .cl-list .rate.hot { color: var(--alert); }
+  .cl-tag { display: inline-block; min-width: 26px; padding: 0 6px; margin-right: 8px; text-align: center; font-weight: 700; font-size: 13px; color: #fff; background: var(--band); border-radius: 4px; }
+  .cl-fallback { display: none !important; }
+  .cluster.nomap .cl-map, .cluster.nomap .cl-list { display: none; }
+  .cluster.nomap .cl-fallback { display: grid !important; }
   .glance-note { margin: -6px 0 14px; font-size: 14px; color: var(--muted); }
   .tops { margin: 0; padding-left: 22px; display: grid; gap: 12px; }
   .tops li { padding-left: 4px; }
   .tops .t-name { font-weight: 600; color: var(--ink); }
   .tops .t-count { color: var(--muted); font-size: 14px; }
   .tops .t-big { font-size: 14px; }
+  .modes { display: inline-flex; gap: 2px; padding: 3px; margin-bottom: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--soft); }
+  .modes button { font: inherit; font-size: 15px; font-weight: 400; border: 0; border-radius: 6px; padding: 8px 18px; background: transparent; color: var(--muted); cursor: pointer; }
+  .modes button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(42, 29, 61, .14); }
+  .lf-search { position: relative; flex: 1 1 380px; }
+  .lf-search input { width: 100%; }
+  .lf-results { position: absolute; z-index: 20; left: 0; right: 0; top: 100%; margin: 4px 0 0; padding: 4px; list-style: none; max-height: 380px; overflow: auto;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 10px 28px rgba(42, 29, 61, .16); }
+  .lf-results button { display: grid; grid-template-columns: 1fr auto; gap: 0 12px; width: 100%; padding: 8px 10px; text-align: left;
+    font: inherit; color: var(--text); background: none; border: 0; border-radius: 6px; cursor: pointer; }
+  .lf-results button:hover, .lf-results button:focus-visible { background: var(--soft); }
+  .r-name { font-weight: 600; color: var(--ink); }
+  .r-meta { grid-column: 1; font-size: 13px; color: var(--muted); }
+  .r-badge { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-size: 12px; font-weight: 600; color: var(--alert); white-space: nowrap; }
+  .r-more { padding: 8px 10px; font-size: 13px; color: var(--muted); }
+  .mini { font: inherit; font-size: 12px; font-weight: 600; margin-left: 8px; padding: 1px 9px; vertical-align: 1px; cursor: pointer;
+    color: var(--teal); background: none; border: 1px solid var(--teal); border-radius: 999px; }
+  a.btn { display: inline-block; text-decoration: none; }
+  .about .kv { margin-top: 0; font-size: 15px; }
+  .ex-filters { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--line); }
+  .ex-filters .row { gap: 14px; }
+  .ex-filters input[type=search] { min-width: 220px; }
+  .conds { display: grid; gap: 8px; margin: 12px 0; }
+  .conds:empty { display: none; }
+  .cond { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .cond select, .cond input { min-width: 0; }
+  .cond .c-field { min-width: 260px; }
+  .cond .c-val { width: 160px; font: inherit; font-size: 15px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--text); }
+  .c-del { font: inherit; font-size: 20px; line-height: 1; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--muted); cursor: pointer; }
+  .ex-actions { display: flex; gap: 18px; align-items: center; margin-top: 4px; }
+  .ej-pop { margin: 0 0 22px; font-size: 17px; color: var(--muted); }
+  .ej-pop span { font-size: 34px; font-weight: 700; color: var(--ink); margin-right: 6px; font-variant-numeric: tabular-nums; }
+  .ej-bars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 40px; }
+  .ej-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+  .ej-label { font-weight: 400; color: var(--text); }
+  .ej-val { font-size: 24px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .ej-val.hot { color: var(--coral); }
+  .ej-track { position: relative; height: 14px; background: var(--soft); border: 1px solid var(--line); border-radius: 3px; }
+  .ej-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--bar); border-radius: 2px 0 0 2px; }
+  .ej-fill.hot { background: var(--coral); }
+  .ej-mark { position: absolute; top: -6px; bottom: -6px; width: 3px; margin-left: -1.5px; border-radius: 2px; }
+  .ej-mark.m-state { background: var(--ink); box-shadow: 0 0 0 2px var(--surface); }
+  .ej-mark.m-nat { background: var(--teal); box-shadow: 0 0 0 2px var(--surface); }
+  .ej-scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .ej-cmp { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+  .ej-cmp strong { color: var(--text); font-weight: 600; }
+  .legend i.lg-mark { width: 3px; height: 14px; border-radius: 2px; }
+  .chart .hb-l { fill: var(--text); font-size: 13px; }
+  .eb { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; border: 1px solid var(--line); color: var(--muted); }
+  .eb-sig { background: var(--coral); border-color: var(--coral); color: #fff; }
+  .eb-viol { border-color: var(--coral); color: var(--alert); }
+  .eb-none { border-color: var(--teal); color: var(--teal); }
+  .eb-link { text-decoration: none; white-space: nowrap; }
+  .eb-link:hover .eb, .eb-link:focus-visible .eb { text-decoration: underline; }
+  .eb-arrow { margin-left: 3px; font-size: 12px; color: var(--teal); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .echo-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 4px 0 18px; }
+  .echo-head .eb { font-size: 14px; padding: 4px 12px; }
+  .echo-status { font-size: 15px; color: var(--text); }
+  .tag { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); color: var(--text); }
+  .stat dd small { font-size: 16px; font-weight: 400; color: var(--muted); }
+  .qhist { margin-top: 28px; }
+  .qhist h4 { margin: 0 0 12px; font-size: 16px; color: var(--ink); font-weight: 600; }
+  .qrow, .qaxis { display: grid; grid-template-columns: 200px minmax(0, 360px) 1fr; gap: 14px; align-items: center; margin-bottom: 8px; }
+  .qname { font-size: 14px; }
+  .qcount { font-size: 13px; color: var(--muted); }
+  .qstrip { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; }
+  .q { display: inline-block; height: 22px; border-radius: 3px; }
+  .q-s { background: var(--coral); }
+  .q-v { background: var(--coral); opacity: .45; }
+  .q-ok { background: var(--teal); opacity: .25; }
+  .q-na { background: transparent; border: 1px dashed var(--line); }
+  .qaxis { margin-top: -2px; font-size: 11px; color: var(--muted); }
+  .qaxis span:nth-child(2) { grid-column: 2; display: flex; justify-content: space-between; }
+  .qaxis span:nth-child(3) { display: none; }
+  .legend i.q { width: 14px; height: 14px; vertical-align: -2px; }
+  .echo-kv { margin-top: 18px; max-width: 640px; }
+  .warn-inline { color: var(--alert); font-weight: 600; }
   .tablewrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 15px; }
   th { text-align: left; font-weight: 400; font-size: 13px; color: var(--muted); border-bottom: 2px solid var(--ink); padding: 8px 14px 8px 0; white-space: nowrap; }
@@ -164,6 +251,10 @@
   @media (max-width: 760px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
     .split { grid-template-columns: 1fr; }
+    .qrow, .qaxis { grid-template-columns: 1fr; gap: 4px; }
+    .qaxis span:nth-child(2) { grid-column: 1; }
+    .ej-bars { grid-template-columns: 1fr; }
+    .cond .c-field { min-width: 0; flex: 1 1 100%; }
     .lead { font-size: 18px; }
     select, input[type=date] { min-width: 0; width: 100%; }
     .form .field { flex: 1 1 140px; }
@@ -225,22 +316,81 @@
       </div>
     </div>
 
-    <form id="form" class="form" hidden>
-      <label class="field"><span>State</span><select id="state" required></select></label>
-      <label class="field"><span>Period</span>
-        <select id="preset">
-          <option value="30">Last 30 days</option>
-          <option value="90" selected>Last 90 days</option>
-          <option value="ytd">Year to date</option>
-          <option value="365">Last 12 months</option>
-          <option value="all">All plumes on record</option>
-          <option value="custom">Custom dates</option>
-        </select>
-      </label>
-      <label class="field custom" hidden><span>From</span><input type="date" id="from"></label>
-      <label class="field custom" hidden><span>To</span><input type="date" id="to"></label>
-      <button class="btn primary" type="submit" id="buildBtn">Build report</button>
-    </form>
+    <div id="tools" hidden>
+      <div class="modes" role="group" aria-label="Report type">
+        <button type="button" data-mode="state" aria-pressed="true">State report</button>
+        <button type="button" data-mode="landfill" aria-pressed="false">Landfill profile</button>
+        <button type="button" data-mode="explore" aria-pressed="false">Data explorer</button>
+      </div>
+      <form id="form" class="form">
+        <label class="field" data-modes="state explore"><span id="stateLabel">State</span><select id="state"></select></label>
+        <div class="field lf-search" data-modes="landfill" hidden>
+          <span id="lfqLabel">Landfill</span>
+          <input id="lfq" type="search" autocomplete="off" spellcheck="false" placeholder="Search by name, owner or city"
+                 aria-labelledby="lfqLabel" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lfResults">
+          <ul id="lfResults" class="lf-results" role="listbox" aria-labelledby="lfqLabel" hidden></ul>
+        </div>
+        <label class="check" id="onlyPlumesWrap" data-modes="landfill" hidden><input id="onlyPlumes" type="checkbox"> Only landfills with plumes</label>
+        <label class="field"><span>Period</span>
+          <select id="preset">
+            <option value="30">Last 30 days</option>
+            <option value="90" selected>Last 90 days</option>
+            <option value="ytd">Year to date</option>
+            <option value="365">Last 12 months</option>
+            <option value="all">All plumes on record</option>
+            <option value="custom">Custom dates</option>
+          </select>
+        </label>
+        <label class="field custom" hidden><span>From</span><input type="date" id="from"></label>
+        <label class="field custom" hidden><span>To</span><input type="date" id="to"></label>
+        <button class="btn primary" type="submit" id="buildBtn">Build report</button>
+      </form>
+
+      <div id="exFilters" class="ex-filters" data-modes="explore" hidden>
+        <div class="row">
+          <label class="field"><span>Owner name contains</span><input id="exOwner" type="search" list="ownerList" autocomplete="off" placeholder="e.g. Wm, Republic"></label>
+          <datalist id="ownerList"></datalist>
+          <label class="field"><span>Status</span><select id="exStatus"><option value="">Any</option></select></label>
+          <label class="field"><span>Ownership</span><select id="exOwnership"><option value="">Any</option></select></label>
+          <label class="field"><span>Gas collection system</span><select id="exLfg"><option value="">Any</option><option>Yes</option><option>No</option></select></label>
+          <label class="field" id="exEchoWrap"><span>EPA compliance (ECHO)</span>
+            <select id="exEcho">
+              <option value="">Any</option>
+              <option value="sig">In significant violation</option>
+              <option value="any">Any violation in the last 3 years</option>
+              <option value="none">No violations</option>
+              <option value="matched">Matched to ECHO</option>
+            </select>
+          </label>
+          <label class="field" id="exContWrap"><span>ECHO pattern</span><select id="exContinuity"><option value="">Any</option></select></label>
+          <label class="field"><span>Plumes</span>
+            <select id="exPlumes">
+              <option value="">Any</option>
+              <option value="any">With plumes on record</option>
+              <option value="period">With plumes in this period</option>
+              <option value="none">No plumes on record</option>
+            </select>
+          </label>
+        </div>
+        <div id="exConds" class="conds" aria-label="Conditions"></div>
+        <div class="row">
+          <label class="field"><span>Group by</span>
+            <select id="exGroup">
+              <option value="">No grouping</option>
+              <option value="owner">Owner</option>
+              <option value="state">State</option>
+              <option value="status">Status</option>
+              <option value="ownership">Ownership type</option>
+            </select>
+          </label>
+          <label class="field"><span>Rank by</span><select id="exRank"></select></label>
+          <div class="ex-actions">
+            <button type="button" class="linkbtn" id="exAddCond">Add a condition</button>
+            <button type="button" class="linkbtn" id="exReset">Clear filters</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div id="meta" class="meta" hidden>
       <span id="dataInfo"></span>
@@ -256,8 +406,8 @@
 <script>
 /* =====================================================================
    CONFIG — the only part you should ever need to edit.
-   Field names must match Airtable exactly. Where a list is given,
-   the first name that exists is used.
+   Field names must match Airtable. Where a list is given, the first
+   name that exists is used (capitals and extra spaces are ignored).
    ===================================================================== */
 const CONFIG = {
   // Locked team token. Create it at this page's address + #setup, then paste it here.
@@ -268,6 +418,7 @@ const CONFIG = {
   plumeTable: 'tblryheIH0yGwHN32',      // Plume data
   stateTable: 'tblFkWUzMnhkkAyJf',      // State Data
   landfillTable: 'tbloc4wt62OvoNnQe',   // Landfill Reference
+  echoTable: 'ECHO Violations',         // ECHO table (its name or its tbl… ID both work)
 
   plumeFields: {
     name:         ['Name', 'plume_id'],
@@ -282,20 +433,13 @@ const CONFIG = {
     stateName:    ['state name'],
     mapUrl:       ['Plume Map URL'],
     png:          ['plume_png'],
+    bounds:       ['plume_bounds'],
+    clusterMap:   ['Cluster Map URL'],
     // landfill lookups on Plume data (used if Landfill Reference doesn't have the value)
     lfPop:        ['Population (from Landfill Reference)'],
     lfWaste:      ['Waste in Place'],
     lfWit:        ['WIT URL'],
   },
-
-  landfillFields: {                     // fields in Landfill Reference
-    status:       ['Current Landfill Status', 'Landfill Status', 'Status', 'Open/Closed'],
-    ghgrp:        ['GHGRP Emissions', 'GHGRP Reported Emissions', 'GHGRP Methane Emissions', 'GHGRP Emissions (MT CO2e)'],
-    pop:          ['Population', 'Population Within 5 Miles', 'Population within 5 miles'],
-    waste:        ['Waste in Place', 'Waste in Place (tons)', 'Waste in Place (MT)'],
-    wit:          ['WIT URL'],
-  },
-  ghgrpLabel: 'GHGRP emissions',
 
   stateFields: {
     name:         ['Name', 'State', 'State Name', 'state name'],
@@ -304,10 +448,103 @@ const CONFIG = {
     pop:          ['Population Within 5 Miles'],
     pct:          ['Pct Population Within 5 Miles'],
     witUrl:       ['WIT State URL'],
+    abbr:         ['State Abbreviation'],
+    // optional general-population benchmarks for the EJ comparisons (add these fields to State Data to use them)
+    bipoc:        ['State % BIPOC'],
+    lowIncome:    ['State % Low Income'],
+    under5:       ['State % Under 5'],
+    over64:       ['State % Over 64'],
   },
+
+  // optional national general-population benchmarks (percent, e.g. 41.2). Leave null to compare
+  // with the average across all landfill communities instead.
+  nationalBenchmarks: { bipoc: null, lowIncome: null, under5: null, over64: null },
+
+  landfillFields: {                     // fields in Landfill Reference
+    name:         ['Landfill Name', 'Name'],
+    frs:          ['FRS ID'],
+    alias:        ['Landfill Alias'],
+    state:        ['State Name', 'State'],
+    stateAbbr:    ['State Abbreviation'],
+    city:         ['City'],
+    county:       ['County'],
+    owner:        ['Landfill Owner Organization(s)'],
+    operator:     ['Landfill Operator Organization'],
+    ownership:    ['Ownership Type'],
+    status:       ['Current Landfill Status', 'Landfill Status', 'Status'],
+    opened:       ['Year Landfill Opened'],
+    closure:      ['Landfill Expected Closure Year'],
+    waste:        ['Waste in Place (metric tons)', 'Waste in Place', 'Waste in Place (tons)'],
+    pctCapacity:  ['% of Capacity'],
+    acceptance:   ['2024 Annual Waste Acceptance Rate (metric tons/year)', 'Annual Waste Acceptance Rate'],
+    lfg:          ['LFG Collection System In Place?'],
+    flares:       ['Flares in Place?'],
+    nsps:         ['Falls Under NSPS/EG'],
+    ghgrp:        ['2024 GHGRP Methane (metric tons CH4)', 'GHGRP Emissions', 'GHGRP Reported Emissions', 'GHGRP Methane Emissions'],
+    co2e20:       ['2024 Methane (MT CO2e, AR6, 20y)'],
+    vehicles:     ['Passenger vehicles driven for 1 year (Methane, AR6, 20y)'],
+    stateRank:    ['Rank of Facility within State'],
+    pop:          ['Total Population (5-Mile Radius)', 'Population', 'Population Within 5 Miles'],
+    bipoc:        ['% BIPOC'],
+    lowIncome:    ['% Low Income'],
+    under5:       ['% Under 5'],
+    over64:       ['% Over 64'],
+    wit:          ['WIT URL'],
+  },
+  echoFields: {                         // fields in the ECHO table
+    frs:            ['FRS ID Clean', 'FRS ID'],
+    landfillLink:   ['Landfill Reference'],
+    facName:        ['Landfill Name'],
+    status:         ['FacComplianceStatus'],
+    snc:            ['FacSNCFlg'],
+    qtrsNC:         ['FacQtrsWithNC'],
+    caaStatus:      ['CAAComplianceStatus'],
+    cwaStatus:      ['CWAComplianceStatus'],
+    rcraStatus:     ['RCRAComplianceStatus'],
+    sdwaStatus:     ['SDWAComplianceStatus'],
+    inspections:    ['FacInspectionCount'],
+    informal:       ['FacInformalCount'],
+    formal:         ['FacFormalActionCount'],
+    penalties:      ['FacTotalPenalties'],
+    lastPenaltyDate:['FacDateLastPenalty'],
+    lastPenaltyAmt: ['FacLastPenaltyAmt'],
+    lastInspection: ['FacDateLastInspection'],
+    lastFormal:     ['FacDateLastFormalAction'],
+    caaHistory:     ['CAA3yrComplQtrsHistory'],
+    rcraHistory:    ['RCRA3yrComplQtrsHistory'],
+    sdwaHistory:    ['SDWA3yrComplQtrsHistory'],
+    caaQtrs:        ['CAAViolationQtrs'],
+    rcraQtrs:       ['RCRAViolationQtrs'],
+    sdwaQtrs:       ['SDWAViolationQtrs'],
+    severityScore:  ['Severity_Score'],
+    severity:       ['Severity_Label'],
+    continuity:     ['Continuity_Label'],
+    repeat:         ['Repeat_Offender'],
+    programs:       ['Violation_Programs_Summary'],
+    url:            ['ECHO URL'],
+    lastPull:       ['Last ECHO Pull'],
+    pullStatus:     ['ECHO Pull Status'],
+  },
+  // Order of the 12 characters in the 3-year quarter histories (e.g. "_V__________").
+  // Check one facility against its EPA Detailed Facility Report and flip this if the timeline looks reversed.
+  echoHistoryNewestFirst: false,
+
+  ghgrpLabel: 'GHGRP emissions',        // used unless the GHGRP field is the metric-tons-of-methane one
 
   superEmitterKgHr: 100,
   portalUrl: id => `https://data.carbonmapper.org/?plume_id=${encodeURIComponent(id)}`,
+
+  // Cluster map: same settings as the cluster email script
+  clusterMap: {
+    mapboxToken: '',          // '' = reuse the Mapbox token already inside your Plume Map URLs
+    cloudinaryCloud: 'o592cgd0',
+    style: 'mapbox/satellite-streets-v12',
+    width: 576, height: 360,  // drawn at 2x
+    contextFactor: 1.5,       // map extent vs. combined plume area (bigger = more zoomed out)
+    minSpanKm: 3,
+    labels: true,             // letter labels (A, B, C…) on the map
+    labelOffset: { x: 16, y: -56 },
+  },
 };
 /* ===================================================================== */
 
@@ -319,35 +556,29 @@ const store = {
   del(k) { try { localStorage.removeItem(k); } catch (e) {} },
 };
 const TOKEN_KEY = 'fcf_plume_report_token';
+const NATIONAL = '__national';
 
-let token = null, STATES = [], PLUMES = [], CURRENT = null;
+let token = null, STATES = [], PLUMES = [], CURRENT = null, WARN_MSG = '';
 let usePassword = !!CONFIG.encryptedToken;
-
-/* ---------- team password lock (AES-GCM, key from PBKDF2) ---------- */
-const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
-const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
-async function deriveKey(password, salt) {
-  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
-  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 310000, hash: 'SHA-256' },
-    base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
-}
-async function lockToken(tok, password) {
-  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
-  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await deriveKey(password, salt), new TextEncoder().encode(tok));
-  return ['v1', b64(salt), b64(iv), b64(ct)].join('.');
-}
-async function unlockToken(blob, password) {
-  const [v, s, i, c] = blob.trim().split('.');
-  if (v !== 'v1' || !c) throw new Error('format');
-  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(i) }, await deriveKey(password, unb64(s)), unb64(c));
-  return new TextDecoder().decode(pt);
-}
+let MODE = ['state', 'landfill', 'explore'].includes(store.get('fcf_plume_report_mode')) ? store.get('fcf_plume_report_mode') : 'state';
+let SELECTED_LF = store.get('fcf_plume_report_landfill') || '';
+let LANDFILLS = new Map(), LF_ALL_LOADED = false, LF_INDEX = [], LF_MISSING = [];
+let LF_TOTALS = new Map(), MAPBOX_TOKEN = '';
+let LF_PLUMES = new Map(), EJ_AVG = null;
+let ECHO_BY_FRS = new Map(), ECHO_BY_LF = new Map(), ECHO_LOADED = false, URL_PARAMS = null;
 
 /* ---------- small helpers ---------- */
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
-function pick(fields, names) { for (const n of names) if (fields[n] !== undefined) return fields[n]; return undefined; }
+const normKey = k => String(k).toLowerCase().replace(/\s+/g, ' ').trim();
+function pickKey(fields, names) {
+  for (const n of names) if (fields[n] !== undefined) return n;
+  const want = names.map(normKey);
+  for (const k of Object.keys(fields)) if (want.includes(normKey(k))) return k;
+  return undefined;
+}
+function pick(fields, names) { const k = pickKey(fields, names); return k === undefined ? undefined : fields[k]; }
 function arr(v) { return v == null ? [] : Array.isArray(v) ? v : [v]; }
 function first(v) { return Array.isArray(v) ? v[0] : v; }
 function text(v) {
@@ -368,6 +599,10 @@ function url(v) {
   const s = typeof v === 'object' ? (v.url || '') : String(v).trim();
   return /^https?:\/\//i.test(s) ? s : '';
 }
+function yn(v) {
+  const t = text(first(v));
+  return /^y$/i.test(t) ? 'Yes' : /^n$/i.test(t) ? 'No' : t;
+}
 function parseDate(v) {
   v = first(v);
   if (!v) return null;
@@ -383,15 +618,70 @@ const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')
 const fmtDate = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const fmtDateTime = d => d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
 const fmtInt = n => n == null ? '—' : Math.round(n).toLocaleString('en-US');
+const fmtNum = (n, d = 1) => n == null ? '—' : n.toLocaleString('en-US', { maximumFractionDigits: d });
 const fmtRate = r => r == null ? 'Not yet quantified' : r.toLocaleString('en-US', { maximumFractionDigits: 1 }) + ' kg/hr';
 const fmtRateNum = r => r == null ? '—' : r.toLocaleString('en-US', { maximumFractionDigits: 1 });
 const plural = (n, one, many) => `${n.toLocaleString('en-US')} ${n === 1 ? one : (many || one + 's')}`;
 const isHot = p => p.rate != null && p.rate >= CONFIG.superEmitterKgHr;
+function fmtPct(v) {
+  if (v == null || v === '') return '';
+  if (typeof v === 'string' && v.includes('%')) return v.trim();
+  const n = num(v);
+  if (n == null) return text(v);
+  return (n <= 1 ? n * 100 : n).toLocaleString('en-US', { maximumFractionDigits: 1 }) + '%';
+}
+
+function pctVal(v) {
+  v = first(v);
+  if (v == null || v === '') return null;
+  const n = typeof v === 'string' ? parseFloat(v.replace(/[%,\s]/g, '')) : Number(v);
+  if (!Number.isFinite(n)) return null;
+  return typeof v === 'string' && v.includes('%') ? n : (n <= 1 && n > 0 ? n * 100 : n);
+}
+function money(v) {
+  v = first(v);
+  if (v == null || v === '') return null;
+  const n = Number(String(v).replace(/[$,\s]/g, ''));
+  return Number.isFinite(n) ? n : null;
+}
+function parseDay(v) {
+  v = first(v);
+  if (!v) return null;
+  const s = String(v).trim();
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return new Date(+m[1], +m[2] - 1, +m[3]);   // date-only values: keep the calendar day
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+const digits = v => String(first(v) ?? '').replace(/\D/g, '');
+const fmtMoney = n => n == null ? '—' : '$' + Math.round(n).toLocaleString('en-US');
+const fmtP = n => n == null ? '—' : n.toLocaleString('en-US', { maximumFractionDigits: 1 }) + '%';
 
 function setStatus(msg, kind) {
   const el = $('#status');
   el.className = 'status' + (kind ? ' ' + kind : '');
   el.textContent = msg || '';
+}
+function restoreStatus() { setStatus(WARN_MSG, WARN_MSG ? 'warn' : ''); }
+
+/* ---------- team password lock (AES-GCM, key from PBKDF2) ---------- */
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function deriveKey(password, salt) {
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 310000, hash: 'SHA-256' },
+    base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+}
+async function lockToken(tok, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await deriveKey(password, salt), new TextEncoder().encode(tok));
+  return ['v1', b64(salt), b64(iv), b64(ct)].join('.');
+}
+async function unlockToken(blob, password) {
+  const [v, s, i, c] = blob.trim().split('.');
+  if (v !== 'v1' || !c) throw new Error('format');
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(i) }, await deriveKey(password, unb64(s)), unb64(c));
+  return new TextDecoder().decode(pt);
 }
 
 /* ---------- Airtable ---------- */
@@ -418,12 +708,34 @@ async function fetchAll(tableId, label, params = {}) {
     if (!res.ok) throw new Error(`Airtable returned error ${res.status} while loading ${label}. Try Reload data.`);
     const data = await res.json();
     out.push(...data.records);
-    setStatus(`Loading ${label}: ${out.length.toLocaleString('en-US')} records…`);
+    if (!params.filterByFormula) setStatus(`Loading ${label}: ${out.length.toLocaleString('en-US')} records…`);
     if (!data.offset) break;
     offset = data.offset;
     await sleep(220); // stay under Airtable's 5 requests/second limit
   }
   return out;
+}
+
+async function fetchByIds(tableId, label, ids) {
+  const out = [];
+  for (let i = 0; i < ids.length; i += 40) {
+    const chunk = ids.slice(i, i + 40);
+    const recs = await fetchAll(tableId, label, { filterByFormula: 'OR(' + chunk.map(id => `RECORD_ID()='${id}'`).join(',') + ')' });
+    out.push(...recs);
+    setStatus(`Loading ${label}: ${out.length.toLocaleString('en-US')} of ${ids.length.toLocaleString('en-US')} landfills…`);
+    await sleep(220);
+  }
+  return out;
+}
+
+function seenFields(records) {
+  const seen = new Set();
+  records.forEach(r => Object.keys(r.fields).forEach(k => seen.add(normKey(k))));
+  return seen;
+}
+function missingFields(records, groups, keys) {
+  const seen = seenFields(records);
+  return keys.filter(k => !groups[k].some(n => seen.has(normKey(n)))).map(k => groups[k][0]);
 }
 
 function normState(r) {
@@ -437,6 +749,8 @@ function normState(r) {
     pop: num(pick(f, S.pop)),
     pct: num(pick(f, S.pct)),
     wit: url(pick(f, S.witUrl)),
+    abbr: text(first(pick(f, S.abbr))),
+    bench: { bipoc: pctVal(pick(f, S.bipoc)), lowIncome: pctVal(pick(f, S.lowIncome)), under5: pctVal(pick(f, S.under5)), over64: pctVal(pick(f, S.over64)) },
   };
 }
 
@@ -453,49 +767,106 @@ function normPlume(r) {
   return {
     id: r.id, name,
     scene: name.replace(/-[A-Z]{1,2}$/i, ''),
+    label: (name.match(/-([^-]+)$/) || [])[1] || '',
     date: parseDate(pick(f, P.datetime)),
     rate: rate > 0 ? rate : null,          // 0 or blank = not yet quantified
     unc: unc > 0 ? unc : null,
     platform: text(first(pick(f, P.platform))),
     landfill: landfill || 'Unmatched landfill',
     landfillKey: lfId || landfill.toLowerCase() || 'unmatched',
+    lfId,
     owner: text(pick(f, P.owner)),
     stateKeys,
-    image: url(pick(f, P.mapUrl)) || url(pick(f, P.png)),
+    mapUrl: url(pick(f, P.mapUrl)),
     png: url(pick(f, P.png)),
+    image: url(pick(f, P.mapUrl)) || url(pick(f, P.png)),
+    bounds: text(first(pick(f, P.bounds))),
+    clusterMapUrl: url(pick(f, P.clusterMap)),
     portal: CONFIG.portalUrl(name),
-    lfId,
     lfPop: num(pick(f, P.lfPop)),
     lfWaste: num(pick(f, P.lfWaste)),
     lfWit: url(pick(f, P.lfWit)),
   };
 }
 
-function missingFields(records, groups, optionalKeys) {
-  const seen = new Set();
-  records.forEach(r => Object.keys(r.fields).forEach(k => seen.add(k)));
-  return Object.entries(groups)
-    .filter(([key, names]) => !optionalKeys.includes(key) && !names.some(n => seen.has(n)))
-    .map(([, names]) => names[0]);
+function stateLabel(v) {
+  const t = text(first(v));
+  if (/^rec[A-Za-z0-9]{14}$/.test(t)) return (STATES.find(s => s.id === t) || {}).name || '';
+  return t;
 }
-
-const NATIONAL = '__national';
-let LANDFILLS = new Map(), LF_TOTALS = new Map();
 
 function normLandfill(r) {
   const f = r.fields, L = CONFIG.landfillFields;
+  const g = k => pick(f, L[k]);
+  const ghKey = pickKey(f, L.ghgrp) || '';
+  const wasteKey = pickKey(f, L.waste) || '';
+  const accKey = pickKey(f, L.acceptance) || '';
   return {
-    status: text(first(pick(f, L.status))),
-    ghgrp: num(pick(f, L.ghgrp)),
-    pop: num(pick(f, L.pop)),
-    waste: num(pick(f, L.waste)),
-    wit: url(pick(f, L.wit)),
+    id: r.id, raw: f,
+    name: text(first(g('name'))), alias: text(g('alias')), frs: digits(g('frs')),
+    state: stateLabel(g('state')), stateAbbr: text(first(g('stateAbbr'))),
+    city: text(first(g('city'))), county: text(first(g('county'))),
+    owner: text(g('owner')), operator: text(g('operator')), ownership: text(first(g('ownership'))),
+    status: text(first(g('status'))),
+    opened: text(first(g('opened'))), closure: text(first(g('closure'))),
+    waste: num(g('waste')), wasteMetric: /metric/i.test(wasteKey),
+    pctCapacity: first(g('pctCapacity')),
+    acceptance: num(g('acceptance')), acceptanceMetric: /metric/i.test(accKey),
+    lfg: yn(g('lfg')), flares: yn(g('flares')), nsps: yn(g('nsps')),
+    ghgrp: num(g('ghgrp')), ghgrpCh4: /ch4/i.test(ghKey),
+    co2e20: num(g('co2e20')), vehicles: num(g('vehicles')), stateRank: num(g('stateRank')),
+    pop: num(g('pop')), bipoc: num(g('bipoc')), lowIncome: num(g('lowIncome')),
+    under5: num(g('under5')), over64: num(g('over64')),
+    wit: url(g('wit')),
+    bipocP: pctVal(g('bipoc')), lowIncomeP: pctVal(g('lowIncome')), under5P: pctVal(g('under5')), over64P: pctVal(g('over64')),
+    capP: pctVal(g('pctCapacity')), openedN: num(g('opened')),
   };
+}
+
+function normEcho(r) {
+  const f = r.fields, E = CONFIG.echoFields;
+  const g = k => pick(f, E[k]);
+  const t = k => text(first(g(k)));
+  const snc = t('snc').toUpperCase();
+  const status = t('status');
+  return {
+    id: r.id, raw: f, frs: digits(g('frs')),
+    lfIds: arr(g('landfillLink')).filter(x => typeof x === 'string'),
+    facName: t('facName'),
+    status, snc: snc === 'Y',
+    level: snc === 'Y' || /significant/i.test(status) ? 'sig' : /violation identified|violation w\/in|unaddressed|violation$/i.test(status) && !/no violation/i.test(status) ? 'viol' : /no violation/i.test(status) ? 'none' : 'unknown',
+    qtrsNC: num(g('qtrsNC')),
+    programs: [
+      { key: 'CAA', name: 'Clean Air Act', status: t('caaStatus'), history: t('caaHistory'), qtrs: num(g('caaQtrs')) },
+      { key: 'CWA', name: 'Clean Water Act', status: t('cwaStatus'), history: '', qtrs: null },
+      { key: 'RCRA', name: 'Hazardous waste (RCRA)', status: t('rcraStatus'), history: t('rcraHistory'), qtrs: num(g('rcraQtrs')) },
+      { key: 'SDWA', name: 'Safe Drinking Water Act', status: t('sdwaStatus'), history: t('sdwaHistory'), qtrs: num(g('sdwaQtrs')) },
+    ].filter(pr => pr.status || pr.history || pr.qtrs != null),
+    inspections: num(g('inspections')), informal: num(g('informal')), formal: num(g('formal')),
+    penalties: money(g('penalties')), lastPenaltyDate: parseDay(g('lastPenaltyDate')), lastPenaltyAmt: money(g('lastPenaltyAmt')),
+    lastInspection: parseDay(g('lastInspection')), lastFormal: parseDay(g('lastFormal')),
+    severityScore: num(g('severityScore')), severity: t('severity'), continuity: t('continuity'),
+    repeat: /^(1|true|yes|checked)$/i.test(t('repeat')), programsSummary: text(g('programs')),
+    url: url(g('url')), lastPull: text(first(g('lastPull'))), pullStatus: t('pullStatus'),
+  };
+}
+function echoFor(lf) {
+  if (!lf) return null;
+  return ECHO_BY_LF.get(lf.id) || (lf.frs ? ECHO_BY_FRS.get(lf.frs) : null) || null;
+}
+const ECHO_LEVEL_TEXT = { sig: 'Significant violation', viol: 'Violation', none: 'No violation', unknown: 'Not known' };
+function echoBadge(ec, linked = true) {
+  if (!ec) return '—';
+  const badge = `<span class="eb eb-${ec.level}">${esc(ECHO_LEVEL_TEXT[ec.level])}</span>`;
+  return linked && ec.url
+    ? `<a class="eb-link" href="${esc(ec.url)}" target="_blank" rel="noopener" title="Open EPA’s Detailed Facility Report">${badge}<span class="eb-arrow" aria-hidden="true">↗</span><span class="sr-only"> (EPA Detailed Facility Report)</span></a>`
+    : badge;
 }
 
 function landfillInfo(p) {
   const r = LANDFILLS.get(p.lfId) || {};
   return {
+    echo: echoFor(LANDFILLS.get(p.lfId)),
     status: r.status || '',
     ghgrp: r.ghgrp ?? null,
     pop: r.pop ?? p.lfPop,
@@ -503,30 +874,72 @@ function landfillInfo(p) {
     wit: r.wit || p.lfWit,
   };
 }
-
-function seenFields(records) {
-  const seen = new Set();
-  records.forEach(r => Object.keys(r.fields).forEach(k => seen.add(k)));
-  return seen;
+function ghgrpLabel() {
+  for (const l of LANDFILLS.values()) if (l.ghgrp != null) return l.ghgrpCh4 ? 'GHGRP methane (metric tons)' : CONFIG.ghgrpLabel;
+  return CONFIG.ghgrpLabel;
 }
 
-async function fetchByIds(tableId, label, ids) {
-  const out = [];
-  for (let i = 0; i < ids.length; i += 40) {
-    const chunk = ids.slice(i, i + 40);
-    const recs = await fetchAll(tableId, label, { filterByFormula: 'OR(' + chunk.map(id => `RECORD_ID()='${id}'`).join(',') + ')' });
-    out.push(...recs);
-    setStatus(`Loading ${label}: ${out.length.toLocaleString('en-US')} of ${ids.length.toLocaleString('en-US')} landfills…`);
-    await sleep(220);
+/* ---------- cluster map (same method as the cluster email script) ---------- */
+function base64Url(str) {
+  return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_');
+}
+function buildClusterMapUrl(list) {
+  const C = CONFIG.clusterMap;
+  if (!MAPBOX_TOKEN) return null;
+  const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+  const mercY = lat => Math.log(Math.tan(Math.PI / 4 + rad(lat) / 2));
+  const invMercY = y => deg(2 * Math.atan(Math.exp(y)) - Math.PI / 2);
+  const boxes = [];
+  for (const p of list) {
+    if (!p.bounds || !p.png) continue;
+    const nums = (String(p.bounds).match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+    if (nums.length !== 4) continue;
+    const [minLon, minLat, maxLon, maxLat] = nums;
+    if (maxLon <= minLon || maxLat <= minLat || Math.abs(minLat) > 85 || Math.abs(maxLat) > 85) continue;
+    boxes.push({ label: p.label, png: p.png, x0: rad(minLon), x1: rad(maxLon), y0: mercY(minLat), y1: mercY(maxLat), midLat: (minLat + maxLat) / 2 });
   }
-  return out;
+  if (!boxes.length) return null;
+  const ux0 = Math.min(...boxes.map(b => b.x0)), ux1 = Math.max(...boxes.map(b => b.x1));
+  const uy0 = Math.min(...boxes.map(b => b.y0)), uy1 = Math.max(...boxes.map(b => b.y1));
+  const cx = (ux0 + ux1) / 2, cy = (uy0 + uy1) / 2, aspect = C.height / C.width;
+  const midLat = boxes.reduce((s, b) => s + b.midLat, 0) / boxes.length;
+  const minSpan = C.minSpanKm / (6371 * Math.cos(rad(midLat)));
+  const frameW = Math.max((ux1 - ux0) * C.contextFactor, ((uy1 - uy0) * C.contextFactor) / aspect, minSpan);
+  const frameH = frameW * aspect;
+  const fx0 = cx - frameW / 2, fx1 = cx + frameW / 2, fy0 = cy - frameH / 2, fy1 = cy + frameH / 2;
+  const bbox = [deg(fx0), invMercY(fy0), deg(fx1), invMercY(fy1)].map(v => v.toFixed(6)).join(',');
+  const pxW = C.width * 2, pxH = C.height * 2;
+  const placed = boxes.map(b => ({ ...b,
+    x: Math.round((b.x0 - fx0) / frameW * pxW),
+    y: Math.round((fy1 - b.y1) / frameH * pxH),
+    w: Math.max(1, Math.round((b.x1 - b.x0) / frameW * pxW)),
+    h: Math.max(1, Math.round((b.y1 - b.y0) / frameH * pxH)),
+  }));
+  let layers = '';
+  for (const b of placed) layers += `l_fetch:${base64Url(b.png)}/c_scale,w_${b.w},h_${b.h}/fl_layer_apply,g_north_west,x_${b.x},y_${b.y}/`;
+  if (C.labels) {
+    for (const b of placed) {
+      if (!b.label) continue;
+      const lx = Math.min(Math.max(Math.round(b.x + b.w / 2 + C.labelOffset.x), 0), pxW - 60);
+      const ly = Math.min(Math.max(Math.round(b.y + b.h / 2 + C.labelOffset.y), 0), pxH - 60);
+      layers += `l_text:Arial_36_bold_stroke:${encodeURIComponent(b.label)},co_rgb:FFFFFF,bo_4px_solid_rgb:2A1D3D/fl_layer_apply,g_north_west,x_${lx},y_${ly}/`;
+    }
+  }
+  const mapboxUrl = `https://api.mapbox.com/styles/v1/${C.style}/static/[${bbox}]/${C.width}x${C.height}@2x?access_token=${MAPBOX_TOKEN}`;
+  return `https://res.cloudinary.com/${C.cloudinaryCloud}/image/fetch/${layers}f_jpg,q_auto:good/${encodeURIComponent(mapboxUrl)}`;
 }
+function clusterMapFor(c) {
+  return buildClusterMapUrl(c) || (c.find(p => p.clusterMapUrl) || {}).clusterMapUrl || null;
+}
+
+/* ---------- loading ---------- */
+function showTools(show) { $('#tools').hidden = !show; $('#meta').hidden = !show; }
 
 async function loadData() {
   $('#connect').hidden = true;
-  $('#form').hidden = true;
-  $('#meta').hidden = true;
+  showTools(false);
   setStatus('Connecting to Airtable…');
+  LF_ALL_LOADED = false; LF_INDEX = [];
   try {
     const stateRecs = await fetchAll(CONFIG.stateTable, 'State Data');
     const plumeRecs = await fetchAll(CONFIG.plumeTable, 'Plume data');
@@ -540,6 +953,16 @@ async function loadData() {
       p.stateId = st ? st.id : '';
       p.stateName = st ? st.name : 'Unknown state';
     });
+    MAPBOX_TOKEN = CONFIG.clusterMap.mapboxToken || '';
+    if (!MAPBOX_TOKEN) {
+      for (const p of PLUMES) {
+        if (!p.mapUrl) continue;
+        let u = p.mapUrl;
+        try { u = decodeURIComponent(u); } catch (e) {}
+        const m = u.match(/access_token=(pk\.[\w.-]+)/);
+        if (m) { MAPBOX_TOKEN = m[1]; break; }
+      }
+    }
     LF_TOTALS = new Map();
     PLUMES.forEach(p => LF_TOTALS.set(p.landfillKey, (LF_TOTALS.get(p.landfillKey) || 0) + 1));
 
@@ -551,7 +974,21 @@ async function loadData() {
       lfRecs = await fetchByIds(CONFIG.landfillTable, 'Landfill Reference', lfIds);
       lfRecs.forEach(r => LANDFILLS.set(r.id, normLandfill(r)));
     } catch (e) {
-      warnings.push('Couldn’t read the Landfill Reference table, so landfill status and GHGRP emissions are blank.');
+      warnings.push('Couldn’t read the Landfill Reference table, so landfill details are blank.');
+    }
+
+    try {
+      const echoRecs = await fetchAll(CONFIG.echoTable, 'ECHO');
+      ECHO_BY_FRS = new Map(); ECHO_BY_LF = new Map();
+      echoRecs.map(normEcho).forEach(ec => {
+        if (ec.frs) ECHO_BY_FRS.set(ec.frs, ec);
+        ec.lfIds.forEach(id => ECHO_BY_LF.set(id, ec));
+      });
+      ECHO_LOADED = echoRecs.length > 0;
+      const failed = echoRecs.filter(r => /^error/i.test(normEcho(r).pullStatus)).length;
+      if (failed) warnings.push(`${plural(failed, 'ECHO row')} show${failed === 1 ? 's' : ''} a failed last refresh, so ${failed === 1 ? 'its' : 'their'} compliance figures may be out of date.`);
+    } catch (e) {
+      warnings.push('Couldn’t read the ECHO table, so EPA compliance data is left out.');
     }
 
     const sel = $('#state');
@@ -561,46 +998,150 @@ async function loadData() {
     const saved = store.get('fcf_plume_report_state');
     if (saved && (saved === NATIONAL || STATES.some(s => s.id === saved))) sel.value = saved;
 
-    $('#form').hidden = false;
-    $('#meta').hidden = false;
+    showTools(true);
     $('#dataInfo').textContent = `${PLUMES.length.toLocaleString('en-US')} plumes loaded at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
 
-    const plumeSeen = seenFields(plumeRecs);
-    const missP = missingFields(plumeRecs, CONFIG.plumeFields, ['stateName', 'uncertainty', 'mapUrl', 'owner', 'platform', 'lfPop', 'lfWaste', 'lfWit']);
-    const missS = missingFields(stateRecs, CONFIG.stateFields, ['name']);
+    const P = CONFIG.plumeFields;
+    const missP = missingFields(plumeRecs, P, ['name', 'datetime', 'emissions', 'landfillLink', 'landfillName', 'stateLink', 'png']);
+    const missS = missingFields(stateRecs, CONFIG.stateFields, ['wasteInPlace', 'rank', 'pop', 'pct', 'witUrl']);
     if (missP.length) missingNames.push(`Not found in Plume data: ${missP.join(', ')}.`);
     if (missS.length) missingNames.push(`Not found in State Data: ${missS.join(', ')}.`);
     if (lfRecs.length) {
-      const lfSeen = seenFields(lfRecs);
+      const plumeSeen = seenFields(plumeRecs), lfSeen = seenFields(lfRecs);
       const fallback = { pop: 'lfPop', waste: 'lfWaste', wit: 'lfWit' };
-      const missL = Object.entries(CONFIG.landfillFields)
-        .filter(([k, names]) => !names.some(n => lfSeen.has(n)) &&
-          !(fallback[k] && CONFIG.plumeFields[fallback[k]].some(n => plumeSeen.has(n))))
-        .map(([, names]) => names[0]);
+      const missL = ['status', 'ghgrp', 'pop', 'waste', 'wit']
+        .filter(k => !CONFIG.landfillFields[k].some(n => lfSeen.has(normKey(n))) &&
+          !(fallback[k] && P[fallback[k]].some(n => plumeSeen.has(normKey(n)))))
+        .map(k => CONFIG.landfillFields[k][0]);
       if (missL.length) missingNames.push(`Not found in Landfill Reference: ${missL.join(', ')}.`);
     }
     if (undated) warnings.push(`${plural(undated, 'plume')} had no readable date and ${undated === 1 ? 'is' : 'are'} left out.`);
-    const msg = [...missingNames, ...warnings].join(' ') + (missingNames.length ? ' Check these names in the CONFIG section of the page.' : '');
-    setStatus(msg.trim(), msg.trim() ? 'warn' : '');
+    applyUrlParams();
+    WARN_MSG = ([...missingNames, ...warnings].join(' ') + (missingNames.length ? ' Check these names in the CONFIG section of the page.' : '')).trim();
+    restoreStatus();
 
-    if (sel.value) buildReport();
-    else if (!CURRENT) $('#report').innerHTML = '<p class="start">Choose a state, or all states, and a period to build a report.</p>';
+    await setMode(MODE);
   } catch (e) {
     setStatus(e.message, 'error');
     if (e.badToken) {
       store.del(TOKEN_KEY); token = null; showConnect();
       if (usePassword) setStatus(e.message + ' If the team password worked, the team token itself may have expired or been deleted, and needs replacing through the #setup page.', 'error');
+    } else {
+      $('#meta').hidden = false; $('#tools').hidden = !STATES.length;
     }
-    else { $('#meta').hidden = false; $('#form').hidden = !STATES.length; }
   }
 }
 
-/* ---------- report ---------- */
+async function ensureAllLandfills() {
+  if (LF_ALL_LOADED) return true;
+  $('#lfq').disabled = true;
+  try {
+    const recs = await fetchAll(CONFIG.landfillTable, 'Landfill Reference');
+    recs.forEach(r => LANDFILLS.set(r.id, normLandfill(r)));
+    LF_PLUMES = new Map();
+    PLUMES.forEach(p => { if (p.lfId) { if (!LF_PLUMES.has(p.lfId)) LF_PLUMES.set(p.lfId, []); LF_PLUMES.get(p.lfId).push(p); } });
+    const counts = new Map([...LF_PLUMES].map(([id, list]) => [id, list.length]));
+    LF_INDEX = [...LANDFILLS.values()].filter(l => l.name).map(l => ({
+      id: l.id, name: l.name, city: l.city, state: l.state, stateAbbr: l.stateAbbr, owner: l.owner,
+      plumeCount: counts.get(l.id) || 0,
+      hay: [l.name, l.alias, l.owner, l.operator, l.city, l.county, l.state, l.stateAbbr].join(' ').toLowerCase(),
+    })).sort((a, b) => a.name.localeCompare(b.name));
+    const seen = seenFields(recs);
+    LF_MISSING = Object.values(CONFIG.landfillFields).filter(names => !names.some(n => seen.has(normKey(n)))).map(names => names[0]);
+    EJ_AVG = computeEjAverages();
+    fillExplorerOptions();
+    LF_ALL_LOADED = true;
+    restoreStatus();
+    return true;
+  } catch (e) {
+    setStatus(e.message, 'error');
+    return false;
+  } finally {
+    $('#lfq').disabled = false;
+  }
+}
+
+/* ---------- mode switching + landfill search ---------- */
+function startMessage() {
+  $('#report').innerHTML = MODE === 'landfill'
+    ? '<p class="start">Search for a landfill by name, owner or city.</p>'
+    : '<p class="start">Choose a state, or all states, and a period to build a report.</p>';
+}
+
+function applyMode() {
+  document.querySelectorAll('.modes [data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === MODE)));
+  document.querySelectorAll('[data-modes]').forEach(el => { el.hidden = !el.dataset.modes.split(' ').includes(MODE); });
+  $('#buildBtn').textContent = MODE === 'landfill' ? 'Build profile' : MODE === 'explore' ? 'Update' : 'Build report';
+  $('#stateLabel').textContent = MODE === 'explore' ? 'State' : 'State';
+}
+
+async function setMode(m) {
+  MODE = m;
+  store.set('fcf_plume_report_mode', m);
+  applyMode();
+  if (m === 'landfill' || m === 'explore') {
+    if (!LF_ALL_LOADED) { setStatus('Loading the landfill list…'); $('#report').innerHTML = ''; }
+    if (!(await ensureAllLandfills())) return;
+  }
+  if (m === 'explore') {
+    buildReport();
+  } else if (m === 'landfill') {
+    if (SELECTED_LF && LANDFILLS.has(SELECTED_LF)) { $('#lfq').value = LANDFILLS.get(SELECTED_LF).name; buildReport(); }
+    else startMessage();
+  } else {
+    if ($('#state').value) buildReport(); else startMessage();
+  }
+}
+
+function openLandfill(id) {
+  SELECTED_LF = id;
+  store.set('fcf_plume_report_landfill', id);
+  setMode('landfill');
+  window.scrollTo({ top: 0 });
+}
+
+function hideResults() {
+  $('#lfResults').hidden = true;
+  $('#lfq').setAttribute('aria-expanded', 'false');
+}
+function renderResults() {
+  const box = $('#lfResults');
+  const q = $('#lfq').value.trim().toLowerCase();
+  const only = $('#onlyPlumes').checked;
+  if (!LF_ALL_LOADED || (!q && !only)) { hideResults(); box.innerHTML = ''; return; }
+  let list = only ? LF_INDEX.filter(l => l.plumeCount) : LF_INDEX;
+  if (q) { const toks = q.split(/\s+/); list = list.filter(l => toks.every(t => l.hay.includes(t))); }
+  list = [...list].sort((a, b) =>
+    (q ? (b.name.toLowerCase().startsWith(q) - a.name.toLowerCase().startsWith(q)) : 0) ||
+    b.plumeCount - a.plumeCount || a.name.localeCompare(b.name));
+  const shown = list.slice(0, 30);
+  box.innerHTML = shown.length
+    ? shown.map(l => `<li role="option"><button type="button" data-pick="${esc(l.id)}">
+        <span class="r-name">${esc(l.name)}</span>
+        <span class="r-meta">${esc([l.city, l.stateAbbr || l.state].filter(Boolean).join(', '))}${l.owner ? (l.city || l.state ? '. ' : '') + esc(l.owner) : ''}</span>
+        ${l.plumeCount ? `<span class="r-badge">${plural(l.plumeCount, 'plume')}</span>` : ''}
+      </button></li>`).join('') +
+      (list.length > 30 ? `<li class="r-more">${(list.length - 30).toLocaleString('en-US')} more. Keep typing to narrow the list.</li>` : '')
+    : '<li class="r-more">No landfills match.</li>';
+  box.hidden = false;
+  $('#lfq').setAttribute('aria-expanded', 'true');
+}
+function pickLandfill(id) {
+  const l = LANDFILLS.get(id);
+  if (!l) return;
+  SELECTED_LF = id;
+  store.set('fcf_plume_report_landfill', id);
+  $('#lfq').value = l.name;
+  hideResults();
+  buildReport();
+}
+
+/* ---------- report pieces shared by both modes ---------- */
 function matchesState(p, st) {
   return p.stateKeys.includes(st.id.toLowerCase()) || p.stateKeys.includes(st.name.toLowerCase());
 }
 
-function getRange(statePlumes) {
+function getRange(scope) {
   const preset = $('#preset').value;
   const now = new Date();
   let start, end = endOfDay(now);
@@ -613,7 +1154,7 @@ function getRange(statePlumes) {
   } else if (preset === 'ytd') {
     start = new Date(now.getFullYear(), 0, 1);
   } else if (preset === 'all') {
-    const dates = statePlumes.map(p => p.date.getTime());
+    const dates = scope.map(p => p.date.getTime());
     start = dates.length ? startOfDay(new Date(Math.min(...dates))) : startOfDay(now);
   } else {
     start = addDays(startOfDay(now), -(Number(preset) - 1));
@@ -628,6 +1169,14 @@ function median(xs) {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 }
 
+function computeClusters(plumes) {
+  const cMap = new Map();
+  plumes.forEach(p => { const k = p.scene + '|' + p.landfillKey; if (!cMap.has(k)) cMap.set(k, []); cMap.get(k).push(p); });
+  return [...cMap.values()].filter(g => g.length > 1)
+    .map(g => g.sort((a, b) => a.name.localeCompare(b.name)))
+    .sort((a, b) => b[0].date - a[0].date);
+}
+
 function imgTag(p, alt) {
   if (!p.image) return '';
   return `<img src="${esc(p.image)}" alt="${esc(alt)}" loading="lazy" data-fallback="${esc(p.png)}" onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else{this.closest('figure').classList.add('noimg')}">`;
@@ -635,8 +1184,173 @@ function imgTag(p, alt) {
 function lfLink(name, wit) {
   return wit ? `<a href="${esc(wit)}" target="_blank" rel="noopener">${esc(name)}</a>` : esc(name);
 }
+function profileBtn(lfId) {
+  return lfId ? ` <button type="button" class="mini noprint" data-open-lf="${esc(lfId)}">Profile</button>` : '';
+}
+
+/* ---------- sharing ---------- */
+function shareParams() {
+  const q = new URLSearchParams();
+  q.set('view', MODE);
+  if (MODE === 'state' || MODE === 'explore') { if ($('#state').value) q.set('state', $('#state').value); }
+  if (MODE === 'landfill' && SELECTED_LF) q.set('landfill', SELECTED_LF);
+  q.set('period', $('#preset').value);
+  if ($('#preset').value === 'custom') { q.set('from', $('#from').value); q.set('to', $('#to').value); }
+  if (MODE === 'explore') { const e = readExplorer(); q.set('filters', JSON.stringify({ ...e, conds: e.conds, allConds: undefined })); }
+  return q;
+}
+function applyUrlParams() {
+  const q = new URLSearchParams(location.search);
+  if (!q.has('view')) return;
+  const view = q.get('view');
+  if (['state', 'landfill', 'explore'].includes(view)) MODE = view;
+  const st = q.get('state');
+  if (st && [...$('#state').options].some(o => o.value === st)) $('#state').value = st;
+  if (q.get('landfill')) SELECTED_LF = q.get('landfill');
+  const p = q.get('period');
+  if (p && [...$('#preset').options].some(o => o.value === p)) { $('#preset').value = p; toggleCustom(); }
+  if (q.get('from')) $('#from').value = q.get('from');
+  if (q.get('to')) $('#to').value = q.get('to');
+  if (q.get('filters')) store.set('fcf_plume_report_explorer', q.get('filters'));
+  history.replaceState(null, '', location.pathname);   // the link has done its job; keep the address bar clean
+}
+async function copyShareLink() {
+  const link = `${location.origin}${location.pathname}?${shareParams().toString()}`;
+  try { await navigator.clipboard.writeText(link); setStatus('Link copied. Teammates who open it will see this report after typing the team password.'); }
+  catch (e) { window.prompt('Copy this link:', link); }
+}
+function saveSnapshot() {
+  const report = $('#report').cloneNode(true);
+  report.querySelectorAll('th button').forEach(b => { b.replaceWith(document.createTextNode(b.textContent.replace(/ [▲▼]$/, ''))); });
+  report.querySelectorAll('.noprint, button').forEach(el => el.remove());
+  report.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+  const title = report.querySelector('.r-state')?.textContent.trim() || 'Report';
+  const css = document.querySelector('style').textContent;
+  const when = fmtDateTime(new Date());
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>${esc(title)} | Full Circle Future</title>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>${css}</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><p class="org">Full Circle Future</p><p class="app-title">Landfill methane report</p></div></header>
+<main class="wrap report">${report.innerHTML}
+<p class="foot">This is a snapshot taken ${esc(when)}. Figures won’t change after that date. Questions: <a href="https://www.fullcirclefuture.org">fullcirclefuture.org</a>.</p>
+</main>
+</body>
+</html>`;
+  const blob = new Blob([html], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${title.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase()}-${ymd(new Date())}.html`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  setStatus('Shareable page saved. Upload it to the reports folder of your GitHub repo to get a public link.');
+}
+
+function headHTML(title, subs, extra = '') {
+  const dls = (CURRENT && CURRENT.downloads) || [];
+  return `
+    <div class="r-head">
+      <div>
+        <h2 class="r-state">${esc(title)}</h2>
+        ${subs.filter(Boolean).map(s => `<p class="r-sub">${s}</p>`).join('')}
+      </div>
+      <div class="r-actions noprint">
+        ${extra}
+        <button type="button" class="btn" id="shareBtn">Copy link</button>
+        <button type="button" class="btn" id="snapBtn">Save shareable page</button>
+        ${dls.map((d, i) => `<button type="button" class="btn" data-dl="${i}" ${d.disabled ? 'disabled' : ''}>${esc(d.label)}</button>`).join('')}
+        <button type="button" class="btn" id="printBtn">Print or save as PDF</button>
+      </div>
+    </div>`;
+}
+
+function footHTML() {
+  return `<p class="foot">Plume data from Carbon Mapper, matched to landfills in Full Circle Future’s Airtable. Carbon Mapper doesn’t observe every area every day, so a period with few or no plumes may reflect limited satellite coverage rather than low emissions. The 100 kg/hr super-emitter threshold is the EPA’s definition for oil and gas methane emissions. Report built ${esc(fmtDateTime(new Date()))}.</p>`;
+}
+
+function largestCard(p, { title = 'Largest plume', showState = false, showLandfill = true } = {}) {
+  if (!p) return `<article class="panel largest"><div class="body"><h3>${esc(title)}</h3><p>None of these plumes has an emissions estimate from Carbon Mapper yet.</p></div></article>`;
+  const info = landfillInfo(p);
+  return `
+    <article class="panel largest">
+      ${p.image ? `<figure>${imgTag(p, 'Methane plume at ' + p.landfill)}</figure>` : ''}
+      <div class="body">
+        <h3>${esc(title)}</h3>
+        <p class="rate-big">${fmtRateNum(p.rate)} <small>kg/hr${p.unc ? ' ± ' + fmtRateNum(p.unc) : ''}</small></p>
+        <dl class="kv">
+          ${showLandfill ? `<dt>Landfill</dt><dd>${lfLink(p.landfill, info.wit)}${showState ? ', ' + esc(p.stateName) : ''}${profileBtn(p.lfId)}</dd>` : ''}
+          ${showLandfill && p.owner ? `<dt>Owner</dt><dd>${esc(p.owner)}</dd>` : ''}
+          <dt>Detected</dt><dd>${esc(fmtDateTime(p.date))}</dd>
+          ${p.platform ? `<dt>Instrument</dt><dd>${esc(p.platform)}</dd>` : ''}
+          <dt>Plume</dt><dd><a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a></dd>
+        </dl>
+      </div>
+    </article>`;
+}
+
+function chartSection(plumes, start, end) {
+  return `
+    <section class="block chart">
+      <h3>Plumes over time</h3>
+      <p class="note">${(end - start) / 864e5 <= 62 ? 'Plumes detected each week.' : 'Plumes detected each month.'}</p>
+      ${chartSVG(plumes, start, end)}
+      <div class="legend"><span><i style="background:var(--coral)"></i>${CONFIG.superEmitterKgHr} kg/hr or more</span><span><i style="background:var(--bar)"></i>Other plumes</span></div>
+    </section>`;
+}
+
+function clusterSection(clusters, { showState = false, showLandfill = true } = {}) {
+  return `
+    <section class="block">
+      <h3>Plume clusters</h3>
+      <p class="note">A cluster is two or more plumes captured in the same Carbon Mapper scene at the same landfill, which points to more than one leak source. Each plume’s rate is listed on its own rather than added together.</p>
+      ${clusters.length ? `<div class="clusters">${clusters.map(c => {
+        const cmap = clusterMapFor(c);
+        const grid = `<div class="cl-grid${cmap ? ' cl-fallback' : ''}">${c.map(p => `
+            <figure class="cl-fig${p.image ? '' : ' noimg'}">${imgTag(p, 'Plume ' + p.name + ' at ' + p.landfill)}
+              <figcaption><a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a><br><span class="rate${isHot(p) ? ' hot' : ''}">${esc(fmtRate(p.rate))}</span></figcaption>
+            </figure>`).join('')}</div>`;
+        const heading = showLandfill
+          ? `${lfLink(c[0].landfill, landfillInfo(c[0]).wit)}${showState ? ', ' + esc(c[0].stateName) : ''}: ${plural(c.length, 'plume')}${profileBtn(c[0].lfId)}`
+          : `${esc(fmtDate(c[0].date))}: ${plural(c.length, 'plume')}`;
+        return `
+        <div class="cluster">
+          <h4>${heading}</h4>
+          <p>${showLandfill ? esc(fmtDate(c[0].date)) + ', ' : ''}scene ${esc(c[0].scene)}</p>
+          ${cmap ? `
+          <figure class="cl-map"><img src="${esc(cmap)}" loading="lazy" alt="Satellite map of ${esc(c[0].landfill)} with plumes ${esc(c.map(p => p.label).filter(Boolean).join(', '))} overlaid" onerror="this.closest('.cluster').classList.add('nomap')"></figure>
+          <ul class="cl-list">${c.map(p => `<li>${p.label ? `<span class="cl-tag">${esc(p.label)}</span>` : ''}<a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a>: <span class="rate${isHot(p) ? ' hot' : ''}">${esc(fmtRate(p.rate))}</span></li>`).join('')}</ul>` : ''}
+          ${grid}
+        </div>`;
+      }).join('')}</div>` : `<p>No clusters in this period.</p>`}
+    </section>`;
+}
+
+function plumeColumns({ showLandfill = true, showState = false } = {}) {
+  return [
+    { key: 'date', label: 'Detected', value: p => p.date.getTime(), html: p => esc(fmtDate(p.date)) },
+    ...(showLandfill ? [{ key: 'landfill', label: 'Landfill', value: p => p.landfill.toLowerCase(), html: p => lfLink(p.landfill, landfillInfo(p).wit) }] : []),
+    ...(showState ? [{ key: 'state', label: 'State', value: p => p.stateName.toLowerCase(), html: p => esc(p.stateName) }] : []),
+    { key: 'rate', label: 'Emissions (kg/hr)', num: true, value: p => p.rate ?? -1, html: p => p.rate == null ? 'Not yet quantified' : fmtRateNum(p.rate) + (p.unc ? ' ± ' + fmtRateNum(p.unc) : ''), hot: isHot },
+    { key: 'platform', label: 'Instrument', value: p => p.platform.toLowerCase(), html: p => esc(p.platform || '—') },
+    { key: 'name', label: 'Plume', value: p => p.name, html: p => `<a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a>`, cls: 'plume' },
+  ];
+}
 
 function buildReport() {
+  if (MODE === 'landfill') buildLandfillReport();
+  else if (MODE === 'explore') buildExplorer();
+  else buildAreaReport();
+}
+
+/* ---------- state / national report ---------- */
+function buildAreaReport() {
   const sel = $('#state').value;
   const national = sel === NATIONAL;
   const st = national ? { id: NATIONAL, name: 'United States' } : STATES.find(s => s.id === sel);
@@ -644,16 +1358,15 @@ function buildReport() {
   const scope = national ? PLUMES : PLUMES.filter(p => p.stateId === st.id);
   let range;
   try { range = getRange(scope); } catch (e) { setStatus(e.message, 'error'); return; }
-  if ($('#status').classList.contains('error')) setStatus('');
+  if ($('#status').classList.contains('error')) restoreStatus();
   const { start, end, days } = range;
 
   const plumes = scope.filter(p => p.date >= start && p.date <= end).sort((a, b) => b.date - a.date);
   const prevCount = days ? scope.filter(p => p.date >= addDays(start, -days) && p.date < start).length : null;
 
-  // landfills
   const lfMap = new Map();
   plumes.forEach(p => {
-    if (!lfMap.has(p.landfillKey)) lfMap.set(p.landfillKey, { key: p.landfillKey, name: p.landfill, state: p.stateName, owner: p.owner, info: landfillInfo(p), plumes: [], scenes: new Set() });
+    if (!lfMap.has(p.landfillKey)) lfMap.set(p.landfillKey, { key: p.landfillKey, lfId: p.lfId, name: p.landfill, state: p.stateName, owner: p.owner, info: landfillInfo(p), plumes: [], scenes: new Set() });
     const l = lfMap.get(p.landfillKey);
     l.plumes.push(p); l.scenes.add(p.scene);
   });
@@ -662,13 +1375,7 @@ function buildReport() {
     return { ...l, ...l.info, count: l.plumes.length, total: LF_TOTALS.get(l.key) || l.plumes.length, largest: q.length ? Math.max(...q) : null };
   });
   const repeat = landfills.filter(l => l.scenes.size > 1).length;
-
-  // clusters: same scene ID + same landfill, 2+ plumes
-  const cMap = new Map();
-  plumes.forEach(p => { const k = p.scene + '|' + p.landfillKey; if (!cMap.has(k)) cMap.set(k, []); cMap.get(k).push(p); });
-  const clusters = [...cMap.values()].filter(g => g.length > 1)
-    .map(g => g.sort((a, b) => a.name.localeCompare(b.name)))
-    .sort((a, b) => b[0].date - a[0].date);
+  const clusters = computeClusters(plumes);
 
   const quantified = plumes.filter(p => p.rate != null);
   const hot = plumes.filter(isHot);
@@ -676,7 +1383,6 @@ function buildReport() {
   const med = median(quantified.map(p => p.rate));
   const unq = plumes.length - quantified.length;
 
-  // states (national only)
   let statesAgg = [];
   if (national) {
     const sMap = new Map();
@@ -695,23 +1401,14 @@ function buildReport() {
   }
   const stateCount = statesAgg.filter(s => s.name !== 'Unknown state').length;
 
-  CURRENT = { st, start, end, plumes, national };
+  CURRENT = { downloads: [
+    { label: 'Plumes CSV', filename: `${national ? 'National' : st.name}_plumes_${ymd(start)}_to_${ymd(end)}`, rows: () => plumeCsvRows(plumes), disabled: !plumes.length },
+    { label: 'Landfills CSV', filename: `${national ? 'National' : st.name}_landfills_with_plumes_${ymd(start)}_to_${ymd(end)}`, rows: () => landfillCsvRows(landfills.map(l => LANDFILLS.get(l.lfId)).filter(Boolean), start, end), disabled: !landfills.some(l => LANDFILLS.get(l.lfId)) },
+  ] };
   store.set('fcf_plume_report_state', sel);
 
   const periodText = `${fmtDate(start)} to ${fmtDate(end)}`;
-  const head = `
-    <div class="r-head">
-      <div>
-        <h2 class="r-state">${esc(st.name)}</h2>
-        <p class="r-sub">${national ? 'Landfill methane plumes in all states' : 'Landfill methane plumes'}, ${esc(periodText)}</p>
-      </div>
-      <div class="r-actions noprint">
-        <button type="button" class="btn" id="csvBtn" ${plumes.length ? '' : 'disabled'}>Download CSV</button>
-        <button type="button" class="btn" id="printBtn">Print or save as PDF</button>
-      </div>
-    </div>`;
-
-  const foot = `<p class="foot">Plume data from Carbon Mapper, matched to landfills in Full Circle Future’s Airtable. Carbon Mapper doesn’t observe every area every day, so a period with few or no plumes may reflect limited satellite coverage rather than low emissions. The 100 kg/hr super-emitter threshold is the EPA’s definition for oil and gas methane emissions. Report built ${esc(fmtDateTime(new Date()))}.</p>`;
+  const head = headHTML(st.name, [`${national ? 'Landfill methane plumes in all states' : 'Landfill methane plumes'}, ${esc(periodText)}`]);
 
   if (!plumes.length) {
     $('#report').innerHTML = head + `
@@ -719,12 +1416,11 @@ function buildReport() {
         <h3>No landfill plumes in this period</h3>
         <p>Carbon Mapper didn’t publish any landfill plumes ${national ? 'in any state' : 'for ' + esc(st.name)} between ${esc(periodText)}. Try a longer period. ${scope.length ? `There are ${plural(scope.length, 'plume')} on record ${national ? 'nationally' : 'for ' + esc(st.name)} overall.` : ''}</p>
       </div>
-      ${national ? '' : `<div class="split"><div></div>${glanceHTML(st, scope)}</div>`}` + foot;
+      ${national ? '' : `<div class="split"><div></div>${glanceHTML(st, scope)}</div>`}` + footHTML();
     wireActions();
     return;
   }
 
-  // lead
   let lead = `Between ${esc(fmtDate(start))} and ${esc(fmtDate(end))}, Carbon Mapper detected <strong>${plural(plumes.length, 'methane plume')}</strong> from <strong>${plural(landfills.length, 'landfill')}</strong> ${national ? `in <strong>${plural(stateCount, 'state')}</strong>` : 'in ' + esc(st.name)}.`;
   if (hot.length) lead += ` <strong>${hot.length.toLocaleString('en-US')}</strong> ${hot.length === 1 ? 'was' : 'were'} at or above the ${CONFIG.superEmitterKgHr} kg/hr super-emitter threshold.`;
   if (largest) lead += ` The largest was at ${esc(largest.landfill)}${national ? ', ' + esc(largest.stateName) + ',' : ''} on ${esc(fmtDate(largest.date))}, at an estimated <strong>${esc(fmtRate(largest.rate))}</strong>.`;
@@ -744,55 +1440,15 @@ function buildReport() {
       <div class="stat"><dt>Plume clusters</dt><dd>${clusters.length.toLocaleString('en-US')}</dd><span class="sub">${clusters.length ? plural(clusters.reduce((n, c) => n + c.length, 0), 'plume') + ' in clusters' : 'one plume per pass'}</span></div>
     </dl>`;
 
-  const lgInfo = largest ? landfillInfo(largest) : null;
-  const largestHTML = largest ? `
-    <article class="panel largest">
-      ${largest.image ? `<figure>${imgTag(largest, 'Methane plume at ' + largest.landfill)}</figure>` : ''}
-      <div class="body">
-        <h3>Largest plume</h3>
-        <p class="rate-big">${fmtRateNum(largest.rate)} <small>kg/hr${largest.unc ? ' ± ' + fmtRateNum(largest.unc) : ''}</small></p>
-        <dl class="kv">
-          <dt>Landfill</dt><dd>${lfLink(largest.landfill, lgInfo.wit)}${national ? ', ' + esc(largest.stateName) : ''}</dd>
-          ${largest.owner ? `<dt>Owner</dt><dd>${esc(largest.owner)}</dd>` : ''}
-          <dt>Detected</dt><dd>${esc(fmtDateTime(largest.date))}</dd>
-          ${largest.platform ? `<dt>Instrument</dt><dd>${esc(largest.platform)}</dd>` : ''}
-          <dt>Plume</dt><dd><a href="${esc(largest.portal)}" target="_blank" rel="noopener">${esc(largest.name)}</a></dd>
-        </dl>
-      </div>
-    </article>` : `<article class="panel largest"><div class="body"><h3>Largest plume</h3><p>None of these plumes has an emissions estimate from Carbon Mapper yet.</p></div></article>`;
-
-  const chart = `
-    <section class="block chart">
-      <h3>Plumes over time</h3>
-      <p class="note">${(end - start) / 864e5 <= 62 ? 'Plumes detected each week.' : 'Plumes detected each month.'}</p>
-      ${chartSVG(plumes, start, end)}
-      <div class="legend"><span><i style="background:var(--coral)"></i>${CONFIG.superEmitterKgHr} kg/hr or more</span><span><i style="background:var(--bar)"></i>Other plumes</span></div>
-    </section>`;
-
-  const clusterHTML = `
-    <section class="block">
-      <h3>Plume clusters</h3>
-      <p class="note">A cluster is two or more plumes captured in the same Carbon Mapper scene at the same landfill, which points to more than one leak source. Each plume’s rate is listed on its own rather than added together.</p>
-      ${clusters.length ? `<div class="clusters">${clusters.map(c => `
-        <div class="cluster">
-          <h4>${lfLink(c[0].landfill, landfillInfo(c[0]).wit)}${national ? ', ' + esc(c[0].stateName) : ''}: ${plural(c.length, 'plume')}</h4>
-          <p>${esc(fmtDate(c[0].date))}, scene ${esc(c[0].scene)}</p>
-          <div class="cl-grid">${c.map(p => `
-            <figure class="cl-fig${p.image ? '' : ' noimg'}">${imgTag(p, 'Plume ' + p.name + ' at ' + p.landfill)}
-              <figcaption><a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a><br><span class="rate${isHot(p) ? ' hot' : ''}">${esc(fmtRate(p.rate))}</span></figcaption>
-            </figure>`).join('')}</div>
-        </div>`).join('')}</div>` : `<p>No clusters in this period.</p>`}
-    </section>`;
-
   const statesSection = national ? `<section class="block"><h3>States</h3><p class="note">Sorted by number of plumes. Select a column heading to re-sort.</p><div class="tablewrap" id="stTable"></div></section>` : '';
 
   $('#report').innerHTML = head +
     `<p class="lead">${lead}</p>` + stats +
-    `<div class="split">${largestHTML}${national ? topStatesHTML(statesAgg) : glanceHTML(st, scope)}</div>` +
-    chart + clusterHTML + statesSection +
-    `<section class="block"><h3>Landfills with plumes</h3><p class="note">Sorted by plumes in this period. “Plumes on record” counts every plume in FCF’s records for that landfill. Landfill names link to Waste Impact Tracker.</p><div class="tablewrap" id="lfTable"></div></section>` +
+    `<div class="split">${largestCard(largest, { showState: national })}${national ? topStatesHTML(statesAgg) : glanceHTML(st, scope)}</div>` +
+    chartSection(plumes, start, end) + clusterSection(clusters, { showState: national }) + statesSection +
+    `<section class="block"><h3>Landfills with plumes</h3><p class="note">Sorted by plumes in this period. “Plumes on record” counts every plume in FCF’s records for that landfill. Landfill names link to Waste Impact Tracker, and Profile opens the landfill’s full profile here.</p><div class="tablewrap" id="lfTable"></div></section>` +
     `<section class="block"><h3>All plumes</h3><p class="note">Plume IDs link to the Carbon Mapper data portal.</p><div class="tablewrap" id="plumeTable"></div></section>` +
-    foot;
+    footHTML();
 
   if (national) sortableTable($('#stTable'), [
     { key: 'name', label: 'State', value: s => s.name.toLowerCase(), html: s => esc(s.name) },
@@ -804,27 +1460,20 @@ function buildReport() {
   ], statesAgg, 'count', 'desc');
 
   sortableTable($('#lfTable'), [
-    { key: 'name', label: 'Landfill', value: l => l.name.toLowerCase(), html: l => lfLink(l.name, l.wit) },
+    { key: 'name', label: 'Landfill', value: l => l.name.toLowerCase(), html: l => lfLink(l.name, l.wit) + profileBtn(l.lfId) },
     ...(national ? [{ key: 'state', label: 'State', value: l => l.state.toLowerCase(), html: l => esc(l.state) }] : []),
     { key: 'owner', label: 'Owner', value: l => (l.owner || '').toLowerCase(), html: l => esc(l.owner || '—') },
     { key: 'status', label: 'Status', value: l => (l.status || '').toLowerCase(), html: l => esc(l.status || '—') },
     { key: 'pop', label: 'People within 5 mi', num: true, value: l => l.pop ?? -1, html: l => fmtInt(l.pop) },
     { key: 'waste', label: 'Waste in place', num: true, value: l => l.waste ?? -1, html: l => fmtInt(l.waste) },
-    { key: 'ghgrp', label: CONFIG.ghgrpLabel, num: true, value: l => l.ghgrp ?? -1, html: l => fmtInt(l.ghgrp) },
+    { key: 'ghgrp', label: ghgrpLabel(), num: true, value: l => l.ghgrp ?? -1, html: l => fmtInt(l.ghgrp) },
+    ...(ECHO_LOADED ? [{ key: 'echo', label: 'EPA compliance', value: l => ({ sig: 3, viol: 2, none: 1 }[l.echo?.level] || 0), html: l => echoBadge(l.echo) }] : []),
     { key: 'count', label: 'Plumes in period', num: true, value: l => l.count, html: l => l.count },
     { key: 'total', label: 'Plumes on record', num: true, value: l => l.total, html: l => l.total },
     { key: 'largest', label: 'Largest (kg/hr)', num: true, value: l => l.largest ?? -1, html: l => fmtRateNum(l.largest), hot: l => l.largest != null && l.largest >= CONFIG.superEmitterKgHr },
   ], landfills, 'count', 'desc');
 
-  sortableTable($('#plumeTable'), [
-    { key: 'date', label: 'Detected', value: p => p.date.getTime(), html: p => esc(fmtDate(p.date)) },
-    { key: 'landfill', label: 'Landfill', value: p => p.landfill.toLowerCase(), html: p => lfLink(p.landfill, landfillInfo(p).wit) },
-    ...(national ? [{ key: 'state', label: 'State', value: p => p.stateName.toLowerCase(), html: p => esc(p.stateName) }] : []),
-    { key: 'rate', label: 'Emissions (kg/hr)', num: true, value: p => p.rate ?? -1, html: p => p.rate == null ? 'Not yet quantified' : fmtRateNum(p.rate) + (p.unc ? ' ± ' + fmtRateNum(p.unc) : ''), hot: isHot },
-    { key: 'platform', label: 'Instrument', value: p => p.platform.toLowerCase(), html: p => esc(p.platform || '—') },
-    { key: 'name', label: 'Plume', value: p => p.name, html: p => `<a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a>`, cls: 'plume' },
-  ], plumes, 'date', 'desc');
-
+  sortableTable($('#plumeTable'), plumeColumns({ showState: national }), plumes, 'date', 'desc');
   wireActions();
 }
 
@@ -843,7 +1492,7 @@ function topStatesHTML(statesAgg) {
 
 function glanceHTML(st, statePlumes) {
   let pct = st.pct;
-  if (pct != null && pct <= 1) pct = pct * 100; // Airtable percent fields come through as fractions
+  if (pct != null && pct <= 1) pct = pct * 100;
   const earliest = statePlumes.length ? new Date(Math.min(...statePlumes.map(p => p.date.getTime()))) : null;
   return `
     <aside class="glance">
@@ -859,6 +1508,589 @@ function glanceHTML(st, statePlumes) {
     </aside>`;
 }
 
+/* ---------- landfill profile ---------- */
+function aboutHTML(lf) {
+  const unitT = metric => metric ? ' metric tons' : '';
+  const avgKgHr = lf.ghgrp != null && lf.ghgrpCh4 ? lf.ghgrp * 1000 / 8760 : null;
+  const rows = [
+    ['Status', esc(lf.status)],
+    ['Owner', esc(lf.owner)],
+    ['Operator', esc(lf.operator)],
+    ['Ownership', esc(lf.ownership)],
+    ['Location', esc([lf.city, lf.county && lf.county.toLowerCase() !== lf.city.toLowerCase() ? lf.county + ' County' : '', lf.state].filter(Boolean).join(', '))],
+    ['Opened', esc(lf.opened)],
+    ['Expected closure', esc(lf.closure)],
+    ['Waste in place', lf.waste != null ? fmtInt(lf.waste) + unitT(lf.wasteMetric) : ''],
+    ['Capacity used', esc(fmtPct(lf.pctCapacity))],
+    ['Waste accepted each year', lf.acceptance != null ? fmtInt(lf.acceptance) + unitT(lf.acceptanceMetric) : ''],
+    ['Gas collection system', esc(lf.lfg)],
+    ['Flares', esc(lf.flares)],
+    ['Falls under NSPS/EG', esc(lf.nsps)],
+    [lf.ghgrpCh4 ? 'GHGRP methane, 2024' : 'GHGRP emissions', lf.ghgrp != null
+      ? (lf.ghgrpCh4 ? `${fmtNum(lf.ghgrp)} metric tons, an average of about ${fmtInt(avgKgHr)} kg/hr over the year` : fmtInt(lf.ghgrp))
+      : ''],
+    ['Methane as CO2e (AR6, 20-year)', lf.co2e20 != null ? fmtInt(lf.co2e20) + ' metric tons' : ''],
+    ['Climate impact equal to', lf.vehicles != null ? `${fmtInt(lf.vehicles)} passenger vehicles driven for a year` : ''],
+    ['Emissions rank in state', lf.stateRank != null ? `#${fmtInt(lf.stateRank)}${lf.state ? ' in ' + esc(lf.state) : ''}` : ''],
+  ].filter(([, v]) => v);
+  return `
+    <aside class="glance about">
+      <h3>About this landfill</h3>
+      ${rows.length ? `<dl class="kv">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join('')}</dl>` : '<p>No landfill details found in Landfill Reference.</p>'}
+      ${lf.wit ? `<p class="record"><a href="${esc(lf.wit)}" target="_blank" rel="noopener">View ${esc(lf.name)} on Waste Impact Tracker</a></p>` : ''}
+    </aside>`;
+}
+
+const EJ_METRICS = [
+  { key: 'bipoc', prop: 'bipocP', label: 'People of color (BIPOC)' },
+  { key: 'lowIncome', prop: 'lowIncomeP', label: 'Low income' },
+  { key: 'under5', prop: 'under5P', label: 'Children under 5' },
+  { key: 'over64', prop: 'over64P', label: 'Adults over 64' },
+];
+
+// Population-weighted averages across landfill communities, by state and nationally
+function computeEjAverages() {
+  const acc = { national: {}, states: {} };
+  const add = (bucket, key, pop, v) => { bucket[key] = bucket[key] || { w: 0, s: 0 }; bucket[key].w += pop; bucket[key].s += pop * v; };
+  for (const l of LANDFILLS.values()) {
+    if (!l.pop) continue;
+    const st = (l.state || '').toLowerCase();
+    for (const m of EJ_METRICS) {
+      const v = l[m.prop];
+      if (v == null) continue;
+      add(acc.national, m.key, l.pop, v);
+      if (st) { acc.states[st] = acc.states[st] || {}; add(acc.states[st], m.key, l.pop, v); }
+    }
+  }
+  const fin = b => Object.fromEntries(Object.entries(b).map(([k, { w, s }]) => [k, w ? s / w : null]));
+  return { national: fin(acc.national), states: Object.fromEntries(Object.entries(acc.states).map(([k, b]) => [k, fin(b)])) };
+}
+function weightedEj(list) {
+  const out = {};
+  for (const m of EJ_METRICS) {
+    let w = 0, s = 0;
+    for (const l of list) { const v = l[m.prop]; if (l.pop && v != null) { w += l.pop; s += l.pop * v; } }
+    out[m.key] = w ? s / w : null;
+  }
+  return out;
+}
+function stateFor(name) {
+  const n = (name || '').toLowerCase();
+  return STATES.find(s => s.name.toLowerCase() === n || (s.abbr && s.abbr.toLowerCase() === n)) || null;
+}
+// The two reference points for a metric: state + national. General-population benchmarks win when present.
+function ejRefs(key, stateName) {
+  const refs = [];
+  if (stateName) {
+    const st = stateFor(stateName);
+    const bench = st?.bench?.[key];
+    if (bench != null) refs.push({ cls: 'm-state', label: `${stateName} overall`, v: bench });
+    else {
+      const v = EJ_AVG?.states[stateName.toLowerCase()]?.[key];
+      if (v != null) refs.push({ cls: 'm-state', label: `${stateName} landfill communities`, v });
+    }
+  }
+  const nb = CONFIG.nationalBenchmarks[key];
+  if (nb != null) refs.push({ cls: 'm-nat', label: 'U.S. overall', v: nb });
+  else if (EJ_AVG?.national[key] != null) refs.push({ cls: 'm-nat', label: 'All U.S. landfill communities', v: EJ_AVG.national[key] });
+  return refs;
+}
+function cmpText(v, ref) {
+  const d = v - ref.v;
+  if (Math.abs(d) <= ref.v * 0.1) return `about the same as ${esc(ref.label)} (${fmtP(ref.v)})`;
+  return `<strong>${fmtNum(Math.abs(d))} points ${d > 0 ? 'higher' : 'lower'}</strong> than ${esc(ref.label)} (${fmtP(ref.v)})`;
+}
+
+function ejBars(values, stateName, subject = 'This community') {
+  const rows = EJ_METRICS.filter(m => values[m.key] != null).map(m => {
+    const v = values[m.key], refs = ejRefs(m.key, stateName);
+    const top = Math.max(v, ...refs.map(r => r.v));
+    const scale = Math.min(100, Math.max(10, Math.ceil(top * 1.2 / 10) * 10));
+    const pos = x => `${Math.min(100, x / scale * 100).toFixed(2)}%`;
+    const elevated = refs.length && v > refs[0].v * 1.1;
+    return `
+      <div class="ej-row">
+        <div class="ej-head"><span class="ej-label">${esc(m.label)}</span><span class="ej-val${elevated ? ' hot' : ''}">${fmtP(v)}</span></div>
+        <div class="ej-track" role="img" aria-label="${esc(m.label)}: ${fmtP(v)}${refs.map(r => `. ${r.label}: ${fmtP(r.v)}`).join('')}">
+          <div class="ej-fill${elevated ? ' hot' : ''}" style="width:${pos(v)}"></div>
+          ${refs.map(r => `<span class="ej-mark ${r.cls}" style="left:${pos(r.v)}"></span>`).join('')}
+        </div>
+        <div class="ej-scale"><span>0%</span><span>${scale}%</span></div>
+        ${refs.length ? `<p class="ej-cmp">${refs.map(r => cmpText(v, r)).join('; ')}.</p>` : ''}
+      </div>`;
+  });
+  if (!rows.length) return '';
+  const refsAny = ejRefs('bipoc', stateName).length ? ejRefs('bipoc', stateName) : ejRefs('lowIncome', stateName);
+  const general = refsAny.some(r => / overall$/.test(r.label));
+  return `
+    <div class="ej-bars">${rows.join('')}</div>
+    <div class="legend">
+      <span><i style="background:var(--bar)"></i>${esc(subject)}</span>
+      ${stateName ? `<span><i class="lg-mark" style="background:var(--ink)"></i>${esc(stateName)}</span>` : ''}
+      <span><i class="lg-mark" style="background:var(--teal)"></i>United States</span>
+    </div>
+    <p class="note" style="margin-top:8px">${general
+      ? 'Comparisons are with the general population, from the benchmark fields in State Data and CONFIG.'
+      : 'Comparisons are population-weighted averages across all landfill communities in FCF’s tracker, since general-population benchmarks haven’t been added yet.'} Values within 10% of a comparison count as about the same; coral marks a value more than 10% above the ${stateName ? 'state' : 'national'} comparison.</p>`;
+}
+
+function communityHTML(lf) {
+  const vals = Object.fromEntries(EJ_METRICS.map(m => [m.key, lf[m.prop]]));
+  const bars = ejBars(vals, lf.state || '');
+  if (lf.pop == null && !bars) return '';
+  return `
+    <section class="block">
+      <h3>People living nearby</h3>
+      <p class="note">Census tracts within 5 miles of the landfill, from FCF’s landfill tracker.</p>
+      ${lf.pop != null ? `<p class="ej-pop"><span>${fmtInt(lf.pop)}</span> people live within 5 miles</p>` : ''}
+      ${bars}
+    </section>`;
+}
+
+function historyStrip(h) {
+  const chars = (h || '').padEnd(12, ' ').slice(0, 12).split('');
+  const ordered = CONFIG.echoHistoryNewestFirst ? chars.reverse() : chars;
+  const cls = c => c === 'S' ? 'q-s' : c === 'V' ? 'q-v' : c === '_' ? 'q-ok' : 'q-na';
+  const word = c => c === 'S' ? 'significant violation' : c === 'V' ? 'violation' : c === '_' ? 'no violation' : 'no data';
+  return `<div class="qstrip" role="img" aria-label="${ordered.map((c, i) => `Quarter ${i + 1}: ${word(c)}`).join('; ')}">${ordered.map(c => `<span class="q ${cls(c)}"></span>`).join('')}</div>`;
+}
+
+function echoSection(lf) {
+  const ec = echoFor(lf);
+  if (!ec) {
+    return ECHO_LOADED ? `
+    <section class="block">
+      <h3>EPA compliance record</h3>
+      <p class="note">${lf.frs ? `No row in the ECHO table matches this landfill’s FRS ID (${esc(lf.frs)}).` : 'This landfill has no FRS ID in Landfill Reference, so it can’t be matched to ECHO.'}</p>
+    </section>` : '';
+  }
+  const labels = [ec.severity && `${ec.severity} severity`, ec.continuity, ec.repeat ? 'Repeat offender' : ''].filter(Boolean);
+  const failed = /^error/i.test(ec.pullStatus);
+  const hist = ec.programs.filter(pr => pr.history);
+  const statusRows = ec.programs.filter(pr => pr.status && !/^\d+(\.\d+)?$/.test(pr.status));
+  return `
+    <section class="block">
+      <h3>EPA compliance record</h3>
+      <p class="note">From EPA’s ECHO database for FRS ID ${esc(ec.frs || lf.frs)}${ec.facName ? ` (${esc(ec.facName)})` : ''}. Inspection and enforcement counts cover the last five years; violation quarters cover the last three.</p>
+      <div class="echo-head">
+        ${echoBadge(ec, false)}
+        ${ec.status && ECHO_LEVEL_TEXT[ec.level].toLowerCase() !== ec.status.toLowerCase() ? `<span class="echo-status">${esc(ec.status)}</span>` : ''}
+        ${labels.map(l => `<span class="tag">${esc(l)}</span>`).join('')}
+      </div>
+      <dl class="stats">
+        <div class="stat"><dt>Quarters in violation</dt><dd class="${ec.qtrsNC ? 'hot' : ''}">${ec.qtrsNC == null ? '—' : fmtInt(ec.qtrsNC)} <small>of 12</small></dd><span class="sub">last 3 years</span></div>
+        <div class="stat"><dt>Inspections</dt><dd>${fmtInt(ec.inspections)}</dd><span class="sub">${ec.lastInspection ? 'last on ' + esc(fmtDate(ec.lastInspection)) : 'last 5 years'}</span></div>
+        <div class="stat"><dt>Formal enforcement actions</dt><dd>${fmtInt(ec.formal)}</dd><span class="sub">${ec.lastFormal ? 'last on ' + esc(fmtDate(ec.lastFormal)) : (ec.informal != null ? fmtInt(ec.informal) + ' informal' : 'last 5 years')}</span></div>
+        <div class="stat"><dt>Penalties</dt><dd>${fmtMoney(ec.penalties)}</dd><span class="sub">${ec.lastPenaltyDate ? 'last on ' + esc(fmtDate(ec.lastPenaltyDate)) + (ec.lastPenaltyAmt ? ', ' + fmtMoney(ec.lastPenaltyAmt) : '') : 'last 5 years'}</span></div>
+      </dl>
+      ${hist.length ? `
+      <div class="qhist">
+        <h4>Three years of compliance, by quarter</h4>
+        ${hist.map(pr => `<div class="qrow"><span class="qname">${esc(pr.name)}</span>${historyStrip(pr.history)}<span class="qcount">${pr.qtrs != null ? plural(pr.qtrs, 'quarter') + ' in violation' : ''}</span></div>`).join('')}
+        <div class="qaxis"><span></span><span>Oldest</span><span>Most recent</span></div>
+        <div class="legend"><span><i class="q q-s"></i>Significant violation</span><span><i class="q q-v"></i>Violation</span><span><i class="q q-ok"></i>No violation</span><span><i class="q q-na"></i>No data</span></div>
+      </div>` : ''}
+      ${statusRows.length ? `<dl class="kv echo-kv">${statusRows.map(pr => `<dt>${esc(pr.name)}</dt><dd>${esc(pr.status)}</dd>`).join('')}</dl>` : ''}
+      <p class="record">${[
+        ec.url ? `<a href="${esc(ec.url)}" target="_blank" rel="noopener">EPA Detailed Facility Report</a>.` : '',
+        ec.lastPull ? `ECHO data pulled ${esc(ec.lastPull)}.` : '',
+        failed ? '<strong class="warn-inline">The most recent refresh for this facility failed, so these figures may be out of date.</strong>' : '',
+      ].filter(Boolean).join(' ')}</p>
+    </section>`;
+}
+
+function buildLandfillReport() {
+  const lf = LANDFILLS.get(SELECTED_LF);
+  if (!lf) { startMessage(); return; }
+  const all = PLUMES.filter(p => p.lfId === lf.id).sort((a, b) => b.date - a.date);
+  let range;
+  try { range = getRange(all); } catch (e) { setStatus(e.message, 'error'); return; }
+  if ($('#status').classList.contains('error')) restoreStatus();
+  const { start, end, days } = range;
+
+  const plumes = all.filter(p => p.date >= start && p.date <= end);
+  const prevCount = days ? all.filter(p => p.date >= addDays(start, -days) && p.date < start).length : null;
+  const clusters = computeClusters(plumes);
+  const passes = new Set(plumes.map(p => p.scene)).size;
+  const quantified = plumes.filter(p => p.rate != null);
+  const hot = plumes.filter(isHot);
+  const largest = quantified.length ? quantified.reduce((a, b) => (b.rate > a.rate ? b : a)) : null;
+  const allQuant = all.filter(p => p.rate != null);
+  const largestEver = allQuant.length ? allQuant.reduce((a, b) => (b.rate > a.rate ? b : a)) : null;
+  const med = median(quantified.map(p => p.rate));
+  const unq = plumes.length - quantified.length;
+  const firstEver = all.length ? all[all.length - 1].date : null;
+  const lastEver = all.length ? all[0].date : null;
+
+  CURRENT = { downloads: [
+    { label: 'Landfill data CSV', filename: `${lf.name}_landfill_data`, rows: () => landfillCsvRows([lf], start, end) },
+    { label: 'Plumes CSV', filename: `${lf.name}_plumes_${ymd(start)}_to_${ymd(end)}`, rows: () => plumeCsvRows(plumes), disabled: !plumes.length },
+  ] };
+
+  const periodText = `${fmtDate(start)} to ${fmtDate(end)}`;
+  const where = [lf.city, lf.state].filter(Boolean).join(', ');
+  const head = headHTML(lf.name, [
+    esc([where, lf.owner].filter(Boolean).join('. ')),
+    `Landfill methane plumes, ${esc(periodText)}`,
+  ], [
+    lf.wit ? `<a class="btn" href="${esc(lf.wit)}" target="_blank" rel="noopener">Waste Impact Tracker</a>` : '',
+    echoFor(lf)?.url ? `<a class="btn" href="${esc(echoFor(lf).url)}" target="_blank" rel="noopener">EPA ECHO report</a>` : '',
+  ].join(''));
+
+  let lead;
+  if (plumes.length) {
+    lead = `Between ${esc(fmtDate(start))} and ${esc(fmtDate(end))}, Carbon Mapper detected <strong>${plural(plumes.length, 'methane plume')}</strong> at ${esc(lf.name)}${passes > 1 ? ` across <strong>${plural(passes, 'satellite pass', 'satellite passes')}</strong>` : ''}.`;
+    if (hot.length) lead += ` <strong>${hot.length.toLocaleString('en-US')}</strong> ${hot.length === 1 ? 'was' : 'were'} at or above the ${CONFIG.superEmitterKgHr} kg/hr super-emitter threshold.`;
+    if (largest) lead += ` The largest, on ${esc(fmtDate(largest.date))}, was estimated at <strong>${esc(fmtRate(largest.rate))}</strong>.`;
+    if (clusters.length) lead += ` ${clusters.length === 1 ? 'One pass' : clusters.length + ' passes'} caught more than one plume rising from the landfill at once.`;
+    if (all.length > plumes.length) lead += ` There are ${plural(all.length, 'plume')} on record here since ${esc(fmtDate(firstEver))}.`;
+  } else {
+    lead = `Carbon Mapper didn’t detect any plumes at ${esc(lf.name)} between ${esc(fmtDate(start))} and ${esc(fmtDate(end))}.`;
+    lead += all.length
+      ? ` There ${all.length === 1 ? 'is' : 'are'} ${plural(all.length, 'plume')} on record here, most recently on ${esc(fmtDate(lastEver))}. Choose “All plumes on record” to see ${all.length === 1 ? 'it' : 'them'}.`
+      : ` There are no plumes at this landfill in FCF’s records.`;
+  }
+
+  const ecLead = echoFor(lf);
+  if (ecLead && ecLead.level === 'sig') lead += ` EPA’s ECHO database lists the facility in <strong>significant violation</strong>${ecLead.qtrsNC ? `, with violations in ${plural(ecLead.qtrsNC, 'quarter')} of the last 12` : ''}.`;
+  else if (ecLead && ecLead.qtrsNC) lead += ` EPA’s ECHO database records violations in ${plural(ecLead.qtrsNC, 'quarter')} of the last 12.`;
+  const prevSub = prevCount == null ? 'all plumes on record' : `${prevCount.toLocaleString('en-US')} in the previous ${days} days`;
+  const stats = plumes.length ? `
+    <dl class="stats">
+      <div class="stat"><dt>Plumes detected</dt><dd>${plumes.length.toLocaleString('en-US')}</dd><span class="sub">${esc(prevSub)}</span></div>
+      <div class="stat"><dt>Satellite passes with plumes</dt><dd>${passes.toLocaleString('en-US')}</dd><span class="sub">${plural(all.length, 'plume')} on record</span></div>
+      <div class="stat"><dt>Super-emitter plumes</dt><dd class="${hot.length ? 'hot' : ''}">${hot.length.toLocaleString('en-US')}</dd><span class="sub">${CONFIG.superEmitterKgHr} kg/hr or more</span></div>
+      <div class="stat"><dt>Largest plume</dt><dd class="${largest && isHot(largest) ? 'hot' : ''}">${largest ? fmtRateNum(largest.rate) + ' <small>kg/hr</small>' : '—'}</dd><span class="sub">${largest ? esc(fmtDate(largest.date)) : 'none quantified yet'}</span></div>
+      <div class="stat"><dt>Median plume</dt><dd>${med == null ? '—' : fmtRateNum(med) + ' <small>kg/hr</small>'}</dd><span class="sub">${quantified.length} quantified${unq ? `, ${unq} not yet quantified` : ''}</span></div>
+      <div class="stat"><dt>Plume clusters</dt><dd>${clusters.length.toLocaleString('en-US')}</dd><span class="sub">${clusters.length ? plural(clusters.reduce((n, c) => n + c.length, 0), 'plume') + ' in clusters' : 'one plume per pass'}</span></div>
+    </dl>` : '';
+
+  const card = plumes.length
+    ? largestCard(largest, { showLandfill: false })
+    : largestEver
+      ? largestCard(largestEver, { title: 'Largest plume on record', showLandfill: false })
+      : `<article class="panel largest"><div class="body"><h3>Plumes</h3><p>No plumes detected at this landfill in FCF’s records.</p></div></article>`;
+
+  const gallery = plumes.length ? `
+    <section class="block">
+      <h3>Plume images</h3>
+      <p class="note">Each plume on a satellite map${plumes.length > 24 ? `. Showing the 24 most recent of ${plumes.length}.` : '.'}</p>
+      <div class="cl-grid">${plumes.slice(0, 24).map(p => `
+        <figure class="cl-fig${p.image ? '' : ' noimg'}">${imgTag(p, 'Plume ' + p.name)}
+          <figcaption>${esc(fmtDate(p.date))}<br><a href="${esc(p.portal)}" target="_blank" rel="noopener">${esc(p.name)}</a><br><span class="rate${isHot(p) ? ' hot' : ''}">${esc(fmtRate(p.rate))}</span></figcaption>
+        </figure>`).join('')}</div>
+    </section>` : '';
+
+  const missingNote = LF_MISSING.length
+    ? `<p class="foot noprint">Not shown because these Landfill Reference fields weren’t found: ${esc(LF_MISSING.join(', '))}.</p>` : '';
+
+  $('#report').innerHTML = head +
+    `<p class="lead">${lead}</p>` + stats +
+    `<div class="split">${card}${aboutHTML(lf)}</div>` +
+    communityHTML(lf) + echoSection(lf) +
+    (plumes.length ? chartSection(plumes, start, end) + clusterSection(clusters, { showLandfill: false }) + gallery +
+      `<section class="block"><h3>All plumes</h3><p class="note">Plume IDs link to the Carbon Mapper data portal.</p><div class="tablewrap" id="plumeTable"></div></section>` : '') +
+    footHTML() + missingNote;
+
+  if (plumes.length) sortableTable($('#plumeTable'), plumeColumns({ showLandfill: false }), plumes, 'date', 'desc');
+  wireActions();
+}
+
+/* ---------- data explorer ---------- */
+const EX_METRICS = [
+  { key: 'count', label: 'Number of landfills', agg: 'count', groupOnly: true },
+  { key: 'waste', label: 'Waste in place (metric tons)', agg: 'sum', get: l => l.waste },
+  { key: 'acceptance', label: 'Waste accepted each year', agg: 'sum', get: l => l.acceptance },
+  { key: 'ghgrp', label: 'GHGRP methane (metric tons)', agg: 'sum', get: l => l.ghgrp },
+  { key: 'co2e20', label: 'Methane CO2e, AR6 20-yr (metric tons)', agg: 'sum', get: l => l.co2e20 },
+  { key: 'pop', label: 'People within 5 miles', agg: 'sum', get: l => l.pop },
+  { key: 'bipoc', label: '% BIPOC within 5 miles', agg: 'wpct', pct: true, get: l => l.bipocP },
+  { key: 'lowIncome', label: '% low income within 5 miles', agg: 'wpct', pct: true, get: l => l.lowIncomeP },
+  { key: 'under5', label: '% under 5 within 5 miles', agg: 'wpct', pct: true, get: l => l.under5P },
+  { key: 'over64', label: '% over 64 within 5 miles', agg: 'wpct', pct: true, get: l => l.over64P },
+  { key: 'capP', label: '% of capacity used', agg: 'mean', pct: true, get: l => l.capP },
+  { key: 'opened', label: 'Year opened', agg: 'none', get: l => l.openedN },
+  { key: 'plumesAll', label: 'Plumes on record', agg: 'sum', get: l => l.plumesAll },
+  { key: 'plumesPeriod', label: 'Plumes in period', agg: 'sum', get: l => l.plumesPeriod },
+  { key: 'largest', label: 'Largest plume (kg/hr)', agg: 'max', get: l => l.largestRate },
+  { key: 'qtrsNC', label: 'Quarters in violation (ECHO, 3 yrs)', agg: 'sum', get: l => echoFor(l)?.qtrsNC ?? null },
+  { key: 'formal', label: 'Formal enforcement actions (ECHO, 5 yrs)', agg: 'sum', get: l => echoFor(l)?.formal ?? null },
+  { key: 'penalties', label: 'Penalties (ECHO, 5 yrs, $)', agg: 'sum', get: l => echoFor(l)?.penalties ?? null },
+  { key: 'inspections', label: 'Inspections (ECHO, 5 yrs)', agg: 'sum', get: l => echoFor(l)?.inspections ?? null },
+  { key: 'severityScore', label: 'ECHO severity score', agg: 'max', get: l => echoFor(l)?.severityScore ?? null },
+];
+const exMetric = k => EX_METRICS.find(m => m.key === k);
+const fmtMetric = (m, v) => v == null ? '—' : m.key === 'penalties' ? fmtMoney(v) : m.pct ? fmtP(v) : m.key === 'opened' ? String(v) : m.key === 'largest' ? fmtRateNum(v) : fmtInt(v);
+
+function fillExplorerOptions() {
+  const uniq = f => [...new Set([...LANDFILLS.values()].map(f).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  const opts = (vals) => '<option value="">Any</option>' + vals.map(v => `<option>${esc(v)}</option>`).join('');
+  $('#exStatus').innerHTML = opts(uniq(l => l.status));
+  $('#exOwnership').innerHTML = opts(uniq(l => l.ownership));
+  $('#ownerList').innerHTML = uniq(l => l.owner).map(v => `<option value="${esc(v)}">`).join('');
+  const conts = [...new Set([...ECHO_BY_FRS.values(), ...ECHO_BY_LF.values()].map(e => e.continuity).filter(Boolean))].sort();
+  $('#exContinuity').innerHTML = opts(conts);
+  $('#exEchoWrap').hidden = !ECHO_LOADED;
+  $('#exContWrap').hidden = !ECHO_LOADED;
+  $('#exRank').innerHTML = EX_METRICS.filter(m => m.agg !== 'none').map(m => `<option value="${m.key}">${esc(m.label)}</option>`).join('');
+  restoreExplorer();
+}
+
+function condRow(c = {}) {
+  const row = document.createElement('div');
+  row.className = 'cond';
+  row.innerHTML = `
+    <select class="c-field" aria-label="Measure">${EX_METRICS.filter(m => !m.groupOnly).map(m => `<option value="${m.key}"${m.key === c.f ? ' selected' : ''}>${esc(m.label)}</option>`).join('')}</select>
+    <select class="c-op" aria-label="Comparison"><option value="gte"${c.op !== 'lte' ? ' selected' : ''}>at least</option><option value="lte"${c.op === 'lte' ? ' selected' : ''}>at most</option></select>
+    <input class="c-val" type="number" step="any" aria-label="Value" value="${c.v ?? ''}">
+    <button type="button" class="c-del" aria-label="Remove this condition">×</button>`;
+  return row;
+}
+
+function readExplorer() {
+  return {
+    owner: $('#exOwner').value.trim(),
+    status: $('#exStatus').value, ownership: $('#exOwnership').value, lfg: $('#exLfg').value,
+    plumes: $('#exPlumes').value, group: $('#exGroup').value, rank: $('#exRank').value,
+    echo: $('#exEcho').value, continuity: $('#exContinuity').value,
+    conds: [...document.querySelectorAll('#exConds .cond')].map(r => ({ f: r.querySelector('.c-field').value, op: r.querySelector('.c-op').value, v: r.querySelector('.c-val').value }))
+      .filter(c => c.v !== ''),
+    allConds: [...document.querySelectorAll('#exConds .cond')].map(r => ({ f: r.querySelector('.c-field').value, op: r.querySelector('.c-op').value, v: r.querySelector('.c-val').value })),
+  };
+}
+function saveExplorer() { const e = readExplorer(); store.set('fcf_plume_report_explorer', JSON.stringify({ ...e, conds: e.allConds })); }
+function restoreExplorer() {
+  let e = {};
+  try { e = JSON.parse(store.get('fcf_plume_report_explorer') || '{}'); } catch (x) {}
+  $('#exOwner').value = e.owner || '';
+  ['status', 'ownership', 'lfg', 'plumes', 'group', 'echo', 'continuity'].forEach(k => {
+    const el = $('#ex' + k[0].toUpperCase() + k.slice(1));
+    if (e[k] && [...el.options].some(o => o.value === e[k])) el.value = e[k];
+  });
+  $('#exRank').value = e.rank && exMetric(e.rank) ? e.rank : 'waste';
+  $('#exConds').innerHTML = '';
+  (e.conds || []).forEach(c => $('#exConds').appendChild(condRow(c)));
+}
+function clearExplorer() {
+  $('#exOwner').value = '';
+  ['#exStatus', '#exOwnership', '#exLfg', '#exPlumes', '#exGroup', '#exEcho', '#exContinuity'].forEach(s => { $(s).value = ''; });
+  $('#exRank').value = 'waste';
+  $('#exConds').innerHTML = '';
+  $('#state').value = NATIONAL;
+}
+
+function aggregate(m, list) {
+  if (m.agg === 'count') return list.length;
+  const vals = list.map(l => [l, m.get(l)]).filter(([, v]) => v != null);
+  if (!vals.length) return null;
+  if (m.agg === 'sum') return vals.reduce((s, [, v]) => s + v, 0);
+  if (m.agg === 'max') return Math.max(...vals.map(([, v]) => v));
+  if (m.agg === 'mean') return vals.reduce((s, [, v]) => s + v, 0) / vals.length;
+  if (m.agg === 'wpct') { let w = 0, s = 0; vals.forEach(([l, v]) => { if (l.pop) { w += l.pop; s += l.pop * v; } }); return w ? s / w : null; }
+  return null;
+}
+
+function hbarChart(items, m) {
+  if (!items.length) return '';
+  const rowH = 30, W = 720, LW = 250, RW = 96, H = items.length * rowH + 8;
+  const max = Math.max(...items.map(i => i.v || 0)) || 1;
+  const trunc = s => s.length > 34 ? s.slice(0, 33) + '…' : s;
+  const bars = items.map((it, i) => {
+    const y = i * rowH + 4, w = Math.max(2, ((it.v || 0) / max) * (W - LW - RW));
+    return `<text class="lbl hb-l" x="${LW - 10}" y="${y + rowH / 2}" text-anchor="end" dominant-baseline="middle">${esc(trunc(it.label))}</text>
+      <rect class="${it.hot ? 'b-hot' : 'b-other'}" x="${LW}" y="${y + 5}" width="${w}" height="${rowH - 12}" rx="2"/>
+      <text class="cnt" x="${LW + w + 8}" y="${y + rowH / 2}" dominant-baseline="middle">${esc(fmtMetric(m, it.v))}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(m.label)}: ${esc(items.map(i => `${i.label} ${fmtMetric(m, i.v)}`).join(', '))}">${bars}</svg>`;
+}
+
+function buildExplorer() {
+  if (!LF_ALL_LOADED) return;
+  const e = readExplorer();
+  saveExplorer();
+  const stSel = $('#state').value;
+  const st = stSel && stSel !== NATIONAL ? STATES.find(s => s.id === stSel) : null;
+  let range;
+  try { range = getRange(PLUMES); } catch (x) { setStatus(x.message, 'error'); return; }
+  if ($('#status').classList.contains('error')) restoreStatus();
+  const { start, end } = range;
+
+  // per-landfill plume figures
+  const rows = [...LANDFILLS.values()].filter(l => l.name).map(l => {
+    const ps = LF_PLUMES.get(l.id) || [];
+    const rates = ps.filter(p => p.rate != null).map(p => p.rate);
+    return Object.assign(l, {
+      plumesAll: ps.length,
+      plumesPeriod: ps.filter(p => p.date >= start && p.date <= end).length,
+      largestRate: rates.length ? Math.max(...rates) : null,
+    });
+  });
+
+  const ownerQ = e.owner.toLowerCase();
+  const matches = rows.filter(l => {
+    if (st && !(l.state.toLowerCase() === st.name.toLowerCase() || (st.abbr && l.stateAbbr.toLowerCase() === st.abbr.toLowerCase()))) return false;
+    if (ownerQ && !l.owner.toLowerCase().includes(ownerQ)) return false;
+    if (e.status && l.status !== e.status) return false;
+    if (e.ownership && l.ownership !== e.ownership) return false;
+    if (e.lfg && l.lfg !== e.lfg) return false;
+    if (e.plumes === 'any' && !l.plumesAll) return false;
+    if (e.plumes === 'period' && !l.plumesPeriod) return false;
+    if (e.plumes === 'none' && l.plumesAll) return false;
+    if (e.echo || e.continuity) {
+      const ec = echoFor(l);
+      if (e.echo === 'sig' && ec?.level !== 'sig') return false;
+      if (e.echo === 'any' && !(ec && (ec.level === 'sig' || ec.level === 'viol' || ec.qtrsNC > 0))) return false;
+      if (e.echo === 'none' && !(ec && ec.level === 'none' && !ec.qtrsNC)) return false;
+      if (e.echo === 'matched' && !ec) return false;
+      if (e.continuity && ec?.continuity !== e.continuity) return false;
+    }
+    for (const c of e.conds) {
+      const v = exMetric(c.f)?.get(l), t = Number(c.v);
+      if (v == null || !Number.isFinite(t)) return false;
+      if (c.op === 'gte' ? v < t : v > t) return false;
+    }
+    return true;
+  });
+
+  // describe the selection
+  const parts = [];
+  if (e.status) parts.push(e.status.toLowerCase());
+  if (e.ownership) parts.push(e.ownership.toLowerCase());
+  const title = (e.owner || parts.length || st) ? `${e.owner ? e.owner + ' ' : ''}${parts.length ? parts.join(', ') + ' ' : ''}landfills${st ? ' in ' + st.name : ''}` : 'All landfills';
+  const filterText = [
+    e.lfg ? `Gas collection system: ${e.lfg.toLowerCase()}` : '',
+    e.echo === 'sig' ? 'In significant violation (ECHO)' : e.echo === 'any' ? 'With ECHO violations in the last 3 years' : e.echo === 'none' ? 'No ECHO violations' : e.echo === 'matched' ? 'Matched to ECHO' : '',
+    e.continuity ? `ECHO pattern: ${e.continuity}` : '',
+    e.plumes === 'any' ? 'With plumes on record' : e.plumes === 'period' ? 'With plumes in this period' : e.plumes === 'none' ? 'No plumes on record' : '',
+    ...e.conds.map(c => { const m = exMetric(c.f); return `${m.label} ${c.op === 'gte' ? 'at least' : 'at most'} ${m.pct ? fmtP(Number(c.v)) : Number(c.v).toLocaleString('en-US')}`; }),
+  ].filter(Boolean);
+  const periodText = `${fmtDate(start)} to ${fmtDate(end)}`;
+
+  CURRENT = { downloads: [
+    { label: 'Landfills CSV', filename: title.replace(/^./, c => c.toUpperCase()), rows: () => landfillCsvRows(matches, start, end), disabled: !matches.length },
+  ] };
+
+  const head = headHTML(title.replace(/^./, c => c.toUpperCase()), [
+    filterText.length ? esc(filterText.join('. ')) : '',
+    `Plume counts for ${esc(periodText)} and on record`,
+  ]);
+
+  if (!matches.length) {
+    $('#report').innerHTML = head + `<div class="empty"><h3>No landfills match</h3><p>Try removing a filter or loosening a condition.</p></div>`;
+    wireActions();
+    return;
+  }
+
+  const tot = k => aggregate(exMetric(k), matches);
+  const withPlumes = matches.filter(l => l.plumesAll).length;
+  const ownersN = new Set(matches.map(l => l.owner.toLowerCase()).filter(Boolean)).size;
+  const statesN = new Set(matches.map(l => l.state).filter(Boolean)).size;
+  let lead = `<strong>${plural(matches.length, 'landfill')}</strong> match${matches.length === 1 ? 'es' : ''}`;
+  lead += st ? '.' : `, across ${plural(statesN, 'state')}.`;
+  if (tot('waste') != null) lead += ` Together they hold <strong>${fmtInt(tot('waste'))} metric tons</strong> of waste`;
+  if (tot('ghgrp') != null) lead += `${tot('waste') != null ? ' and' : ' Together they'} reported <strong>${fmtInt(tot('ghgrp'))} metric tons</strong> of methane to the GHGRP`;
+  if (tot('waste') != null || tot('ghgrp') != null) lead += '.';
+  const sigN = matches.filter(l => echoFor(l)?.level === 'sig').length;
+  if (ECHO_LOADED && sigN) lead += ` <strong>${sigN.toLocaleString('en-US')}</strong> ${sigN === 1 ? 'is' : 'are'} in significant violation according to EPA’s ECHO database.`;
+  lead += ` ${withPlumes ? `<strong>${withPlumes.toLocaleString('en-US')}</strong> of them ${withPlumes === 1 ? 'has' : 'have'} plumes on record, with <strong>${plural(tot('plumesPeriod') || 0, 'plume')}</strong> between ${esc(fmtDate(start))} and ${esc(fmtDate(end))}.` : 'None has plumes on record.'}`;
+
+  const stats = `
+    <dl class="stats">
+      <div class="stat"><dt>Landfills</dt><dd>${matches.length.toLocaleString('en-US')}</dd><span class="sub">${plural(ownersN, 'owner')}${st ? '' : ', ' + plural(statesN, 'state')}</span></div>
+      <div class="stat"><dt>Waste in place</dt><dd>${fmtInt(tot('waste'))}</dd><span class="sub">metric tons</span></div>
+      <div class="stat"><dt>GHGRP methane</dt><dd>${fmtInt(tot('ghgrp'))}</dd><span class="sub">metric tons reported</span></div>
+      <div class="stat"><dt>People within 5 miles</dt><dd>${fmtInt(tot('pop'))}</dd><span class="sub">added across landfills</span></div>
+      <div class="stat"><dt>With plumes on record</dt><dd>${withPlumes.toLocaleString('en-US')}</dd><span class="sub">${plural(tot('plumesAll') || 0, 'plume')} in total</span></div>
+      <div class="stat"><dt>Plumes in period</dt><dd class="${tot('plumesPeriod') ? 'hot' : ''}">${(tot('plumesPeriod') || 0).toLocaleString('en-US')}</dd><span class="sub">${esc(periodText)}</span></div>
+    </dl>`;
+
+  // grouping + chart
+  const rankM = exMetric(e.rank) || exMetric('waste');
+  let groups = null, chartItems;
+  if (e.group) {
+    const keyOf = { owner: l => l.owner, state: l => l.state, status: l => l.status, ownership: l => l.ownership }[e.group];
+    const gMap = new Map();
+    matches.forEach(l => { const label = keyOf(l) || 'Not recorded'; const k = label.toLowerCase(); if (!gMap.has(k)) gMap.set(k, { label, list: [] }); gMap.get(k).list.push(l); });
+    groups = [...gMap.values()].map(g => ({ ...g, rank: aggregate(rankM, g.list) }))
+      .sort((a, b) => (b.rank ?? -1) - (a.rank ?? -1));
+    chartItems = groups.slice(0, 15).map(g => ({ label: g.label, v: g.rank }));
+  } else {
+    const m = rankM.groupOnly ? exMetric('waste') : rankM;
+    chartItems = matches.filter(l => m.get(l) != null).sort((a, b) => m.get(b) - m.get(a)).slice(0, 15)
+      .map(l => ({ label: l.name + (st ? '' : `, ${l.stateAbbr || l.state}`), v: m.get(l), hot: l.plumesPeriod > 0 }));
+  }
+  const chartM = !e.group && rankM.groupOnly ? exMetric('waste') : rankM;
+  const groupNames = { owner: 'owner', state: 'state', status: 'status', ownership: 'ownership type' };
+  const chart = chartItems.length ? `
+    <section class="block chart">
+      <h3>${esc(e.group ? `${chartM.label}, by ${groupNames[e.group]}` : `Top landfills by ${chartM.label.replace(/^./, c => c.toLowerCase())}`)}</h3>
+      <p class="note">${e.group ? `The ${Math.min(15, groups.length)} largest of ${plural(groups.length, groupNames[e.group])}.${chartM.agg === 'wpct' ? ' Percentages are weighted by population.' : ''}` : `The top ${chartItems.length} matching landfills. Coral bars had plumes in this period.`} Change “Rank by” to compare a different measure.</p>
+      ${hbarChart(chartItems, chartM)}
+    </section>` : '';
+
+  const ejVals = weightedEj(matches);
+  const ejHtml = EJ_METRICS.some(m => ejVals[m.key] != null) ? `
+    <section class="block">
+      <h3>Communities near these landfills</h3>
+      <p class="note">Population-weighted across the ${plural(matches.length, 'matching landfill')}${st ? '' : ', compared with all landfill communities nationally'}.</p>
+      ${ejBars(ejVals, st ? st.name : null, 'These landfills')}
+    </section>` : '';
+
+  const groupTable = groups ? `<section class="block"><h3>By ${esc(groupNames[e.group])}</h3><p class="note">Select a column heading to re-sort. “Filter” narrows the explorer to that ${esc(groupNames[e.group])}.</p><div class="tablewrap" id="exGroupTable"></div></section>` : '';
+
+  $('#report').innerHTML = head + `<p class="lead">${lead}</p>` + stats + chart + ejHtml + groupTable +
+    `<section class="block"><h3>Matching landfills</h3><p class="note">Landfill names link to Waste Impact Tracker, and Profile opens the full landfill profile.</p><div class="tablewrap" id="exTable"></div></section>` +
+    `<p class="foot">Landfill data from FCF’s landfill tracker in Airtable; plume data from Carbon Mapper. People within 5 miles are added across landfills, so someone living near two landfills is counted twice. Built ${esc(fmtDateTime(new Date()))}.</p>`;
+
+  if (groups) {
+    const canFilter = e.group === 'owner' || e.group === 'state' || e.group === 'status' || e.group === 'ownership';
+    sortableTable($('#exGroupTable'), [
+      { key: 'label', label: groupNames[e.group].replace(/^./, c => c.toUpperCase()), value: g => g.label.toLowerCase(), html: g => esc(g.label) + (canFilter && g.label !== 'Not recorded' ? ` <button type="button" class="mini noprint" data-ex-filter="${esc(g.label)}">Filter</button>` : '') },
+      { key: 'n', label: 'Landfills', num: true, value: g => g.list.length, html: g => g.list.length },
+      { key: 'waste', label: 'Waste in place', num: true, value: g => aggregate(exMetric('waste'), g.list) ?? -1, html: g => fmtInt(aggregate(exMetric('waste'), g.list)) },
+      { key: 'ghgrp', label: 'GHGRP methane', num: true, value: g => aggregate(exMetric('ghgrp'), g.list) ?? -1, html: g => fmtInt(aggregate(exMetric('ghgrp'), g.list)) },
+      { key: 'pop', label: 'People within 5 mi', num: true, value: g => aggregate(exMetric('pop'), g.list) ?? -1, html: g => fmtInt(aggregate(exMetric('pop'), g.list)) },
+      { key: 'bipoc', label: '% BIPOC', num: true, value: g => aggregate(exMetric('bipoc'), g.list) ?? -1, html: g => fmtP(aggregate(exMetric('bipoc'), g.list)) },
+      ...(ECHO_LOADED ? [{ key: 'sig', label: 'Significant violators', num: true, value: g => g.list.filter(l => echoFor(l)?.level === 'sig').length, html: g => g.list.filter(l => echoFor(l)?.level === 'sig').length }] : []),
+      { key: 'withPl', label: 'With plumes', num: true, value: g => g.list.filter(l => l.plumesAll).length, html: g => g.list.filter(l => l.plumesAll).length },
+      { key: 'plP', label: 'Plumes in period', num: true, value: g => aggregate(exMetric('plumesPeriod'), g.list) || 0, html: g => aggregate(exMetric('plumesPeriod'), g.list) || 0 },
+    ], groups, 'n', 'desc', 300);
+  }
+
+  sortableTable($('#exTable'), [
+    { key: 'name', label: 'Landfill', value: l => l.name.toLowerCase(), html: l => lfLink(l.name, l.wit) + profileBtn(l.id) },
+    ...(st ? [] : [{ key: 'state', label: 'State', value: l => (l.state || '').toLowerCase(), html: l => esc(l.stateAbbr || l.state || '—') }]),
+    { key: 'owner', label: 'Owner', value: l => l.owner.toLowerCase(), html: l => esc(l.owner || '—') },
+    { key: 'status', label: 'Status', value: l => l.status.toLowerCase(), html: l => esc(l.status || '—') },
+    { key: 'waste', label: 'Waste in place', num: true, value: l => l.waste ?? -1, html: l => fmtInt(l.waste) },
+    { key: 'ghgrp', label: 'GHGRP methane', num: true, value: l => l.ghgrp ?? -1, html: l => fmtInt(l.ghgrp) },
+    { key: 'pop', label: 'People within 5 mi', num: true, value: l => l.pop ?? -1, html: l => fmtInt(l.pop) },
+    { key: 'bipoc', label: '% BIPOC', num: true, value: l => l.bipocP ?? -1, html: l => fmtP(l.bipocP) },
+    { key: 'lowIncome', label: '% low income', num: true, value: l => l.lowIncomeP ?? -1, html: l => fmtP(l.lowIncomeP) },
+    ...(ECHO_LOADED ? [
+      { key: 'echo', label: 'EPA compliance', value: l => ({ sig: 3, viol: 2, none: 1 }[echoFor(l)?.level] || 0), html: l => echoBadge(echoFor(l)) },
+      { key: 'qtrsNC', label: 'Quarters in violation', num: true, value: l => echoFor(l)?.qtrsNC ?? -1, html: l => fmtInt(echoFor(l)?.qtrsNC) },
+    ] : []),
+    { key: 'plumesPeriod', label: 'Plumes in period', num: true, value: l => l.plumesPeriod, html: l => l.plumesPeriod, hot: l => l.plumesPeriod > 0 },
+    { key: 'plumesAll', label: 'Plumes on record', num: true, value: l => l.plumesAll, html: l => l.plumesAll },
+    { key: 'largest', label: 'Largest (kg/hr)', num: true, value: l => l.largestRate ?? -1, html: l => fmtRateNum(l.largestRate), hot: l => l.largestRate != null && l.largestRate >= CONFIG.superEmitterKgHr },
+  ], matches, rankM.groupOnly || rankM.agg === 'none' ? 'waste' : ({ capP: 'waste', acceptance: 'waste', co2e20: 'ghgrp', under5: 'bipoc', over64: 'bipoc', largest: 'largest', formal: ECHO_LOADED ? 'qtrsNC' : 'waste', penalties: ECHO_LOADED ? 'qtrsNC' : 'waste', inspections: ECHO_LOADED ? 'qtrsNC' : 'waste', severityScore: ECHO_LOADED ? 'qtrsNC' : 'waste', qtrsNC: ECHO_LOADED ? 'qtrsNC' : 'waste' }[rankM.key] || rankM.key), 'desc', 300);
+
+  wireActions();
+}
+
+function applyGroupFilter(label) {
+  const g = $('#exGroup').value;
+  if (g === 'owner') $('#exOwner').value = label;
+  else if (g === 'status') $('#exStatus').value = label;
+  else if (g === 'ownership') $('#exOwnership').value = label;
+  else if (g === 'state') { const st = stateFor(label); if (st) $('#state').value = st.id; }
+  $('#exGroup').value = '';
+  buildExplorer();
+  window.scrollTo({ top: 0 });
+}
+
+/* ---------- chart, tables, export ---------- */
 function chartSVG(plumes, start, end) {
   const weekly = (end - start) / 864e5 <= 62;
   const buckets = [];
@@ -896,19 +2128,21 @@ function chartSVG(plumes, start, end) {
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Plumes per ${weekly ? 'week' : 'month'}. ${esc(summary)}">${g}</svg>`;
 }
 
-function sortableTable(container, cols, rows, key, dir) {
+function sortableTable(container, cols, rows, key, dir, limit = Infinity) {
   function render() {
     const c = cols.find(c => c.key === key);
-    const sorted = [...rows].sort((a, b) => {
+    const sortedAll = [...rows].sort((a, b) => {
       const va = c.value(a), vb = c.value(b);
       const r = va < vb ? -1 : va > vb ? 1 : 0;
       return dir === 'asc' ? r : -r;
     });
+    const sorted = sortedAll.slice(0, limit);
     container.innerHTML = `<table><thead><tr>${cols.map(c => `
       <th class="${c.num ? 'num' : ''}" ${c.key === key ? `aria-sort="${dir === 'asc' ? 'ascending' : 'descending'}"` : ''}>
         <button type="button" data-key="${c.key}">${esc(c.label)}${c.key === key ? (dir === 'asc' ? ' ▲' : ' ▼') : ''}</button>
       </th>`).join('')}</tr></thead>
-      <tbody>${sorted.map(r => `<tr>${cols.map(c => `<td class="${[c.num ? 'num' : '', c.cls || '', c.hot && c.hot(r) ? 'hot' : ''].join(' ').trim()}">${c.html(r)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+      <tbody>${sorted.map(r => `<tr>${cols.map(c => `<td class="${[c.num ? 'num' : '', c.cls || '', c.hot && c.hot(r) ? 'hot' : ''].join(' ').trim()}">${c.html(r)}</td>`).join('')}</tr>`).join('')}</tbody></table>` +
+      (sortedAll.length > sorted.length ? `<p class="note" style="margin-top:10px">Showing the first ${sorted.length.toLocaleString('en-US')} of ${sortedAll.length.toLocaleString('en-US')}. Download the CSV for all of them.</p>` : '');
     container.querySelectorAll('th button').forEach(btn => btn.addEventListener('click', () => {
       const k = btn.dataset.key;
       if (k === key) dir = dir === 'asc' ? 'desc' : 'asc';
@@ -921,20 +2155,191 @@ function sortableTable(container, cols, rows, key, dir) {
 }
 
 function wireActions() {
+  $('#shareBtn')?.addEventListener('click', copyShareLink);
+  $('#snapBtn')?.addEventListener('click', saveSnapshot);
   $('#printBtn')?.addEventListener('click', () => window.print());
-  $('#csvBtn')?.addEventListener('click', downloadCSV);
+  document.querySelectorAll('#report [data-dl]').forEach(b => b.addEventListener('click', () => downloadCSV(CURRENT.downloads[+b.dataset.dl])));
 }
 
-function downloadCSV() {
-  if (!CURRENT) return;
-  const { st, start, end, plumes } = CURRENT;
+/* ---------- CSV exports: row 1 = column names, row 2 = what each column means ---------- */
+const LR_DESCRIPTIONS = [
+  [/^landfill name$/, 'Landfill name in FCF’s landfill tracker (Landfill Reference).'],
+  [/alias/, 'Other names the landfill is known by.'],
+  [/industrious labs id/, 'Landfill identifier from Industrious Labs.'],
+  [/lmop/, 'ID in EPA’s Landfill Methane Outreach Program (LMOP) database.'],
+  [/ghgrp id|facility id/, 'Facility ID in EPA’s Greenhouse Gas Reporting Program (GHGRP).'],
+  [/^frs id/, 'EPA Facility Registry Service ID. Used to match the landfill to its ECHO compliance record.'],
+  [/^landfill id$/, 'Landfill ID in FCF’s landfill tracker.'],
+  [/state abbreviation/, 'Two-letter state code.'],
+  [/^state( name)?$/, 'State where the landfill is located.'],
+  [/^city$/, 'City where the landfill is located.'],
+  [/^county$/, 'County where the landfill is located.'],
+  [/address/, 'Street address of the landfill.'],
+  [/zip/, 'ZIP code of the landfill.'],
+  [/latitude/, 'Latitude of the landfill.'],
+  [/longitude/, 'Longitude of the landfill.'],
+  [/owner/, 'Organization(s) that own the landfill.'],
+  [/operator/, 'Organization that operates the landfill.'],
+  [/ownership type/, 'Whether the landfill is publicly or privately owned.'],
+  [/landfill status/, 'Whether the landfill is open or closed.'],
+  [/year landfill opened/, 'Year the landfill opened.'],
+  [/closure year/, 'Year the landfill is expected to close.'],
+  [/waste in place/, 'Total waste in the landfill, in the units shown in the column name.'],
+  [/% of capacity/, 'Share of the landfill’s design capacity that has been used.'],
+  [/waste acceptance/, 'Waste the landfill accepts each year, in the units shown in the column name.'],
+  [/lfg collection/, 'Whether a landfill gas collection system is in place.'],
+  [/flares/, 'Whether flares are in place to burn collected landfill gas.'],
+  [/nsps/, 'Whether the landfill falls under EPA’s New Source Performance Standards or Emission Guidelines for landfills.'],
+  [/ghgrp.*methane|methane.*ghgrp/, 'Methane emissions the facility reported to EPA’s GHGRP, in the units shown in the column name.'],
+  [/ar4.*100|100.*ar4/, 'Reported methane converted to CO2-equivalent using the IPCC AR4 100-year global warming potential.'],
+  [/ar6.*20|20.*ar6/, 'Reported methane converted to CO2-equivalent using the IPCC AR6 20-year global warming potential.'],
+  [/passenger vehicles/, 'Number of passenger vehicles driven for a year that would have the same climate impact as the reported methane.'],
+  [/rank of facility within state/, 'The facility’s emissions rank among landfills in its state.'],
+  [/population/, 'People living in census tracts within 5 miles of the landfill.'],
+  [/^%/, 'Share of people within 5 miles of the landfill in this group.'],
+  [/wit url/, 'Link to the landfill’s page on FCF’s Waste Impact Tracker.'],
+];
+const ECHO_DESCRIPTIONS = {
+  'Landfill Name': 'Facility name in the ECHO table.',
+  'Last ECHO Pull': 'When FCF last pulled this facility’s data from ECHO.',
+  'ECHO Pull Status': 'Whether FCF’s last pull from ECHO succeeded. An error means the figures may be out of date.',
+  'FacSNCFlg': 'Y if EPA currently lists the facility in significant noncompliance or as a high-priority violator in any program.',
+  'FacQtrsWithNC': 'Number of the last 12 quarters (3 years) with noncompliance in any program.',
+  'FacComplianceStatus': 'The facility’s current overall compliance status in ECHO.',
+  'FacComplianceStatus_Derived': 'Overall compliance status worked out by FCF from the program statuses.',
+  'CAAComplianceStatus': 'Current compliance status under the Clean Air Act.',
+  'CWAComplianceStatus': 'Current compliance status under the Clean Water Act.',
+  'RCRAComplianceStatus': 'Current compliance status under the Resource Conservation and Recovery Act (hazardous waste).',
+  'SDWAComplianceStatus': 'Current compliance status under the Safe Drinking Water Act.',
+  'FacInspectionCount': 'Inspections and compliance evaluations in the last 5 years, all programs.',
+  'FacInformalCount': 'Informal enforcement actions (such as notices of violation) in the last 5 years.',
+  'CAAInformalCount': 'Informal Clean Air Act enforcement actions in the last 5 years.',
+  'FacFormalActionCount': 'Formal enforcement actions (such as orders and penalties) in the last 5 years.',
+  'CAAFormalActionCount': 'Formal Clean Air Act enforcement actions in the last 5 years.',
+  'RCRAFormalActionCount': 'Formal RCRA enforcement actions in the last 5 years.',
+  'SDWAFormalActionCount': 'Formal Safe Drinking Water Act enforcement actions in the last 5 years.',
+  'FacTotalPenalties': 'Total penalties from formal enforcement actions in the last 5 years, all programs.',
+  'FacDateLastPenalty': 'Date of the most recent penalty.',
+  'FacLastPenaltyAmt': 'Amount of the most recent penalty.',
+  'CAAPenalties': 'Clean Air Act penalties in the last 5 years.',
+  'CWAPenalties': 'Clean Water Act penalties in the last 5 years.',
+  'RCRAPenalties': 'RCRA penalties in the last 5 years.',
+  'ECHO URL': 'Link to EPA’s Detailed Facility Report, the full ECHO record for this facility.',
+  'FacDateLastInspection': 'Date of the most recent inspection.',
+  'FacDateLastFormalAction': 'Date of the most recent formal enforcement action.',
+  'CAADateLastFormalAction': 'Date of the most recent formal Clean Air Act enforcement action.',
+  'CAALastPenaltyDate': 'Date of the most recent Clean Air Act penalty.',
+  'CAALastPenaltyAmt': 'Amount of the most recent Clean Air Act penalty.',
+  'CWAInspectionCount': 'Clean Water Act inspections in the last 5 years.',
+  'RCRAInspectionCount': 'RCRA inspections in the last 5 years.',
+  'CAAEvaluationCount': 'Clean Air Act compliance evaluations in the last 5 years.',
+  'CAAHpvFlag': 'Y if the facility is a Clean Air Act high-priority violator.',
+  'CAA3yrComplQtrsHistory': 'Clean Air Act status for each of the last 12 quarters: S = significant violation, V = violation, _ = none.',
+  'RCRA3yrComplQtrsHistory': 'RCRA status for each of the last 12 quarters: S = significant violation, V = violation, _ = none.',
+  'SDWA3yrComplQtrsHistory': 'Safe Drinking Water Act status for each of the last 12 quarters: S = significant violation, V = violation, _ = none.',
+  'CWAComplianceTracking': 'Whether Clean Water Act compliance is tracked for this facility (On/Off).',
+  'CAAViolationQtrs': 'Quarters with Clean Air Act violations in the last 3 years.',
+  'RCRAViolationQtrs': 'Quarters with RCRA violations in the last 3 years.',
+  'SDWAViolationQtrs': 'Quarters with Safe Drinking Water Act violations in the last 3 years.',
+  'Has_Air_Violation': 'FCF flag: 1 if the facility has Clean Air Act violations.',
+  'Has_Water_Violation': 'FCF flag: 1 if the facility has Clean Water Act violations.',
+  'Has_RCRA_Violation': 'FCF flag: 1 if the facility has RCRA violations.',
+  'Has_SDWA_Violation': 'FCF flag: 1 if the facility has Safe Drinking Water Act violations.',
+  'Any_Offense': 'FCF flag: 1 if the facility has any recorded violation or enforcement.',
+  'Continuity_Label': 'FCF label for how persistent the violations are (Chronic, Recurrent or Isolated).',
+  'Severity_Score': 'FCF severity score for the compliance record (higher is more severe).',
+  'Severity_Label': 'FCF severity label for the compliance record (High, Medium or Low).',
+  'Repeat_Offender': 'FCF flag: 1 if the facility is a repeat offender.',
+  'Violation_Programs_Summary': 'Programs with violations (Air, Water, RCRA, Drinking water).',
+};
+const ECHO_SKIP = /^(frs id|frs id clean|state abbreviation|state name|landfill alias|city|county|landfill owner organization\(s\)|landfill operator organization|year landfill opened|falls under nsps\/eg|landfill reference|updated frs id|date frs id last modified|echo changes|summary \(echo changes\)|headline \(echo changes\))$|\(from landfill reference\)/i;
+
+function cellText(v) {
+  if (v == null) return '';
+  if (Array.isArray(v)) return v.map(cellText).filter(Boolean).join('; ');
+  if (typeof v === 'object') return v.name || v.url || v.email || '';
+  if (typeof v === 'boolean') return v ? 'Yes' : 'No';
+  return String(v);
+}
+const REC_ID = /^rec[A-Za-z0-9]{14}$/;
+const isRecIds = v => Array.isArray(v) ? v.length > 0 && v.every(x => typeof x === 'string' && REC_ID.test(x)) : typeof v === 'string' && REC_ID.test(v);
+function usefulKeys(objs) {
+  const keys = new Set();
+  objs.forEach(o => Object.keys(o || {}).forEach(k => keys.add(k)));
+  return [...keys].filter(k => objs.some(o => { const v = o?.[k]; return v != null && v !== '' && !isRecIds(v); }));
+}
+const lrDescIndex = k => { const n = normKey(k); const i = LR_DESCRIPTIONS.findIndex(([re]) => re.test(n)); return i < 0 ? 999 : i; };
+const lrDesc = k => { const i = lrDescIndex(k); return i < 999 ? LR_DESCRIPTIONS[i][1] : 'Field from FCF’s Landfill Reference table in Airtable.'; };
+
+function landfillCsvRows(list, start, end) {
+  const byLf = new Map();
+  PLUMES.forEach(p => { if (p.lfId) { if (!byLf.has(p.lfId)) byLf.set(p.lfId, []); byLf.get(p.lfId).push(p); } });
+  const lrKeys = usefulKeys(list.map(l => l.raw)).sort((a, b) => lrDescIndex(a) - lrDescIndex(b) || a.localeCompare(b));
+  const echoOrder = Object.keys(ECHO_DESCRIPTIONS);
+  const ecKeys = usefulKeys(list.map(l => echoFor(l)?.raw)).filter(k => !ECHO_SKIP.test(k))
+    .sort((a, b) => ((echoOrder.indexOf(a) + 1) || 999) - ((echoOrder.indexOf(b) + 1) || 999) || a.localeCompare(b));
+  const period = `${ymd(start)} to ${ymd(end)}`;
+  const stats = l => {
+    const ps = byLf.get(l.id) || [];
+    const inP = ps.filter(p => p.date >= start && p.date <= end);
+    const q = ps.filter(p => p.rate != null);
+    const big = q.length ? q.reduce((a, b) => (b.rate > a.rate ? b : a)) : null;
+    const latest = ps.length ? ps.reduce((a, b) => (b.date > a.date ? b : a)) : null;
+    return { ps, inP, big, latest };
+  };
+  const comp = [
+    ['Plumes on record', 'Carbon Mapper methane plumes matched to this landfill in FCF’s Airtable, all dates.', (l, x) => x.ps.length],
+    [`Plumes ${period}`, `Carbon Mapper plumes detected at this landfill between ${period}.`, (l, x) => x.inP.length],
+    [`Super-emitter plumes ${period}`, `Plumes of ${CONFIG.superEmitterKgHr} kg/hr or more between ${period}.`, (l, x) => x.inP.filter(isHot).length],
+    ['Largest plume on record (kg/hr)', 'Highest estimated emission rate of any plume at this landfill, in kilograms of methane per hour.', (l, x) => x.big ? x.big.rate : ''],
+    ['Largest plume date', 'Date of the largest plume, in UTC.', (l, x) => x.big ? x.big.date.toISOString().slice(0, 10) : ''],
+    ['Largest plume link', 'The largest plume on the Carbon Mapper data portal.', (l, x) => x.big ? x.big.portal : ''],
+    ['Most recent plume date', 'Date of the most recent plume, in UTC.', (l, x) => x.latest ? x.latest.date.toISOString().slice(0, 10) : ''],
+    ['Plume clusters on record', 'Satellite passes that caught two or more plumes at this landfill at once.', (l, x) => computeClusters(x.ps).length],
+    ['FCF report link', 'Opens this landfill’s profile in FCF’s report tool (team password needed).', l => `${location.origin}${location.pathname}?view=landfill&landfill=${l.id}`],
+  ];
+  const tidy = k => k.replace(/\s+/g, ' ').trim();   // some tracker column names contain line breaks
+  const names = [...lrKeys.map(tidy), ...ecKeys.map(k => 'ECHO: ' + tidy(k)), ...comp.map(c => c[0])];
+  const descs = [...lrKeys.map(lrDesc), ...ecKeys.map(k => ECHO_DESCRIPTIONS[k] || 'Field from FCF’s ECHO table in Airtable.'), ...comp.map(c => c[1])];
+  const rows = list.map(l => {
+    const ec = echoFor(l), x = stats(l);
+    return [...lrKeys.map(k => cellText(l.raw?.[k])), ...ecKeys.map(k => cellText(ec?.raw?.[k])), ...comp.map(c => c[2](l, x))];
+  });
+  return [names, descs, ...rows];
+}
+
+function plumeCsvRows(plumes) {
+  const cols = [
+    ['Plume ID', 'Carbon Mapper plume ID. Everything before the final letter is the scene ID.', p => p.name],
+    ['Detected (UTC)', 'Date and time of the detection, in UTC.', p => p.date.toISOString()],
+    ['State', 'State the plume was matched to.', p => p.stateName],
+    ['Landfill', 'Landfill the plume was matched to by FCF.', p => p.landfill],
+    ['Owner', 'Organization(s) that own the landfill.', p => p.owner],
+    ['Landfill status', 'Whether the landfill is open or closed.', p => landfillInfo(p).status],
+    ['Emissions (kg/hr)', 'Carbon Mapper’s estimated emission rate in kilograms of methane per hour. Blank means not yet quantified.', p => p.rate ?? ''],
+    ['Uncertainty (kg/hr)', 'Carbon Mapper’s uncertainty for the emission rate, plus or minus.', p => p.unc ?? ''],
+    ['Super-emitter', `Yes if the plume is ${CONFIG.superEmitterKgHr} kg/hr or more.`, p => isHot(p) ? 'Yes' : 'No'],
+    ['Instrument', 'Satellite or aircraft instrument that detected the plume.', p => p.platform],
+    ['Scene ID', 'Carbon Mapper scene. Plumes sharing a scene ID at one landfill form a cluster.', p => p.scene],
+    ['Carbon Mapper link', 'The plume on the Carbon Mapper data portal.', p => p.portal],
+    ['FRS ID', 'EPA Facility Registry Service ID of the landfill.', p => LANDFILLS.get(p.lfId)?.frs || ''],
+    ['EPA compliance status', 'The landfill’s current overall compliance status in EPA’s ECHO database.', p => landfillInfo(p).echo?.status || ''],
+    ['EPA ECHO report', 'Link to EPA’s Detailed Facility Report for the landfill.', p => landfillInfo(p).echo?.url || ''],
+    ['Waste Impact Tracker', 'The landfill’s page on FCF’s Waste Impact Tracker.', p => landfillInfo(p).wit],
+  ];
+  return [cols.map(c => c[0]), cols.map(c => c[1]), ...plumes.map(p => cols.map(c => c[2](p)))];
+}
+
+function downloadCSV(d) {
+  if (!d) return;
+  const rows = d.rows();
+  if (rows.length < 3) return;
   const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const rows = [['plume_id', 'detected_utc', 'state', 'landfill', 'owner', 'landfill_status', 'emissions_kg_hr', 'uncertainty_kg_hr', 'instrument', 'scene_id', 'carbon_mapper_url', 'wit_url']]
-    .concat(plumes.map(p => { const i = landfillInfo(p); return [p.name, p.date.toISOString(), p.stateName, p.landfill, p.owner, i.status, p.rate ?? '', p.unc ?? '', p.platform, p.scene, p.portal, i.wit]; }));
-  const blob = new Blob([rows.map(r => r.map(q).join(',')).join('\r\n')], { type: 'text/csv' });
+  // BOM so Excel reads the ’ and accented characters correctly
+  const blob = new Blob(['\ufeff' + rows.map(r => r.map(q).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `${(CURRENT.national ? 'National' : st.name).replace(/[^a-z0-9]+/gi, '_')}_plumes_${ymd(start)}_to_${ymd(end)}.csv`;
+  a.download = `${d.filename.replace(/[^a-z0-9]+/gi, '_')}.csv`;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
@@ -965,14 +2370,58 @@ function toggleCustom() {
   const savedPreset = store.get('fcf_plume_report_preset');
   if (savedPreset && [...$('#preset').options].some(o => o.value === savedPreset)) $('#preset').value = savedPreset;
   toggleCustom();
+  applyMode();
+
+  document.querySelectorAll('.modes [data-mode]').forEach(b => b.addEventListener('click', () => { if (b.dataset.mode !== MODE) setMode(b.dataset.mode); }));
 
   $('#preset').addEventListener('change', () => {
     toggleCustom();
     store.set('fcf_plume_report_preset', $('#preset').value);
-    if ($('#preset').value !== 'custom' && $('#state').value) buildReport();
+    if ($('#preset').value === 'custom') return;
+    if (MODE === 'explore' || (MODE === 'state' ? $('#state').value : SELECTED_LF)) buildReport();
   });
-  $('#state').addEventListener('change', () => { if ($('#state').value) buildReport(); });
-  $('#form').addEventListener('submit', e => { e.preventDefault(); buildReport(); });
+  $('#state').addEventListener('change', () => { if ($('#state').value || MODE === 'explore') buildReport(); });
+  $('#form').addEventListener('submit', e => {
+    e.preventDefault();
+    if (MODE === 'landfill' && !$('#lfResults').hidden) {
+      const firstBtn = $('#lfResults button[data-pick]');
+      if (firstBtn) { pickLandfill(firstBtn.dataset.pick); return; }
+    }
+    buildReport();
+  });
+
+  // landfill search
+  $('#lfq').addEventListener('input', renderResults);
+  $('#lfq').addEventListener('focus', () => { if ($('#lfq').value && SELECTED_LF && LANDFILLS.get(SELECTED_LF)?.name === $('#lfq').value) $('#lfq').select(); else renderResults(); });
+  $('#lfq').addEventListener('keydown', e => {
+    if (e.key === 'Escape') hideResults();
+    if (e.key === 'ArrowDown') { const b = $('#lfResults button'); if (b) { e.preventDefault(); b.focus(); } }
+  });
+  $('#lfResults').addEventListener('keydown', e => {
+    const btns = [...$('#lfResults').querySelectorAll('button')];
+    const i = btns.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' && i < btns.length - 1) { e.preventDefault(); btns[i + 1].focus(); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); (i > 0 ? btns[i - 1] : $('#lfq')).focus(); }
+    if (e.key === 'Escape') { hideResults(); $('#lfq').focus(); }
+  });
+  $('#lfResults').addEventListener('click', e => { const b = e.target.closest('[data-pick]'); if (b) pickLandfill(b.dataset.pick); });
+  $('#onlyPlumes').addEventListener('change', () => { $('#lfq').focus(); renderResults(); });
+  document.addEventListener('click', e => { if (!e.target.closest('.lf-search') && !e.target.closest('#onlyPlumesWrap')) hideResults(); });
+
+  // "Profile" and "Filter" buttons inside reports
+  $('#report').addEventListener('click', e => {
+    const b = e.target.closest('[data-open-lf]'); if (b) { openLandfill(b.dataset.openLf); return; }
+    const f = e.target.closest('[data-ex-filter]'); if (f) applyGroupFilter(f.dataset.exFilter);
+  });
+
+  // explorer filters update the results as you change them
+  let exTimer;
+  const exUpdate = () => { clearTimeout(exTimer); exTimer = setTimeout(() => { if (MODE === 'explore') buildExplorer(); }, 250); };
+  $('#exFilters').addEventListener('input', exUpdate);
+  $('#exFilters').addEventListener('change', exUpdate);
+  $('#exAddCond').addEventListener('click', () => { const r = condRow({ f: 'waste' }); $('#exConds').appendChild(r); r.querySelector('.c-val').focus(); });
+  $('#exConds').addEventListener('click', e => { const d = e.target.closest('.c-del'); if (d) { d.closest('.cond').remove(); exUpdate(); } });
+  $('#exReset').addEventListener('click', () => { clearExplorer(); buildExplorer(); });
 
   $('#connectBtn').addEventListener('click', async () => {
     const v = $('#token').value.trim();
@@ -988,6 +2437,7 @@ function toggleCustom() {
     $('#token').value = '';
     loadData();
   });
+  $('#token').addEventListener('keydown', e => { if (e.key === 'Enter') $('#connectBtn').click(); });
   $('#modeSwitch').addEventListener('click', () => { usePassword = !usePassword; setStatus(''); showConnect(); });
 
   $('#setupBtn').addEventListener('click', async () => {
@@ -1009,11 +2459,12 @@ function toggleCustom() {
     try { await navigator.clipboard.writeText($('#setupOut').value); setStatus('Locked token copied.'); }
     catch (e) { $('#setupOut').select(); setStatus('Press Ctrl+C (or Cmd+C) to copy the selected text.'); }
   });
-  $('#token').addEventListener('keydown', e => { if (e.key === 'Enter') $('#connectBtn').click(); });
+
   $('#reload').addEventListener('click', loadData);
   $('#disconnect').addEventListener('click', () => {
     store.del(TOKEN_KEY); token = null; STATES = []; PLUMES = []; CURRENT = null;
-    $('#form').hidden = true; $('#meta').hidden = true; showConnect();
+    LANDFILLS = new Map(); LF_ALL_LOADED = false; LF_INDEX = [];
+    showTools(false); showConnect();
     $('#report').innerHTML = '';
     setStatus('Disconnected. The token was removed from this browser.');
   });
