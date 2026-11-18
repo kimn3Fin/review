@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Landfill data tools: team quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --page: #F4EFE9; --surface: #FFFFFF; --ink: #2A1D3D; --text: #2F2A36; --muted: #5C5566;
+    --line: #E5DDD4; --line-strong: #C4B5A4; --focus: #E6674F;
+    --ok: #0A6E61; --ok-s: #E3F2EF; --bad: #A63E28; --bad-s: #FCEDEA;
+    --btn: #2A1D3D; --btn-text: #FFFFFF; --primary: #066B5E;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #1B1426; --surface: #251C33; --ink: #F4EFE9; --text: #E9E3EE; --muted: #B8AEC4;
+      --line: #3A2F4A; --line-strong: #54466A; --ok: #6FD3BF; --ok-s: #17322E; --bad: #F2A08E; --bad-s: #3A1E1A;
+      --btn: #F4EFE9; --btn-text: #2A1D3D; --primary: #6FD3BF;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #1B1426; --surface: #251C33; --ink: #F4EFE9; --text: #E9E3EE; --muted: #B8AEC4;
+    --line: #3A2F4A; --line-strong: #54466A; --ok: #6FD3BF; --ok-s: #17322E; --bad: #F2A08E; --bad-s: #3A1E1A;
+    --btn: #F4EFE9; --btn-text: #2A1D3D; --primary: #6FD3BF;
+    color-scheme: dark;
+  }
+  :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 70px); }
+  *, *::before, *::after { box-sizing: inherit; }
+  body { margin: 0; background: var(--page); color: var(--text); font-family: Alexandria, "Segoe UI", Arial, sans-serif; font-size: 17px; line-height: 1.6; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--page); }
+  a { color: inherit; text-underline-offset: 3px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 22px 80px; }
+
+  /* header and progress */
+  header.top { padding: 40px 0 18px; }
+  h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; font-weight: 700; color: var(--ink); margin: 0 0 12px; letter-spacing: -0.01em; }
+  .lede { max-width: 640px; margin: 0 0 18px; font-size: 18px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; font-size: 15px; color: var(--muted); }
+  .meta a { color: var(--ink); font-weight: 600; }
+  .who { display: inline-flex; align-items: center; gap: 8px; color: var(--text); }
+  .who img { width: 26px; height: 26px; border-radius: 50%; }
+  .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--page); padding: 14px 0 14px; margin-top: 10px; border-bottom: 1px solid var(--line); }
+  .strip { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; }
+  .strip a { display: block; min-width: 0; text-decoration: none; }
+  .strip .seg { display: block; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+  .strip .seg i { display: block; height: 100%; width: 0; background: var(--c); transition: width .3s ease; }
+  .strip small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .save { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; margin-top: 12px; font-size: 14px; color: var(--muted); }
+  .tabs { display: flex; gap: 8px; }
+  .tab { font: inherit; font-size: 14px; font-weight: 600; padding: 5px 14px; border-radius: 999px; border: 1.5px solid var(--line-strong); background: transparent; color: var(--text); cursor: pointer; }
+  .tab[aria-pressed="true"] { background: var(--btn); color: var(--btn-text); border-color: var(--btn); }
+
+  /* sections */
+  section.part { margin-top: 34px; background: var(--surface); border: 1px solid var(--line-strong); border-top: 6px solid var(--c); border-radius: 4px; }
+  .part-head { padding: 18px 22px 6px; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 3px 12px; border-radius: 999px; background: var(--c); color: var(--ct, #fff); }
+  .part-head h2 { margin: 10px 0 2px; font-size: 24px; line-height: 1.2; color: var(--ink); }
+  .part-head .time { font-size: 14px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+  .use { margin: 4px 0 0; color: var(--text); }
+  .use strong { color: var(--ink); }
+  .q { padding: 16px 22px; border-top: 1px solid var(--line); }
+  .q:first-of-type { border-top: 0; }
+  .q label.prompt, .q legend { display: block; font-weight: 600; color: var(--ink); margin-bottom: 8px; padding: 0; }
+  .q .qid { display: inline-block; min-width: 2.6em; color: var(--muted); font-weight: 500; }
+  .q .help { display: block; font-weight: 400; font-size: 14px; color: var(--muted); margin-top: 2px; }
+  .q.tryit { background: color-mix(in srgb, var(--c) 7%, var(--surface)); }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  input[type=text], input[type=url], textarea, select {
+    width: 100%; font: inherit; font-size: 16px; color: var(--text); background: var(--surface);
+    border: 1.5px solid var(--line-strong); border-radius: 6px; padding: 9px 12px; }
+  textarea { min-height: 84px; resize: vertical; }
+  .opts { display: grid; gap: 6px; }
+  .opt { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 6px; cursor: pointer; }
+  .opt:hover { border-color: var(--line-strong); }
+  .opt input { margin-top: 5px; accent-color: var(--ink); width: 17px; height: 17px; flex: 0 0 auto; }
+  .opt:has(input:checked) { border-color: var(--ink); background: color-mix(in srgb, var(--ink) 6%, var(--surface)); }
+  .opt .mark { margin-left: auto; font-weight: 700; padding-left: 10px; }
+  .opt.is-right { border-color: var(--ok); background: var(--ok-s); }
+  .opt.is-right .mark { color: var(--ok); }
+  .opt.is-wrong { border-color: var(--bad); background: var(--bad-s); }
+  .opt.is-wrong .mark { color: var(--bad); }
+  .opt.is-off { opacity: .6; }
+  .opt:has(input:disabled) { cursor: default; }
+  .fb { margin: 10px 0 0; padding: 10px 14px; border-radius: 6px; font-size: 15.5px; }
+  .fb-right { background: var(--ok-s); color: var(--text); border-left: 4px solid var(--ok); }
+  .fb-wrong { background: var(--bad-s); color: var(--text); border-left: 4px solid var(--bad); }
+  .fb strong { color: var(--ink); }
+  .grid2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .row-label { font-size: 14px; color: var(--muted); margin: 10px 0 4px; display: block; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  /* footer actions */
+  .done { margin-top: 34px; padding: 22px; border: 2px solid var(--ink); border-radius: 4px; background: var(--surface); }
+  .done h2 { margin: 0 0 6px; color: var(--ink); font-size: 22px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 700; font-size: 16px; padding: 11px 22px; border-radius: 6px; border: 0; cursor: pointer; background: var(--btn); color: var(--btn-text); }
+  .btn.primary { background: var(--primary); color: #fff; }
+  :root[data-theme="dark"] .btn.primary { color: #12221F; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #12221F; } }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .note { font-size: 15px; color: var(--muted); }
+  .notice { margin-top: 18px; padding: 12px 16px; border-left: 4px solid var(--focus); background: var(--surface); }
+
+  /* responses view */
+  .resp-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line-strong); margin-top: 18px; font-size: 15px; }
+  .resp-table th, .resp-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .resp-table th { color: var(--ink); font-weight: 600; }
+  .resp-table tr.person { cursor: pointer; }
+  .resp-table tr.person:hover td { background: color-mix(in srgb, var(--ink) 4%, var(--surface)); }
+  .score { font-weight: 700; color: var(--ink); }
+  .pill { font-size: 13px; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: var(--ok-s); color: var(--ok); white-space: nowrap; }
+  .pill.wip { background: var(--line); color: var(--muted); }
+  .detail td { background: var(--page); }
+  .detail dl { margin: 0; display: grid; grid-template-columns: 6em 1fr; gap: 6px 12px; }
+  .detail dt { color: var(--muted); font-weight: 600; }
+  .detail dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .right { color: var(--ok); font-weight: 600; } .wrong { color: var(--bad); font-weight: 600; }
+  .tablewrap { overflow-x: auto; }
+  [hidden] { display: none !important; }
+  @media (min-width: 680px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .strip small { display: none; } .part-head, .q { padding-left: 16px; padding-right: 16px; } }
+  @media (prefers-reduced-motion: reduce) { .strip .seg i { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Landfill data tools: team quiz</h1>
+    <p class="lede">Try all five tools in about 30 minutes. Each tool has one hands-on task and two quick questions on how and when to use it. Multiple-choice answers lock once you pick one, and you’ll see the right answer and why. Your answers save on this computer as you go, and go to Kim when you press Submit.</p>
+    <div class="meta">
+      <a href="https://kimn3fin.github.io/review/plume-report.html" target="_blank" rel="noopener">Open the landfill data tools</a>
+      <span>Kim sends the password separately</span>
+      <span class="who" id="who" hidden></span>
+    </div>
+  </header>
+
+  <div class="bar" id="bar">
+    <div class="strip" id="strip"></div>
+    <div class="save"><span id="saveState">Loading your saved answers…</span>
+      <span class="tabs" id="tabs" hidden><button type="button" class="tab" id="tabQuiz" aria-pressed="true">Quiz</button><button type="button" class="tab" id="tabResp" aria-pressed="false">Responses</button></span></div>
+  </div>
+
+  <section class="part" style="--c:#2A1D3D" id="sec-you">
+    <div class="part-head"><span class="tag">You</span><h2>Who’s answering</h2></div>
+    <div class="q grid2">
+      <div><label class="prompt" for="youName">Your name</label><input type="text" id="youName" autocomplete="name"></div>
+      <div><label class="prompt" for="youEmail">Your work email</label><input type="text" id="youEmail" autocomplete="email" inputmode="email"></div>
+    </div>
+  </section>
+  <main id="quiz"></main>
+  <div id="responses" hidden></div>
+</div>
+
+<script>
+// ------------------------------------------------------------------ settings
+// Paste the web app URL from your Google Apps Script deployment between the quotes.
+const SHEET_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+const DRAFT_KEY = 'fcf_landfill_tools_quiz_v1';
+
+// ------------------------------------------------------------------ the quiz
+const TOOLS = ['State & national report', 'Landfill profile', 'Data explorer', 'People near landfills', 'Emissions scenarios'];
+const SECTIONS = [
+  { id: 'warm', tag: 'Warm-up', title: 'Getting in', time: '2 minutes', c: '#5C5566', items: [
+    { id: 'A1', type: 'text', prompt: 'Open the tools and unlock them with the team password. How long did the data take to load?' },
+    { id: 'A2', type: 'text', prompt: 'On the home page, find the data status list. How many methane plumes are loaded, and when was the latest one detected?' },
+  ]},
+  { id: 'state', tag: 'State & national report', title: 'State & national report', time: '4 minutes', c: '#F4BD42', ct: '#2A1D3D',
+    use: 'the big picture for one state or the whole country, across all four datasets at once.', items: [
+    { id: 'B1', type: 'try', prompt: 'For Michigan, last 90 days: how many plumes were detected at landfills, which landfill had the largest, and how large was it in kg/hr?' },
+    { id: 'B2', type: 'choice', prompt: 'What does the warning-triangle “Super-emitter” flag next to a plume mean?', options: ['The plume was 100 kg/hr or more', 'The landfill also has an EPA violation', 'The plume was detected twice in one day', 'It’s the state’s largest plume on record'], key: 0, why: 'EPA treats 100 kg/hr or more as a super-emitter, and the flag appears on any plume at or above that rate.' },
+    { id: 'B3', type: 'choice', prompt: 'What does changing the plume period at the top of the report change?', options: ['The years of EPA compliance data shown', 'Which plumes are counted in the plume figures', 'The year of the population figures', 'Every figure in the report'], key: 1, why: 'Only the plume figures follow the period. Landfill, compliance and community figures stay the same whatever dates you pick.' },
+  ]},
+  { id: 'profile', tag: 'Landfill profile', title: 'Landfill profile', time: '4 minutes', c: '#2A1D3D',
+    use: 'everything about one landfill, such as a fact sheet for a partner or a briefing before a meeting.', items: [
+    { id: 'C1', type: 'try', prompt: 'For Sunshine Canyon LF (California): how many plumes are on record, and when was the most recent? Then use “Print or save as PDF” and check the PDF looks right.' },
+    { id: 'C2', type: 'choice', prompt: 'A profile says “No current violation, but violations in 10 of the last 12 quarters.” What does that mean?', options: ['The landfill is in violation right now', 'EPA inspected the landfill 10 times', 'No violation in the latest quarter EPA reported, but violations in 10 of the 12 quarters before', 'Ten violations were fixed this year'], key: 2, why: '“Right now” is the latest quarter EPA has reported. The 10 of 12 covers the three years before it, across all federal programs.' },
+    { id: 'C3', type: 'choice', prompt: 'On the people-of-color bar in the Communities card, what does the dark marker line show?', options: ['The state average', 'The highest value in the state', 'Last year’s figure', 'EPA’s environmental justice threshold'], key: 0, why: 'The marker is the state average, from the Census Bureau’s 2019–2023 American Community Survey, so you can see whether the community is above or below it.' },
+  ]},
+  { id: 'explore', tag: 'Data explorer', title: 'Data explorer', time: '4 minutes', c: '#B5452E',
+    use: 'finding every landfill that matches a set of conditions, such as a target list for a campaign or a comparison of owners.', items: [
+    { id: 'D1', type: 'try', prompt: 'List the open landfills owned by Waste Management (“Wm”) in Pennsylvania that have plumes on record. How many are there?' },
+    { id: 'D2', type: 'choice', prompt: 'You want to know which owner has the most landfills in significant violation. Which control do you use after setting the filters?', options: ['Rank by', 'Group by: Owner', 'Add a condition', 'Download the CSV and count by hand'], key: 1, why: 'Group by: Owner totals the matching landfills for each owner, so you can compare owners directly.' },
+    { id: 'D3', type: 'choice', prompt: 'Filters you set in the data explorer are also applied in which other tool?', options: ['Emissions scenarios', 'Landfill profile', 'People near landfills', 'None of the others'], key: 2, why: 'The data explorer and People near landfills share one filter panel, so a filter set in one is already applied in the other.' },
+  ]},
+  { id: 'people', tag: 'People near landfills', title: 'People near landfills', time: '4 minutes', c: '#0A8574',
+    use: 'an “up to” count of the people living near a group of landfills, and how many are people of color.', items: [
+    { id: 'E1', type: 'try', prompt: 'How many people live within 5 miles of open landfills in New York? Write it as one sentence you could put in a letter to a legislator.' },
+    { id: 'E2', type: 'choice', prompt: 'Why can the total for several landfills be higher than the real number of people living near them?', options: ['The data counts people within 10 miles, not 5', 'Whole census tracts touching the 5-mile circle are counted, and people near more than one landfill are counted once for each', 'It includes people who work near the landfills', 'The figures are projected to 2030'], key: 1, why: 'Whole census tracts that touch the 5-mile circle are counted, and where circles overlap, the same households are counted again for each landfill.' },
+    { id: 'E3', type: 'choice', prompt: 'Which is the best way to quote the total?', options: ['“Exactly 2 million people live near these landfills”', '“2 million people are harmed by these landfills”', '“Up to 2 million people live within 5 miles of these landfills”', '“10% of the state is affected”'], key: 2, why: 'The total is an upper bound, not a count of distinct people, and living nearby isn’t the same as being harmed.' },
+  ]},
+  { id: 'emis', tag: 'Emissions scenarios', title: 'Emissions scenarios', time: '4 minutes', c: '#294480',
+    use: 'how much methane stronger landfill rules or organics diversion would cut, nationally or for chosen states.', items: [
+    { id: 'F1', type: 'try', prompt: 'Nationally, how much methane would the “2030 effective” scenario cut between 2025 and 2050? Give it in million metric tons of methane and in CO₂e over 20 years. Then use the chart’s line buttons to add one more scenario.' },
+    { id: 'F2', type: 'choice', prompt: 'Which scenarios should we cite?', options: ['The 2030-effective or 4-year-delay scenarios', 'Proposed gas collection and cover improvements', 'EPA’s assumptions baseline', 'Whichever shows the biggest cut'], key: 0, why: 'The Proposed scenarios assume improvements started in 2022, which didn’t happen. The 2030-effective and 4-year-delay scenarios are the realistic ones.' },
+    { id: 'F3', type: 'choice', prompt: 'How are the state figures in this tool worked out?', options: ['A separate model for each state', 'EPA’s state greenhouse gas inventories', 'Carbon Mapper plume totals for each state', 'The national model, split by each state’s share of 2023 landfill methane'], key: 3, why: 'States aren’t modelled separately. The national result is divided by each state’s share of 2023 landfill methane.' },
+  ]},
+  { id: 'check', tag: 'Check your understanding', title: 'Which tool would you use?', time: '3 minutes', c: '#7A5A8C',
+    use: 'without opening the tools again, pick the tool you’d use for each question.', items: [
+    { id: 'K1', type: 'tool', prompt: 'How many plumes have been detected at Seneca Meadows landfill?', key: 1, why: 'Plumes at one named landfill are in that landfill’s profile.' },
+    { id: 'K2', type: 'tool', prompt: 'Which Republic Services landfills in Texas have plumes on record?', key: 2, why: 'Combining an owner, a state and plumes needs the data explorer’s filters.' },
+    { id: 'K3', type: 'tool', prompt: 'How many people live within 5 miles of landfills in Ohio?', key: 3, why: 'People near landfills totals the people within 5 miles for a state or any group of landfills.' },
+    { id: 'K4', type: 'tool', prompt: 'Which California landfill had the largest plume this quarter?', key: 0, why: 'The state report lists the state’s largest plumes for the period you choose.' },
+    { id: 'K5', type: 'tool', prompt: 'How much methane would a 2030 landfill rule cut nationally by 2050?', key: 4, why: 'Emissions scenarios models how much methane landfill rules would cut over time.' },
+    { id: 'K6', type: 'tool', prompt: 'What is a landfill’s current EPA compliance status, by program?', key: 1, why: 'The profile’s EPA compliance section shows the current status, program by program.' },
+  ]},
+  { id: 'feedback', tag: 'Feedback', title: 'Your feedback', time: '5 minutes', c: '#E6674F', ct: '#2A1D3D', items: [
+    { id: 'G1', type: 'long', prompt: 'What was the most confusing moment, and where were you?' },
+    { id: 'G2', type: 'long', prompt: 'What would you actually use these tools for in the next month?' },
+    { id: 'G3', type: 'long', prompt: 'What’s missing that would make you use them more?' },
+    { id: 'G4', type: 'long', prompt: 'Did any number look wrong, or did anything break? Say which tool, what you did, what you expected, and what happened. Paste the Copy link if you have it.' },
+  ]},
+];
+const ALL = SECTIONS.flatMap(s => s.items.map(i => ({ ...i, section: s })));
+const SCORED = ALL.filter(i => i.type === 'choice' || i.type === 'tool');
+
+// ------------------------------------------------------------------ state
+let answers = {}, submittedAt = null, db = null, user = null, myId = null, myRef = null, saveTimer = null, isOwnerView = false;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function setSave(t) { $('#saveState').textContent = t; }
+
+// ------------------------------------------------------------------ render quiz
+function field(i) {
+  const v = answers[i.id];
+  const name = `q_${i.id}`;
+  const label = `<span class="qid">${i.id}</span>${esc(i.prompt)}`;
+  if (i.type === 'choice' || i.type === 'tool') {
+    const opts = i.type === 'tool' ? TOOLS : i.options;
+    const done = v !== undefined && v !== null && v !== '';
+    return `<div class="q" id="q-${i.id}"><fieldset><legend>${label}</legend><div class="opts">${opts.map((o, n) => {
+      const cls = !done ? '' : n === i.key ? ' is-right' : String(v) === String(n) ? ' is-wrong' : ' is-off';
+      return `<label class="opt${cls}"><input type="radio" name="${name}" value="${n}" ${String(v) === String(n) ? 'checked' : ''} ${done ? 'disabled' : ''} data-q="${i.id}"><span>${esc(o)}</span>${done && n === i.key ? '<span class="mark" aria-hidden="true">✓</span>' : done && String(v) === String(n) ? '<span class="mark" aria-hidden="true">✗</span>' : ''}</label>`;
+    }).join('')}</div>${done ? feedback(i, v) : ''}</fieldset></div>`;
+  }
+  if (i.type === 'try') {
+    const a = v && typeof v === 'object' ? v : {};
+    return `<div class="q tryit"><label class="prompt" for="${name}">${label}<span class="help">Hands-on task. Kim checks these answers against the data.</span></label>
+      <textarea id="${name}" data-q="${i.id}" data-part="answer">${esc(a.answer)}</textarea>
+      <div class="grid2">
+        <div><label class="row-label" for="${name}_link">Copy link for the view you used (optional)</label><input type="url" id="${name}_link" data-q="${i.id}" data-part="link" value="${esc(a.link)}" placeholder="https://kimn3fin.github.io/review/plume-report.html?..."></div>
+        <div><label class="row-label" for="${name}_note">Anything confusing? (optional)</label><input type="text" id="${name}_note" data-q="${i.id}" data-part="note" value="${esc(a.note)}"></div>
+      </div></div>`;
+  }
+  const tag = i.type === 'long' ? 'textarea' : 'input';
+  return `<div class="q"><label class="prompt" for="${name}">${label}</label>${tag === 'textarea'
+    ? `<textarea id="${name}" data-q="${i.id}">${esc(v)}</textarea>`
+    : `<input type="text" id="${name}" data-q="${i.id}" value="${esc(v)}">`}</div>`;
+}
+
+function feedback(i, v) {
+  const opts = i.type === 'tool' ? TOOLS : i.options, ok = Number(v) === i.key;
+  return `<p class="fb ${ok ? 'fb-right' : 'fb-wrong'}" role="status"><strong>${ok ? 'Right.' : `Not quite. The answer is “${esc(opts[i.key])}”.`}</strong> ${esc(i.why || '')}</p>`;
+}
+
+function renderQuiz() {
+  $('#quiz').innerHTML = SECTIONS.map(s => `
+    <section class="part" id="sec-${s.id}" style="--c:${s.c};${s.ct ? `--ct:${s.ct};` : ''}">
+      <div class="part-head"><span class="tag">${esc(s.tag)}</span>
+        <h2>${esc(s.title)}<span class="time">${esc(s.time)}</span></h2>
+        ${s.use ? `<p class="use"><strong>${s.id === 'check' ? 'How it works:' : 'Use it for:'}</strong> ${esc(s.use)}</p>` : ''}</div>
+      ${s.items.map(field).join('')}
+    </section>`).join('') + `
+    <div class="done" id="done">
+      <h2>${submittedAt ? 'Submitted' : 'Finished?'}</h2>
+      <p>${submittedAt ? `You submitted on ${esc(new Date(submittedAt).toLocaleString())}. You can still change answers and press the button again; Kim will see your latest submission.` : 'Press Submit when you’ve done everything you can, even if some answers are blank.'}</p>
+      <button type="button" class="btn primary" id="submitBtn">${submittedAt ? 'Resubmit my answers' : 'Submit my answers'}</button>
+      <p class="note" id="submitNote"></p>
+    </div>`;
+  $('#submitBtn').addEventListener('click', submit);
+  renderStrip();
+}
+
+function answered(i) {
+  const v = answers[i.id];
+  if (i.type === 'try') return !!(v && String(v.answer || '').trim());
+  return v !== undefined && v !== null && String(v).trim() !== '';
+}
+function renderStrip() {
+  $('#strip').innerHTML = SECTIONS.map(s => {
+    const done = s.items.filter(answered).length, pct = Math.round(done / s.items.length * 100);
+    return `<a href="#sec-${s.id}" style="--c:${s.c}" title="${esc(s.tag)}: ${done} of ${s.items.length} answered"><span class="seg"><i style="width:${pct}%"></i></span><small>${esc(s.tag)}</small></a>`;
+  }).join('');
+}
+
+// ------------------------------------------------------------------ input + saving
+document.addEventListener('input', e => {
+  const el = e.target.closest('[data-q]'); if (!el || isOwnerView) return;
+  const id = el.dataset.q, part = el.dataset.part;
+  if (part) { answers[id] = { ...(typeof answers[id] === 'object' && answers[id] ? answers[id] : {}), [part]: el.value }; }
+  else answers[id] = el.type === 'radio' ? Number(el.value) : el.value;
+  if (el.type === 'radio') {
+    const item = ALL.find(x => x.id === id), box = document.getElementById(`q-${id}`);
+    if (item && box) { box.outerHTML = field(item); document.getElementById(`q-${id}`)?.querySelector('.fb')?.focus?.(); }
+  }
+  renderStrip();
+  queueSave();
+});
+document.addEventListener('change', e => { if (e.target.matches('input[type=radio][data-q]')) e.target.dispatchEvent(new Event('input', { bubbles: true })); });
+
+function queueSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveDraft, 500);
+}
+function saveDraft() {
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ answers, submittedAt, name: $('#youName').value, email: $('#youEmail').value }));
+    setSave(`Saved on this computer ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}. Press Submit at the end to send your answers to Kim.`);
+  } catch (x) { setSave('Your answers are on the page, but this browser won’t keep them if you close it. Finish in one sitting and press Submit.'); }
+}
+function submissionRow() {
+  const headers = ['Submitted', 'Name', 'Email', 'Score', ...ALL.flatMap(i => i.type === 'try' ? [i.id, `${i.id} link`, `${i.id} confusing`] : [i.id])];
+  const row = [new Date().toISOString(), $('#youName').value.trim(), $('#youEmail').value.trim(), `${scoreOf(answers)}/${SCORED.length}`,
+    ...ALL.flatMap(i => {
+      const v = answers[i.id];
+      if (i.type === 'try') return [v && v.answer || '', v && v.link || '', v && v.note || ''];
+      if (i.type === 'choice' || i.type === 'tool') { const o = i.type === 'tool' ? TOOLS : i.options; return [v === undefined || v === '' ? '' : `${o[Number(v)]}${Number(v) === i.key ? ' (right)' : ' (wrong)'}`]; }
+      return [v || ''];
+    })];
+  return { headers, row };
+}
+async function submit() {
+  const note = $('#submitNote');
+  if (!$('#youName').value.trim()) { note.textContent = 'Add your name at the top of the quiz, then press Submit again.'; $('#youName').focus(); return; }
+  if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(SHEET_URL)) { note.textContent = 'This copy of the quiz isn’t connected to a Google Sheet yet, so answers can’t be sent. Tell Kim.'; return; }
+  const btn = $('#submitBtn'); btn.disabled = true; note.textContent = 'Sending…';
+  try {
+    // text/plain keeps this a simple request, which Google Apps Script accepts from any page
+    await fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(submissionRow()) });
+    submittedAt = new Date().toISOString();
+    saveDraft();
+    renderQuiz();
+    $('#submitNote').textContent = 'Sent to Kim. Thanks!';
+    $('#done').scrollIntoView?.({ block: 'center' });
+  } catch (x) {
+    btn.disabled = false;
+    note.textContent = 'Couldn’t send your answers. Check your internet connection and press Submit again; your answers are still here.';
+  }
+}
+
+// ------------------------------------------------------------------ responses (owner and editors)
+let RESP = [], PROFILES = {}, openId = null;
+function scoreOf(a) {
+  return SCORED.reduce((n, i) => n + (a && a[i.id] !== undefined && Number(a[i.id]) === i.key ? 1 : 0), 0);
+}
+function fmtAnswer(i, v) {
+  if (v === undefined || v === null || v === '') return '<span class="note">No answer</span>';
+  if (i.type === 'choice' || i.type === 'tool') {
+    const opts = i.type === 'tool' ? TOOLS : i.options, ok = Number(v) === i.key;
+    return `${esc(opts[Number(v)])} <span class="${ok ? 'right' : 'wrong'}">${ok ? 'right' : `wrong (answer: ${esc(opts[i.key])})`}</span>`;
+  }
+  if (i.type === 'try') return `${esc(v.answer || '')}${v.link ? `\n<a href="${esc(v.link)}" target="_blank" rel="noopener">Their view</a>` : ''}${v.note ? `\nConfusing: ${esc(v.note)}` : ''}`;
+  return esc(v);
+}
+async function renderResponses() {
+  const ids = RESP.map(r => r.id);
+  if (user && ids.length) { try { PROFILES = await user.profiles(ids); } catch (x) { PROFILES = {}; } }
+  const name = id => (PROFILES[id] && PROFILES[id].name) || 'Someone';
+  const rows = RESP.slice().sort((a, b) => String(b.data.updatedAt || '').localeCompare(String(a.data.updatedAt || '')));
+  const box = $('#responses');
+  if (!rows.length) { box.innerHTML = '<p class="notice">No responses yet. Share this page with the team, with Contributor access, so they can save their answers.</p>'; return; }
+  const sub = rows.filter(r => r.data.submittedAt).length;
+  box.innerHTML = `
+    <p class="note" style="margin-top:22px">${rows.length} ${rows.length === 1 ? 'person has' : 'people have'} started; ${sub} submitted. Scores count the ${SCORED.length} multiple-choice and which-tool questions. Click a row to see someone’s answers.</p>
+    <p><button type="button" class="btn" id="dlBtn" hidden>Download all answers (CSV)</button></p>
+    <div class="tablewrap"><table class="resp-table"><thead><tr><th>Person</th><th>Status</th><th>Score</th><th>Last saved</th></tr></thead><tbody>
+    ${rows.map(r => `<tr class="person" data-id="${esc(r.id)}" tabindex="0"><td>${esc(name(r.id))}</td>
+      <td>${r.data.submittedAt ? `<span class="pill">Submitted</span>` : '<span class="pill wip">In progress</span>'}</td>
+      <td class="score">${scoreOf(r.data.answers)} / ${SCORED.length}</td><td>${r.data.updatedAt ? esc(new Date(r.data.updatedAt).toLocaleString()) : ''}</td></tr>
+      ${openId === r.id ? `<tr class="detail"><td colspan="4"><dl>${ALL.map(i => `<dt>${i.id}</dt><dd>${fmtAnswer(i, (r.data.answers || {})[i.id])}</dd>`).join('')}</dl></td></tr>` : ''}`).join('')}
+    </tbody></table></div>`;
+  box.querySelectorAll('tr.person').forEach(tr => {
+    const toggle = () => { openId = openId === tr.dataset.id ? null : tr.dataset.id; renderResponses(); };
+    tr.addEventListener('click', toggle);
+    tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  });
+  const downloads = await claude.use('downloads');
+  if (downloads) {
+    const b = $('#dlBtn'); b.hidden = false;
+    b.onclick = async () => {
+      const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+      const head = ['Person', 'Status', 'Score', 'Last saved', ...ALL.flatMap(i => i.type === 'try' ? [i.id, `${i.id} link`, `${i.id} confusing`] : [i.id])];
+      const lines = [head.map(q).join(',')].concat(rows.map(r => {
+        const a = r.data.answers || {};
+        const cells = ALL.flatMap(i => {
+          const v = a[i.id];
+          if (i.type === 'try') return [v && v.answer, v && v.link, v && v.note];
+          if (i.type === 'choice' || i.type === 'tool') { const o = i.type === 'tool' ? TOOLS : i.options; return [v === undefined || v === '' ? '' : o[Number(v)]]; }
+          return [v];
+        });
+        return [name(r.id), r.data.submittedAt ? 'Submitted' : 'In progress', `${scoreOf(a)}/${SCORED.length}`, r.data.updatedAt || '', ...cells].map(q).join(',');
+      }));
+      try { await downloads.save({ filename: 'landfill-tools-quiz-answers.csv', data: '\uFEFF' + lines.join('\n') }); } catch (x) { /* declined */ }
+    };
+  }
+}
+function showTab(which) {
+  isOwnerView = which === 'resp';
+  $('#tabQuiz').setAttribute('aria-pressed', String(!isOwnerView));
+  $('#tabResp').setAttribute('aria-pressed', String(isOwnerView));
+  $('#quiz').hidden = isOwnerView; $('#responses').hidden = !isOwnerView;
+  $('#strip').hidden = isOwnerView;
+  if (isOwnerView) renderResponses();
+}
+
+// ------------------------------------------------------------------ start
+renderQuiz();
+(function start() {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+    if (d) { answers = d.answers || {}; submittedAt = d.submittedAt || null; $('#youName').value = d.name || ''; $('#youEmail').value = d.email || ''; renderQuiz(); setSave('Your answers from last time are loaded.'); }
+    else setSave('Answers save on this computer as you go. Press Submit at the end to send them to Kim.');
+  } catch (x) { setSave('Press Submit at the end to send your answers to Kim.'); }
+  ['#youName', '#youEmail'].forEach(sel => $(sel).addEventListener('input', queueSave));
+})();
+</script>
+</body>
+</html>
