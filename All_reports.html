@@ -845,6 +845,8 @@
       <div class="tool-head"><h2 id="toolName" class="tool-name"></h2><p id="toolIntro" class="tool-intro"></p></div>
       <form id="form" class="form">
         <label class="field" data-modes="state explore pop"><span id="stateLabel">State</span><select id="state"></select></label>
+        <label class="field" data-modes="state explore pop"><span>County</span><select id="county" disabled><option value="">Choose a state first</option></select></label>
+        <label class="field" data-modes="state explore pop"><span>City</span><select id="city" disabled><option value="">Choose a state first</option></select></label>
         <div class="field lf-search" data-modes="landfill" hidden>
           <span id="lfqLabel">Landfill</span>
           <input id="lfq" type="search" autocomplete="off" spellcheck="false" placeholder="Search by name, owner or city"
@@ -1759,6 +1761,7 @@ function ensureAllData() {
 
     EJ_AVG = computeEjAverages();
     fillExplorerOptions();
+    fillLocalOptions();
     LF_ALL_LOADED = true; DATA_READY = true;
     $('#lfq').disabled = false;
     WARN_MSG = composeWarn();
@@ -2009,6 +2012,39 @@ function jumpNav(ds) {
   return `<nav class="jump noprint" aria-label="Jump to a section"><span>Jump to</span>${ds.map(d => `<button type="button" class="chip chip-${d} chip-btn" data-jump="sec-${d}">${icon(d)}${DOMAINS[d].name}</button>`).join('')}</nav>`;
 }
 const sum = (list, f) => { let n = 0, any = false; list.forEach(x => { const v = f(x); if (v != null) { n += v; any = true; } }); return any ? n : null; };
+/* ---------- county and city (within the chosen state) ---------- */
+const countyKey = v => String(v || '').trim().toLowerCase().replace(/\s+(county|parish|borough|census area|municipality)$/, '');
+const countyLabel = v => { const t = String(v || '').trim(); return !t ? '' : /\b(county|parish|borough|census area|municipality)$/i.test(t) ? t : `${t} County`; };
+function localArea() {
+  const county = $('#county') ? $('#county').value : '', city = $('#city') ? $('#city').value : '';
+  const label = [city, county ? countyLabel(county) : ''].filter(Boolean).join(', ');
+  return { county, city, label, active: !!(county || city) };
+}
+function lfInLocal(l, loc = localArea()) {
+  if (loc.county && countyKey(l.county) !== countyKey(loc.county)) return false;
+  if (loc.city && String(l.city || '').trim().toLowerCase() !== loc.city.toLowerCase()) return false;
+  return true;
+}
+// Fill the county and city lists from the landfills in the chosen state
+function fillLocalOptions() {
+  const cSel = $('#county'), ciSel = $('#city');
+  if (!cSel || !ciSel) return;
+  const sel = $('#state').value, st = sel && sel !== NATIONAL ? STATES.find(x => x.id === sel) : null;
+  const keepC = cSel.value, keepCi = ciSel.value;
+  const inState = st ? [...LANDFILLS.values()].filter(l => l.name && lfInState(l, st)) : [];
+  const counties = new Map();
+  inState.forEach(l => { const k = countyKey(l.county); if (k && !counties.has(k)) counties.set(k, String(l.county).trim()); });
+  const cOpts = [...counties.values()].sort((a, b) => countyLabel(a).localeCompare(countyLabel(b)));
+  cSel.innerHTML = `<option value="">${st ? 'All counties' : 'Choose a state first'}</option>` + cOpts.map(c => `<option value="${esc(c)}">${esc(countyLabel(c))}</option>`).join('');
+  cSel.disabled = !st;
+  if (cOpts.some(c => countyKey(c) === countyKey(keepC))) cSel.value = cOpts.find(c => countyKey(c) === countyKey(keepC));
+  const inCounty = inState.filter(l => !cSel.value || countyKey(l.county) === countyKey(cSel.value));
+  const cities = [...new Set(inCounty.map(l => String(l.city || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  ciSel.innerHTML = `<option value="">${st ? 'All cities' : 'Choose a state first'}</option>` + cities.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  ciSel.disabled = !st;
+  if (cities.includes(keepCi)) ciSel.value = keepCi;
+}
+
 function lfInState(l, st) {
   return (l.state && l.state.toLowerCase() === st.name.toLowerCase()) || (st.abbr && l.stateAbbr && l.stateAbbr.toLowerCase() === st.abbr.toLowerCase());
 }
@@ -2113,6 +2149,7 @@ function shareParams() {
   if (MODE === 'state' || MODE === 'explore') { if ($('#state').value) q.set('state', $('#state').value); }
   if (MODE === 'landfill' && SELECTED_LF) q.set('landfill', SELECTED_LF);
   if (MODE === 'pop' && $('#state').value) q.set('state', $('#state').value);
+  if (['state', 'explore', 'pop'].includes(MODE)) { const loc = localArea(); if (loc.county) q.set('county', loc.county); if (loc.city) q.set('city', loc.city); }
   if (MODE === 'emis') {
     q.set('area', $('#emArea').value); q.set('s1', $('#emS1').value); q.set('s2', $('#emS2').value);
     q.set('from', $('#emFrom').value); q.set('to', $('#emTo').value);
@@ -2139,6 +2176,9 @@ function applyUrlParams() {
   }
   const st = q.get('state');
   if (st && [...$('#state').options].some(o => o.value === st)) $('#state').value = st;
+  fillLocalOptions();
+  if (q.get('county')) { const o = [...$('#county').options].find(x => countyKey(x.value) === countyKey(q.get('county'))); if (o) { $('#county').value = o.value; fillLocalOptions(); } }
+  if (q.get('city') && [...$('#city').options].some(o => o.value === q.get('city'))) $('#city').value = q.get('city');
   if (q.get('landfill')) SELECTED_LF = q.get('landfill');
   const p = q.get('period');
   if (p && [...$('#preset').options].some(o => o.value === p)) { $('#preset').value = p; toggleCustom(); }
@@ -2374,7 +2414,8 @@ function popSelectionTitle(e, st) {
   const parts = [];
   if (e.status) parts.push(e.status.toLowerCase());
   if (e.ownership) parts.push(e.ownership.toLowerCase());
-  const head = `${e.owner ? e.owner + ' ' : ''}${parts.length ? parts.join(', ') + ' ' : ''}landfills${st ? ' in ' + st.name : ' nationwide'}`;
+  const locP = localArea();
+  const head = `${e.owner ? e.owner + ' ' : ''}${parts.length ? parts.join(', ') + ' ' : ''}landfills${st ? ' in ' + (locP.active ? locP.label + ', ' : '') + st.name : ' nationwide'}`;
   const quals = [
     e.lfg === 'Yes' ? 'with a gas collection system' : e.lfg === 'No' ? 'without a gas collection system' : '',
     e.plumes === 'any' ? 'with plumes on record' : e.plumes === 'period' ? 'with plumes in the plume period' : e.plumes === 'none' ? 'with no plumes on record' : '',
@@ -2710,19 +2751,26 @@ function buildAreaReport() {
   const national = sel === NATIONAL;
   const st = national ? { id: NATIONAL, name: 'United States' } : STATES.find(s => s.id === sel);
   if (!st) { setStatus('Choose a state first.', 'error'); return; }
-  const scope = national ? PLUMES : PLUMES.filter(p => p.stateId === st.id);
+  const loc = national ? { active: false } : localArea();
+  const placeName = loc.active ? `${loc.label}, ${st.name}` : st.name;
+  let scope = national ? PLUMES : PLUMES.filter(p => p.stateId === st.id);
+  if (loc.active) {
+    const ids = new Set([...LANDFILLS.values()].filter(l => l.name && lfInState(l, st) && lfInLocal(l, loc)).map(l => l.id));
+    scope = PLUMES.filter(p => ids.has(p.lfId));
+  }
   let range;
   try { range = getRange(scope); } catch (e) { setStatus(e.message, 'error'); return; }
   if ($('#status').classList.contains('error')) restoreStatus();
   const { start, end, days } = range;
   const periodText = `${fmtDate(start)} to ${fmtDate(end)}`;
-  const where = national ? 'nationwide' : 'in ' + st.name;
+  const where = national ? 'nationwide' : 'in ' + placeName;
 
   // ---- landfills in scope
-  const allLfs = [...LANDFILLS.values()].filter(l => l.name && (national || lfInState(l, st)));
+  const allLfs = [...LANDFILLS.values()].filter(l => l.name && (national || (lfInState(l, st) && (!loc.active || lfInLocal(l, loc)))));
+  const stateWaste = loc.active ? sum([...LANDFILLS.values()].filter(l => l.name && lfInState(l, st)), l => l.waste) : null;
   const openN = allLfs.filter(l => /^open/i.test(l.status)).length;
   const closedN = allLfs.filter(l => /^closed/i.test(l.status)).length;
-  const wasteTot = !national && st.waste != null ? st.waste : sum(allLfs, l => l.waste);
+  const wasteTot = !national && !loc.active && st.waste != null ? st.waste : sum(allLfs, l => l.waste);
   const ghLfs = allLfs.filter(l => l.ghgrp != null);
   const ghTot = sum(ghLfs, l => l.ghgrp);
   const ghCh4 = ghLfs.some(l => l.ghgrpCh4);
@@ -2776,18 +2824,18 @@ function buildAreaReport() {
   const progCounts = PROGRAMS.map(p => ({ ...p, n: violList.filter(x => violationPrograms(x.ec).some(v => v.key === p.key)).length })).filter(p => p.n);
 
   // ---- communities
-  const popTot = !national && st.pop != null ? st.pop : sum(allLfs, l => l.pop);
-  let pct = national ? null : st.pct;
+  const popTot = !national && !loc.active && st.pop != null ? st.pop : sum(allLfs, l => l.pop);
+  let pct = national ? null : loc.active ? (popTot != null && STATE_POPULATION[st.name] ? popTot / STATE_POPULATION[st.name] * 100 : null) : st.pct;
   if (pct != null && pct <= 1) pct *= 100;
   const ejVals = weightedEj(allLfs);
 
   CURRENT = { downloads: [
-    { label: 'Landfills CSV', filename: `${national ? 'National' : st.name}_landfills`, rows: () => landfillCsvRows(allLfs, start, end), disabled: !allLfs.length },
-    { label: 'Plumes CSV', filename: `${national ? 'National' : st.name}_plumes_${ymd(start)}_to_${ymd(end)}`, rows: () => plumeCsvRows(plumes), disabled: !plumes.length, emptyNote: 'No plumes in this period' },
+    { label: 'Landfills CSV', filename: `${national ? 'National' : placeName}_landfills`, rows: () => landfillCsvRows(allLfs, start, end), disabled: !allLfs.length },
+    { label: 'Plumes CSV', filename: `${national ? 'National' : placeName}_plumes_${ymd(start)}_to_${ymd(end)}`, rows: () => plumeCsvRows(plumes), disabled: !plumes.length, emptyNote: 'No plumes in this period' },
   ] };
   store.set('fcf_plume_report_state', sel);
 
-  const head = headHTML(st.name, [
+  const head = headHTML(placeName, [
     `Landfills, methane plumes, EPA compliance and nearby communities ${esc(where)}`,
     `Plume figures cover ${esc(periodText)}`,
   ], [{ label: 'Waste Impact Tracker', url: !national && st.wit, icon: 'world' }]);
@@ -2816,10 +2864,12 @@ function buildAreaReport() {
       <div class="stat"><dt>${ghCh4 ? 'GHGRP methane' : 'GHGRP emissions'}</dt><dd>${fmtInt(ghTot)}</dd><span class="sub">${ghCh4 ? 'metric tons, ' : ''}from ${plural(ghLfs.length, 'reporting landfill')}</span></div>
       ${national
         ? `<div class="stat"><dt>States</dt><dd>${fmtInt(new Set(allLfs.map(l => l.state).filter(Boolean)).size)}</dd><span class="sub">with landfills in the tracker</span></div>`
-        : `<div class="stat"><dt>State emissions ranking</dt><dd>${st.rank == null ? '—' : '#' + fmtInt(st.rank)}</dd><span class="sub">out of 53</span></div>`}
+        : loc.active
+          ? `<div class="stat"><dt>Share of the state’s waste</dt><dd>${stateWaste ? fmtP(wasteTot / stateWaste * 100) : '—'}</dd><span class="sub">of waste in place in ${esc(st.name)}</span></div>`
+          : `<div class="stat"><dt>State emissions ranking</dt><dd>${st.rank == null ? '—' : '#' + fmtInt(st.rank)}</dd><span class="sub">out of 53</span></div>`}
     </dl>
     ${topEmit.length ? `<div class="sub chart"><h4>Largest reported methane emitters</h4><p class="note">Top ${topEmit.length} landfills by ${ghCh4 ? 'methane reported to EPA’s GHGRP (metric tons)' : 'GHGRP emissions'}.</p>${hbarChart(topEmit, { key: 'ghgrp', label: '' }, 'lf')}</div>` : ''}
-    ${!national ? linkButton(st.wit, 'world', `View ${st.name} on Waste Impact Tracker`) : ''}`, st.name);
+    ${!national ? linkButton(st.wit, 'world', `View ${st.name} on Waste Impact Tracker`) : ''}`, placeName);
 
   // ---- plume section
   let plInner;
@@ -2853,7 +2903,7 @@ function buildAreaReport() {
       <div class="sub"><h4>Landfills with plumes, ${esc(periodText)}</h4><p class="note">Column colors show which dataset each figure comes from. Landfill names link to Waste Impact Tracker, compliance badges to EPA’s report, and Profile opens the landfill profile.</p><div class="tablewrap" id="lfTable"></div></div>
       <div class="sub"><h4>All plumes</h4><p class="note">Plume IDs link to the Carbon Mapper data portal.</p><div class="tablewrap" id="plumeTable"></div></div>`;
   }
-  const plSection = domainSection('pl', 'Methane plumes', plInner, st.name);
+  const plSection = domainSection('pl', 'Methane plumes', plInner, placeName);
 
   // ---- compliance section
   let ecInner;
@@ -2881,7 +2931,7 @@ function buildAreaReport() {
       ${progCounts.length ? `<div class="sub chart"><h4>Federal programs violated</h4><p class="note">Landfills with violations in the last 3 years, by the federal program the violations fall under. A landfill can appear under more than one program.</p>${hbarChart(progCounts.map(p => ({ label: p.name, v: p.n })), { key: 'count', label: 'Landfills' }, 'ec')}</div>` : ''}
       ${violList.length ? `<div class="sub"><h4>Landfills with violations</h4><p class="note">Significant violations first, then by quarters in violation. Compliance badges open EPA’s Detailed Facility Report.</p><div class="tablewrap" id="ecTable"></div></div>` : '<p>No ECHO violations recorded for these landfills in the last 3 years.</p>'}`;
   }
-  const ecSection = domainSection('ec', 'EPA compliance', ecInner, st.name);
+  const ecSection = domainSection('ec', 'EPA compliance', ecInner, placeName);
 
   // ---- community section
   const topPop = allLfs.filter(l => l.pop).sort((a, b) => b.pop - a.pop).slice(0, 10)
@@ -2894,7 +2944,7 @@ function buildAreaReport() {
     </dl>
     ${EJ_METRICS.some(m => ejVals[m.key] != null) ? `<div class="sub"><h4>Who lives near ${national ? 'landfills nationally' : 'landfills in ' + esc(st.name)}</h4><p class="note">Population-weighted across ${national ? 'all landfill communities' : 'the state’s landfill communities'}.</p>${ejBars(ejVals, national ? 'United States' : st.name, national ? 'All landfill communities' : `${st.name} landfill communities`)}</div>` : ''}
     ${topPop.length ? `<div class="sub chart"><h4>Landfills with the most people nearby</h4><p class="note">People living within 5 miles of each landfill.</p>${hbarChart(topPop, { key: 'pop', label: '' }, 'ej')}</div>` : ''}`;
-  const ejSection = domainSection('ej', 'Communities', ejInner, st.name);
+  const ejSection = domainSection('ej', 'Communities', ejInner, placeName);
 
   $('#report').innerHTML = head + glance + jumpNav(['lf', 'pl', 'ec', 'ej']) + lfSection + plSection + ecSection + ejSection + sourcesHTML(['lf', 'pl', 'ec', 'ej'], st.name, `Landfills, methane plumes, EPA compliance and nearby communities, plume data ${periodText}`);
 
@@ -3561,6 +3611,7 @@ function hbarChart(items, m, d = 'lf') {
 
 // Landfills that pass the explorer's filters (shared by the data explorer and the people counter)
 function explorerMatches(e, st, start, end) {
+  const loc = localArea();
   // per-landfill plume figures
   const rows = [...LANDFILLS.values()].filter(l => l.name).map(l => {
     const ps = LF_PLUMES.get(l.id) || [];
@@ -3575,6 +3626,7 @@ function explorerMatches(e, st, start, end) {
   const ownerQ = e.owner.toLowerCase();
   const matches = rows.filter(l => {
     if (st && !(l.state.toLowerCase() === st.name.toLowerCase() || (st.abbr && l.stateAbbr.toLowerCase() === st.abbr.toLowerCase()))) return false;
+    if (st && loc.active && !lfInLocal(l, loc)) return false;
     if (ownerQ && !l.owner.toLowerCase().includes(ownerQ)) return false;
     if (e.status && l.status !== e.status) return false;
     if (e.ownership && l.ownership !== e.ownership) return false;
@@ -3617,7 +3669,8 @@ function buildExplorer() {
   const parts = [];
   if (e.status) parts.push(e.status.toLowerCase());
   if (e.ownership) parts.push(e.ownership.toLowerCase());
-  const title = (e.owner || parts.length || st) ? `${e.owner ? e.owner + ' ' : ''}${parts.length ? parts.join(', ') + ' ' : ''}landfills${st ? ' in ' + st.name : ''}` : 'All landfills';
+  const locE = localArea();
+  const title = (e.owner || parts.length || st) ? `${e.owner ? e.owner + ' ' : ''}${parts.length ? parts.join(', ') + ' ' : ''}landfills${st ? ' in ' + (locE.active ? locE.label + ', ' : '') + st.name : ''}` : 'All landfills';
   const Title = title.replace(/^./, c => c.toUpperCase());
   const filterText = [
     e.lfg ? `Gas collection system: ${e.lfg.toLowerCase()}` : '',
@@ -4134,7 +4187,12 @@ function toggleCustom() {
     if ($('#preset').value === 'custom') return;
     if (MODE === 'explore' || (MODE === 'state' ? $('#state').value : SELECTED_LF)) buildReport();
   });
-  $('#state').addEventListener('change', () => { if ($('#state').value || MODE === 'explore') buildReport(); });
+  $('#state').addEventListener('change', () => {
+    $('#county').value = ''; $('#city').value = ''; fillLocalOptions();
+    if ($('#state').value || MODE === 'explore') buildReport();
+  });
+  $('#county').addEventListener('change', () => { $('#city').value = ''; fillLocalOptions(); if (['state', 'explore', 'pop'].includes(MODE) && $('#state').value) buildReport(); });
+  $('#city').addEventListener('change', () => { if (['state', 'explore', 'pop'].includes(MODE) && $('#state').value) buildReport(); });
   $('#form').addEventListener('submit', e => {
     e.preventDefault();
     if (MODE === 'landfill' && !$('#lfResults').hidden) {
