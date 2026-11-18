@@ -781,6 +781,16 @@
   .em-more summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--teal-d); }
   .em-print-legend { display: none; }
   @media print { .em-print-legend { display: flex; } }
+
+  /* ===== condition columns + summary (round 29) ===== */
+  th.col-cond, td.col-cond { background: #EFE9F6; }
+  td.col-cond { font-weight: 700; color: var(--ink); }
+  .cond-table th[scope=row] { text-align: left; font-weight: 600; white-space: normal; }
+  .cond-table td:last-child { white-space: normal; min-width: 260px; font-size: 14px; }
+
+  /* ===== update button below every control (round 30) ===== */
+  .update-row { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .update-row .btn { font-size: 16px; padding: 11px 26px; }
 </style>
 </head>
 <body>
@@ -862,7 +872,6 @@
         <label class="field em-scen" data-modes="emis" hidden><span>Compare with</span><select id="emS2"></select></label>
         <label class="field narrow" data-modes="emis" hidden><span>From</span><input type="number" id="emFrom" min="2022" max="2060" value="2025"></label>
         <label class="field narrow" data-modes="emis" hidden><span>To</span><input type="number" id="emTo" min="2022" max="2060" value="2050"></label>
-        <button class="btn primary" type="submit" id="buildBtn">Build report</button>
         <div class="em-states-wrap" id="emStatesWrap" hidden><p class="em-states-h">States to include</p><div class="em-states" id="emStates"></div></div>
       </form>
 
@@ -926,6 +935,7 @@
           <div class="ex-actions"><button type="button" class="linkbtn" id="exReset">Clear filters</button></div>
         </div>
       </div>
+      <div class="update-row"><button class="btn primary" type="submit" form="form" id="buildBtn">Update Report</button></div>
     </div>
 
     <div id="meta" class="meta" hidden>
@@ -1801,16 +1811,16 @@ function applyMode() {
   $('#tools').hidden = MODE === 'home' || $('#nav').hidden;
   document.querySelectorAll('[data-modes]').forEach(el => { el.hidden = !el.dataset.modes.split(' ').includes(MODE); });
   if (TOOLS[MODE]) { $('#toolName').textContent = TOOLS[MODE].name; $('#toolIntro').textContent = TOOLS[MODE].intro; }
-  $('#buildBtn').textContent = MODE === 'landfill' ? 'Build profile' : MODE === 'explore' ? 'Update' : MODE === 'pop' ? 'Count' : MODE === 'emis' ? 'Calculate' : 'Build report';
+  $('#buildBtn').textContent = 'Update Report';
   if (MODE === 'emis') { $('#fromField').hidden = true; $('#toField').hidden = true; } else toggleCustom();
   toggleEmStates();
   // In the explorer the plume period belongs with the other plume filters
   const inFilters = MODE === 'explore' || MODE === 'pop';
   const home = inFilters ? $('#exPlRow') : $('#form');
-  const before = inFilters ? $('#exPlRow').firstElementChild : $('#buildBtn');
+  const before = inFilters ? $('#exPlRow').firstElementChild : $('#emStatesWrap');
   ['#periodField', '#fromField', '#toField'].forEach(sel => {
     const el = $(sel);
-    if (el.parentElement !== home) home.insertBefore(el, inFilters ? before : $('#buildBtn'));
+    if (el.parentElement !== home) home.insertBefore(el, before);
   });
   if (MODE === 'pop') toggleCustom();
   document.querySelectorAll('.ex-only').forEach(el => { el.hidden = MODE !== 'explore'; });
@@ -3441,7 +3451,8 @@ const EX_METRICS = [
   { key: 'lowIncome', d: 'ej', label: '% low income within 5 miles', agg: 'wpct', pct: true, get: l => l.lowIncomeP },
   { key: 'under5', d: 'ej', label: '% under 5 within 5 miles', agg: 'wpct', pct: true, get: l => l.under5P },
   { key: 'over64', d: 'ej', label: '% over 64 within 5 miles', agg: 'wpct', pct: true, get: l => l.over64P },
-  { key: 'capP', d: 'lf', label: '% of capacity used', agg: 'mean', pct: true, get: l => l.capP },
+  { key: 'capP', d: 'lf', label: '% of capacity used', agg: 'mean', pct: true, get: l => capacityUsed(l)?.v ?? null },
+  { key: 'designCap', d: 'lf', label: 'Design capacity (metric tons)', agg: 'sum', get: l => l.designCap },
   { key: 'opened', d: 'lf', label: 'Year opened', agg: 'none', get: l => l.openedN },
   { key: 'plumesAll', d: 'pl', label: 'Plumes on record', agg: 'sum', get: l => l.plumesAll },
   { key: 'plumesPeriod', d: 'pl', label: 'Plumes in period', agg: 'sum', get: l => l.plumesPeriod },
@@ -3684,6 +3695,7 @@ function buildExplorer() {
       ${groups ? `<div class="sub"><h4>By ${esc(groupNames[e.group])}</h4><p class="note">“Filter” narrows the explorer to that ${esc(groupNames[e.group])}.</p><div class="tablewrap" id="exGroupTable"></div></div>` : ''}
     </section>`;
 
+  const condSec = e.conds.length ? conditionSummary(e, matches, selection) : '';
   const lfSec = domainSection('lf', 'Landfill data', `
     <dl class="stats">
       <div class="stat"><dt>Landfills</dt><dd>${fmtInt(matches.length)}</dd><span class="sub">${fmtInt(openN)} open</span></div>
@@ -3707,7 +3719,7 @@ function buildExplorer() {
     ${tot('pop') != null ? `<p class="ej-pop"><span>${fmtInt(tot('pop'))}</span> people within 5 miles, added across landfills</p>` : ''}
     ${ejBars(ejVals, st ? st.name : 'United States', 'These landfills')}`, selection) : '';
 
-  $('#report').innerHTML = head + glance + jumpNav(['lf', 'pl', 'ec', 'ej']) + rankSection + lfSec + plSec + ecSec + ejSec +
+  $('#report').innerHTML = head + glance + jumpNav(['lf', 'pl', 'ec', 'ej']) + condSec + rankSection + lfSec + plSec + ecSec + ejSec +
     `<section class="domain dom-none" id="sec-table"><header class="dom-head"><span class="chip chip-none">All matching landfills</span><h3>Landfill list<span class="dom-place">: ${esc(selection)}</span></h3><p class="dom-src">Column colors show which dataset each figure comes from. Landfill names link to Waste Impact Tracker, compliance badges to EPA’s report, and Profile opens the landfill profile.</p></header><div class="tablewrap" id="exTable"></div></section>` +
     sourcesHTML(['lf', 'pl', 'ec', 'ej'], Title, `${filterText.length ? filterText.join('. ') + '. ' : ''}Plume data ${periodText}`);
 
@@ -3729,11 +3741,22 @@ function buildExplorer() {
     pop: 'pop', bipoc: 'bipoc', lowIncome: 'lowIncome', under5: 'bipoc', over64: 'bipoc',
     plumesAll: 'plumesAll', plumesPeriod: 'plumesPeriod', largest: 'largest',
     qtrsNC: 'qtrsNC', formal: 'qtrsNC', penalties: 'qtrsNC', inspections: 'qtrsNC', severityScore: 'qtrsNC' }[rankM.key] || 'waste';
+  // Measures used in conditions get their own columns, right after the landfill details
+  const condKeys = [...new Set(e.conds.map(c => c.f))];
+  if (condKeys.includes('capP')) { if (!condKeys.includes('waste')) condKeys.push('waste'); if (!condKeys.includes('designCap')) condKeys.push('designCap'); }
+  const condCols = condKeys.map(k => exMetric(k)).filter(Boolean).map(m => ({
+    key: m.key, label: m.label.replace(/ \((metric tons|kg\/hr|\$|ECHO.*)\)$/, ''), num: true, cls: 'col-cond',
+    value: l => m.get(l) ?? -1, html: l => fmtMetric(m, m.get(l)), g: m.d,
+  }));
+  const shownElsewhere = new Set(condCols.map(c => c.key));
+  const notDup = cols => cols.filter(c => !shownElsewhere.has(c.key));
   sortableTable($('#exTable'), [
     { key: 'name', label: 'Landfill', value: l => l.name.toLowerCase(), html: l => lfLink(l.name, l.wit) + profileBtn(l.id), g: 'lf', cls: 'col-name' },
     ...(st ? [] : [{ key: 'state', label: 'State', value: l => (l.state || '').toLowerCase(), html: l => esc(l.stateAbbr || l.state || '—'), g: 'lf' }]),
     { key: 'owner', label: 'Owner', value: l => l.owner.toLowerCase(), html: l => esc(l.owner || '—'), g: 'lf' },
     { key: 'status', label: 'Status', value: l => l.status.toLowerCase(), html: l => esc(l.status || '—'), g: 'lf' },
+    ...condCols,
+    ...notDup([
     { key: 'waste', label: 'Waste in place', num: true, value: l => l.waste ?? -1, html: l => fmtInt(l.waste), g: 'lf' },
     { key: 'ghgrp', label: 'GHGRP methane', num: true, value: l => l.ghgrp ?? -1, html: l => fmtInt(l.ghgrp), g: 'lf' },
     { key: 'plumesPeriod', label: 'In period', num: true, value: l => l.plumesPeriod, html: l => l.plumesPeriod, hot: l => l.plumesPeriod > 0, g: 'pl' },
@@ -3746,9 +3769,37 @@ function buildExplorer() {
     { key: 'pop', label: 'People within 5 mi', num: true, value: l => l.pop ?? -1, html: l => fmtInt(l.pop), g: 'ej' },
     { key: 'bipoc', label: '% BIPOC', num: true, value: l => l.bipocP ?? -1, html: l => fmtP(l.bipocP), g: 'ej' },
     { key: 'lowIncome', label: '% low income', num: true, value: l => l.lowIncomeP ?? -1, html: l => fmtP(l.lowIncomeP), g: 'ej' },
-  ], matches, ECHO_LOADED || !['qtrsNC'].includes(sortKey) ? sortKey : 'waste', 'desc', 300);
+    ]),
+  ], matches, e.conds.length ? e.conds[0].f : (ECHO_LOADED || !['qtrsNC'].includes(sortKey) ? sortKey : 'waste'), 'desc', 300);
 
   wireActions();
+}
+
+// One row per condition: how the matching landfills spread on that measure
+function conditionSummary(e, matches, selection) {
+  const median = a => { const s = a.slice().sort((x, y) => x - y), n = s.length; return n ? (n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2) : null; };
+  const rows = e.conds.map(c => {
+    const m = exMetric(c.f); if (!m) return '';
+    const vals = matches.map(l => m.get(l)).filter(v => v != null && !isNaN(v));
+    const total = m.agg === 'sum' && !m.pct ? vals.reduce((a, b) => a + b, 0) : null;
+    const top = matches.filter(l => m.get(l) != null).sort((a, b) => m.get(b) - m.get(a)).slice(0, 3);
+    return `<tr><th scope="row">${esc(m.label)}</th>
+      <td>${c.op === 'gte' ? 'At least' : 'At most'} ${esc(fmtMetric(m, Number(c.v)))}</td>
+      <td class="num">${fmtInt(vals.length)}</td>
+      <td class="num">${vals.length ? esc(fmtMetric(m, Math.min(...vals))) : '—'}</td>
+      <td class="num">${vals.length ? esc(fmtMetric(m, median(vals))) : '—'}</td>
+      <td class="num">${vals.length ? esc(fmtMetric(m, Math.max(...vals))) : '—'}</td>
+      <td class="num">${total != null ? esc(fmtMetric(m, total)) : '—'}</td>
+      <td>${top.map(l => `${esc(l.name)} (${esc(fmtMetric(m, m.get(l)))})`).join('; ') || '—'}</td></tr>`;
+  }).join('');
+  return `
+    <section class="domain dom-none" id="sec-conds">
+      <header class="dom-head"><span class="chip chip-none">Your conditions</span><h3>Conditions<span class="dom-place">: ${esc(selection)}</span></h3>
+        <p class="dom-src">How the ${plural(matches.length, 'matching landfill')} spread on each measure you set a condition on. The landfill list below shows these measures first and is sorted by the first one.</p></header>
+      <div class="tablewrap"><table class="data cond-table"><thead><tr><th scope="col">Measure</th><th scope="col">Condition</th><th scope="col" class="num">Landfills with a figure</th><th scope="col" class="num">Lowest</th><th scope="col" class="num">Median</th><th scope="col" class="num">Highest</th><th scope="col" class="num">Total</th><th scope="col">Highest three</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+      ${e.conds.some(c => c.f === 'capP') ? '<p class="note">Capacity used is waste in place ÷ design capacity where both are recorded, otherwise the tracker’s own figure. Waste in place and design capacity are shown beside it in the list.</p>' : ''}
+    </section>`;
 }
 
 function applyGroupFilter(label) {
