@@ -791,6 +791,29 @@
   /* ===== update button below every control (round 30) ===== */
   .update-row { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
   .update-row .btn { font-size: 16px; padding: 11px 26px; }
+
+  /* ===== report an issue or idea (round 32) ===== */
+  .fb-launch { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 30; display: inline-flex; align-items: center; gap: 8px;
+               font: inherit; font-size: 14px; font-weight: 700; padding: 10px 16px; border-radius: 999px; border: 0; background: var(--ink); color: #fff; cursor: pointer; box-shadow: 0 4px 14px rgba(42, 29, 61, .25); }
+  .fb-launch .ic { width: 18px; height: 18px; }
+  .fb-launch:hover { background: #3D2C57; }
+  .fb-dialog { width: min(560px, calc(100vw - 32px)); border: 1px solid var(--line-strong); border-top: 6px solid var(--ink); border-radius: 8px; padding: 22px 24px; background: #fff; color: var(--text); }
+  .fb-dialog::backdrop { background: rgba(42, 29, 61, .45); }
+  .fb-dialog h2 { margin: 0 0 4px; font-size: 22px; color: var(--ink); }
+  .fb-sub { margin: 0 0 14px; color: var(--text); }
+  .fb-type { border: 0; padding: 0; margin: 0 0 12px; display: grid; gap: 6px; }
+  .fb-type legend { font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .fb-type label { display: flex; gap: 8px; align-items: center; font-size: 15px; }
+  .fb-field { display: block; margin-bottom: 12px; }
+  .fb-field span { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .fb-field input, .fb-field select, .fb-field textarea { width: 100%; font: inherit; font-size: 15px; border: 1.5px solid var(--line-strong); border-radius: 6px; padding: 8px 10px; background: #fff; box-sizing: border-box; }
+  .fb-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fb-note { font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+  .fb-msg { min-height: 1.2em; font-size: 14px; margin: 0 0 10px; }
+  .fb-msg.fb-err { color: #A63E28; font-weight: 600; }
+  .fb-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  @media (max-width: 560px) { .fb-row { grid-template-columns: 1fr; } .fb-launch { right: 12px; padding: 9px 13px; } }
+  @media print { .fb-launch { display: none; } }
 </style>
 </head>
 <body>
@@ -951,6 +974,34 @@
 
 <main id="report" class="wrap report" aria-live="polite"></main>
 
+
+<button type="button" class="fb-launch noprint" id="fbOpen">Report an issue or idea</button>
+<dialog class="fb-dialog" id="fbDialog" aria-labelledby="fbTitle">
+  <form id="fbForm" novalidate>
+    <h2 id="fbTitle">Report an issue or suggest an idea</h2>
+    <p class="fb-sub">Spotted something wrong, missing or confusing? Have an idea for the tools? It goes straight to Kim.</p>
+    <fieldset class="fb-type"><legend>What is it?</legend>
+      <label><input type="radio" name="fbType" value="Issue" checked> Something’s wrong or broken</label>
+      <label><input type="radio" name="fbType" value="Missing data"> Data I need isn’t here</label>
+      <label><input type="radio" name="fbType" value="Feature idea"> An idea for a feature</label>
+    </fieldset>
+    <label class="fb-field"><span>Which tool?</span><select id="fbTool"></select></label>
+    <label class="fb-field"><span>Summary</span><input type="text" id="fbSummary" maxlength="200" placeholder="One line, such as “County list is missing Cook County”"></label>
+    <label class="fb-field"><span>Details (optional)</span><textarea id="fbDetails" rows="4" placeholder="What you did, what you expected and what happened, or what you’d like to be able to do"></textarea></label>
+    <div class="fb-row">
+      <label class="fb-field"><span>Your name</span><input type="text" id="fbName" autocomplete="name"></label>
+      <label class="fb-field"><span>Your email</span><input type="text" id="fbEmail" autocomplete="email" inputmode="email"></label>
+    </div>
+    <p class="fb-note" id="fbLinkNote"></p>
+    <p class="fb-msg" id="fbMsg" role="status"></p>
+    <div class="fb-actions"><button type="submit" class="btn primary" id="fbSend">Send to Kim</button><button type="button" class="btn" data-fb-close>Cancel</button></div>
+  </form>
+  <div id="fbDone" hidden>
+    <h2>Sent. Thanks!</h2>
+    <p class="fb-sub">Kim will see it in the team’s feedback sheet.</p>
+    <div class="fb-actions"><button type="button" class="btn primary" id="fbDoneBtn" data-fb-close>Close</button></div>
+  </div>
+</dialog>
 <script>
 /* =====================================================================
    CONFIG — the only part you should ever need to edit.
@@ -1182,6 +1233,9 @@ const CONFIG = {
     ej: { parts: [['U.S. EPA EJScreen (2023)', ''], ['CDC PLACES (2023)', 'https://www.cdc.gov/places'], ['U.S. Census Bureau, American Community Survey 2019–2023 5-year estimates', 'https://www.census.gov/programs-surveys/acs']],
           tail: 'for people within 5 miles (EJScreen and PLACES, compiled in Full Circle Future’s landfill tracker) and state averages (Census)' },
   },
+  // "Report an issue or idea" sends to the same Google Apps Script web app as the team quiz
+  // (it adds rows to a "Feedback" tab). Paste the web app URL between the quotes.
+  feedbackUrl: 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE',
   // FCF's own ECHO labels (severity, pattern, repeat offender) are hidden for now.
   // Set to true to bring them back on profiles, the state report, the explorer and CSV downloads.
   showFcfEchoLabels: false,
@@ -1920,6 +1974,7 @@ const ICONS = {
   pop: '<circle cx="12" cy="7.5" r="3"/><path d="M6.5 20c0-3.3 2.5-6 5.5-6s5.5 2.7 5.5 6"/><circle cx="12" cy="12" r="9.5" stroke-dasharray="2.5 2.5"/>',
   emis: '<path d="M4 4v16h16"/><path d="M7 9l4 3 3-4 5 2"/><path d="M7 15l4-1 3 1 5-3" stroke-dasharray="2.2 2.2"/>',
   alert: '<path d="M12 4 2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.2v.3"/>',
+  message: '<path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5z"/><path d="M8.5 9.5h7M8.5 12.5h4"/>',
   ch4: '<circle cx="12" cy="12" r="3.2"/><circle cx="5" cy="5.5" r="1.8"/><circle cx="19" cy="5.5" r="1.8"/><circle cx="5" cy="18.5" r="1.8"/><circle cx="19" cy="18.5" r="1.8"/><path d="M6.4 6.8 9.6 9.8M17.6 6.8l-3.2 3M6.4 17.2l3.2-3M17.6 17.2l-3.2-3"/>',
   co2: '<path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.2 4.7 4.7 0 0 0 7 18.5z"/><path d="M10 12.5h-1.2a1.3 1.3 0 0 0 0 2.6H10M13.6 12.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z"/>',
   car: '<path d="M4.5 16.5V12l2-4.5h11l2 4.5v4.5"/><path d="M3.5 12h17"/><rect x="3.5" y="12" width="17" height="4.5" rx="1"/><circle cx="7.5" cy="18" r="1.6"/><circle cx="16.5" cy="18" r="1.6"/>',
@@ -2735,6 +2790,47 @@ function emSources(area, range) {
       <div class="cite"><label for="citeText">Cite these figures</label><textarea id="citeText" readonly rows="4">${esc(citation)}</textarea>
         <button type="button" class="btn noprint" data-copy-cite>Copy citation</button></div>
     </section>`;
+}
+
+/* ---------- report an issue or suggest a feature ---------- */
+const FB_TOOLS = { home: 'Home page', state: 'State & national report', landfill: 'Landfill profile', explore: 'Data explorer', pop: 'People near landfills', emis: 'Emissions scenarios', other: 'Something else' };
+function openFeedback() {
+  const d = $('#fbDialog');
+  $('#fbTool').innerHTML = Object.entries(FB_TOOLS).map(([k, v]) => `<option value="${k}"${k === MODE ? ' selected' : ''}>${esc(v)}</option>`).join('');
+  $('#fbName').value = store.get('fcf_feedback_name') || '';
+  $('#fbEmail').value = store.get('fcf_feedback_email') || '';
+  $('#fbSummary').value = ''; $('#fbDetails').value = '';
+  $('#fbLinkNote').textContent = MODE === 'home' ? '' : 'A link to what you’re looking at now is attached, so Kim can see the same view.';
+  $('#fbMsg').textContent = ''; $('#fbMsg').className = 'fb-msg';
+  $('#fbForm').hidden = false; $('#fbDone').hidden = true;
+  if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+  $('#fbSummary').focus();
+}
+function closeFeedback() { const d = $('#fbDialog'); if (d.close) d.close(); else d.removeAttribute('open'); }
+async function sendFeedback(ev) {
+  ev.preventDefault();
+  const msg = $('#fbMsg');
+  const type = (document.querySelector('input[name=fbType]:checked') || {}).value || 'Issue';
+  const summary = $('#fbSummary').value.trim();
+  if (!summary) { msg.textContent = 'Add a one-line summary, then send.'; msg.className = 'fb-msg fb-err'; $('#fbSummary').focus(); return; }
+  if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(CONFIG.feedbackUrl)) {
+    msg.textContent = 'This copy of the tools isn’t connected to the feedback sheet yet. Send your note to Kim directly.'; msg.className = 'fb-msg fb-err'; return;
+  }
+  store.set('fcf_feedback_name', $('#fbName').value.trim());
+  store.set('fcf_feedback_email', $('#fbEmail').value.trim());
+  const link = MODE === 'home' ? location.origin + location.pathname : `${location.origin}${location.pathname}?${shareParams().toString()}`;
+  const body = {
+    sheet: 'Feedback',
+    headers: ['Submitted', 'Type', 'Tool', 'Summary', 'Details', 'Name', 'Email', 'Link to the view', 'Browser'],
+    row: [new Date().toISOString(), type, FB_TOOLS[$('#fbTool').value] || '', summary, $('#fbDetails').value.trim(), $('#fbName').value.trim(), $('#fbEmail').value.trim(), link, navigator.userAgent],
+  };
+  const btn = $('#fbSend'); btn.disabled = true; msg.textContent = 'Sending…'; msg.className = 'fb-msg';
+  try {
+    await fetch(CONFIG.feedbackUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+    $('#fbForm').hidden = true; $('#fbDone').hidden = false; $('#fbDoneBtn').focus();
+  } catch (x) {
+    msg.textContent = 'Couldn’t send it. Check your internet connection and try again; what you wrote is still here.'; msg.className = 'fb-msg fb-err';
+  } finally { btn.disabled = false; }
 }
 
 function buildReport() {
@@ -4175,6 +4271,10 @@ function toggleCustom() {
   if (savedPreset && [...$('#preset').options].some(o => o.value === savedPreset)) $('#preset').value = savedPreset;
   toggleCustom();
   initEmissionsControls();
+  $('#fbOpen').insertAdjacentHTML('afterbegin', icon('message'));
+  $('#fbOpen').addEventListener('click', openFeedback);
+  $('#fbForm').addEventListener('submit', sendFeedback);
+  document.querySelectorAll('[data-fb-close]').forEach(b => b.addEventListener('click', closeFeedback));
   $('#popAdd').addEventListener('change', () => { if (MODE === 'pop' && $('#popAdd').value.trim()) popAddFromInput(); });
   document.querySelectorAll('[data-ic]').forEach(el => el.insertAdjacentHTML('afterbegin', icon(el.dataset.ic)));
   applyMode();
