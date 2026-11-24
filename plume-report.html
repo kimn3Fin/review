@@ -814,6 +814,76 @@
   .fb-actions { display: flex; gap: 10px; flex-wrap: wrap; }
   @media (max-width: 560px) { .fb-row { grid-template-columns: 1fr; } .fb-launch { right: 12px; padding: 9px 13px; } }
   @media print { .fb-launch { display: none; } }
+
+  /* ===== schools near landfills (round 33) ===== */
+  .sch-types { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; }
+  .sch-types legend { font-size: 14px; color: var(--muted); padding: 0; margin-bottom: 4px; width: 100%; }
+  .sch-types label { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
+  .sch-race th[scope=row] { text-align: left; font-weight: 500; }
+  .sch-bar { display: inline-block; width: 160px; height: 10px; background: #EDE5DC; border-radius: 2px; position: relative; vertical-align: middle; }
+  .sch-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--d-ej); border-radius: 2px; }
+  .sch-total th, .sch-total td { font-weight: 700; border-top: 2px solid var(--ink); }
+
+  /* ===== schools map (round 34) ===== */
+  .sch-map { height: 480px; border: 1px solid var(--line-strong); background: #EAE4DC; position: relative; z-index: 0; }
+  .sch-map-msg { padding: 16px; margin: 0; }
+  .sch-legend { margin-top: 10px; }
+  .sch-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #C4B5A4; margin-right: 6px; vertical-align: -1px; }
+  .sch-ring { display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 1.5px dashed #2A1D3D; background: rgba(42, 29, 61, .05); margin-right: 6px; vertical-align: -3px; }
+  .sch-map .leaflet-popup-content { font-family: Alexandria, "Segoe UI", Arial, sans-serif; font-size: 14px; line-height: 1.45; }
+  @media (max-width: 700px) { .sch-map { height: 360px; } }
+  @media print { .sch-map { height: 420px; } }
+
+  /* ===== schools tool refinements (round 35) ===== */
+  #exFilters.is-collapsed { display: none !important; }
+  .ex-toggle { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%; margin-top: 14px; padding: 12px 16px; font: inherit; font-size: 15px; font-weight: 700;
+               color: var(--ink); background: #fff; border: 1.5px solid var(--line-strong); border-radius: 8px; cursor: pointer; text-align: left; }
+  .ex-toggle:hover { border-color: var(--ink); }
+  .ex-toggle .tog-sub { font-weight: 400; font-size: 14px; color: var(--muted); }
+  .ex-toggle .tog-n { font-size: 12.5px; font-weight: 700; color: #fff; background: var(--ink); border-radius: 999px; padding: 1px 10px; }
+  .ex-toggle .tog-chev { margin-left: auto; }
+  .sch-split { list-style: none; margin: 6px 0 0; padding: 0; }
+  .sch-split div { margin: 2px 0; }
+  .sch-split strong { color: var(--ink); }
+  .sch-once { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
+  .race-bars { margin-top: 12px; display: grid; gap: 5px; }
+  .rb { display: grid; grid-template-columns: minmax(120px, 42%) minmax(0, 1fr) 48px; gap: 8px; align-items: center; font-size: 13px; }
+  .rb-l { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rb-t { position: relative; height: 8px; background: #EDE5DC; border-radius: 2px; }
+  .rb-t i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; }
+  .rb > span:last-child, .rb strong { text-align: right; }
+  .rb-total { font-size: 14px; padding-bottom: 6px; margin-bottom: 2px; border-bottom: 1px solid var(--line); }
+  .rb-total .rb-l { font-weight: 700; color: var(--ink); }
+  .rb-total .rb-t { height: 14px; }
+  .rb-total .rb-t i { background: var(--d-ej); }
+  .rb-total strong { color: var(--ink); font-size: 15px; }
+  .sch-race tbody th { border-bottom: 1px solid var(--line); font-weight: 500; color: var(--text); }
+  .sch-race .sch-total th, .sch-race .sch-total td { border-top: 0; border-bottom: 2px solid var(--ink); font-weight: 700; color: var(--ink); }
+  .sch-bar-total i { background: var(--d-ej); }
+  .race-key { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 7px; vertical-align: -1px; }
+  .race-legend { margin: 0 0 10px; font-size: 13px; }
+  td.col-nowrap { white-space: nowrap; }
+  td.col-lf, th.col-lf { min-width: 210px; }
+  td.col-race { min-width: 220px; white-space: nowrap; }
+  .srb { display: inline-flex; width: 140px; height: 12px; border-radius: 2px; overflow: hidden; background: #EDE5DC; vertical-align: middle; }
+  .srb i { display: block; height: 100%; }
+  .srb-n { display: inline-block; min-width: 48px; text-align: right; margin-left: 8px; color: var(--ink); }
+
+  /* ===== round 36 ===== */
+  .sch-limits { margin: 18px 0 4px; background: #fff; border: 1px solid var(--line-strong); border-left: 4px solid #F4BD42; padding: 12px 16px; }
+  .sch-limits h4 { margin: 0 0 4px; font-size: 16px; color: var(--ink); }
+  .sch-limits ul { margin: 4px 0 6px; padding-left: 20px; }
+  .sch-limits li { margin: 3px 0; font-size: 15px; }
+  .sch-map-opt { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 15px; font-weight: 600; color: var(--ink); cursor: pointer; }
+  .sch-map-opt input { width: 17px; height: 17px; accent-color: #2A1D3D; }
+  .ej-schools { margin: 6px 0 14px; }
+  .pop-actions { display: flex; gap: 16px; align-items: center; margin: 4px 0 0; }
+
+  /* ===== schools in other reports (round 37) ===== */
+  .sch-summary { margin: 18px 0 4px; background: #fff; border: 1px solid var(--line-strong); border-left: 4px solid var(--d-ej); padding: 12px 16px; }
+  .sch-summary h4 { margin: 0 0 4px; font-size: 16px; color: var(--ink); }
+  .sch-summary p { margin: 4px 0; }
+  .sch-summary .sch-open { margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -827,6 +897,7 @@
       <button type="button" data-mode="landfill" data-ic="landfill">Landfill profile</button>
       <button type="button" data-mode="explore" data-ic="explore">Data explorer</button>
       <button type="button" data-mode="pop" data-ic="pop">People near landfills</button>
+      <button type="button" data-mode="schools" data-ic="schools">Schools near landfills</button>
       <button type="button" data-mode="emis" data-ic="emis">Emissions scenarios</button>
     </nav>
   </div>
@@ -867,9 +938,9 @@
     <div id="tools" hidden>
       <div class="tool-head"><h2 id="toolName" class="tool-name"></h2><p id="toolIntro" class="tool-intro"></p></div>
       <form id="form" class="form">
-        <label class="field" data-modes="state explore pop"><span id="stateLabel">State</span><select id="state"></select></label>
-        <label class="field" data-modes="state explore pop"><span>County</span><select id="county" disabled><option value="">Choose a state first</option></select></label>
-        <label class="field" data-modes="state explore pop"><span>City</span><select id="city" disabled><option value="">Choose a state first</option></select></label>
+        <label class="field" data-modes="state explore pop schools"><span id="stateLabel">State</span><select id="state"></select></label>
+        <label class="field" data-modes="state explore schools"><span>County</span><select id="county" disabled><option value="">Choose a state first</option></select></label>
+        <label class="field" data-modes="state explore schools"><span>City</span><select id="city" disabled><option value="">Choose a state first</option></select></label>
         <div class="field lf-search" data-modes="landfill" hidden>
           <span id="lfqLabel">Landfill</span>
           <input id="lfq" type="search" autocomplete="off" spellcheck="false" placeholder="Search by name, owner or city"
@@ -877,7 +948,7 @@
           <ul id="lfResults" class="lf-results" role="listbox" aria-labelledby="lfqLabel" hidden></ul>
         </div>
         <label class="check" id="onlyPlumesWrap" data-modes="landfill" hidden><input id="onlyPlumes" type="checkbox"> Only landfills with plumes</label>
-        <label class="field" id="periodField" data-modes="state landfill explore pop"><span id="periodLabel">Plume period</span>
+        <label class="field" id="periodField" data-modes="state landfill explore schools"><span id="periodLabel">Plume period</span>
           <select id="preset">
             <option value="30">Last 30 days</option>
             <option value="90" selected>Last 90 days</option>
@@ -889,7 +960,17 @@
         </label>
         <label class="field custom" id="fromField" hidden><span>From</span><input type="date" id="from"></label>
         <label class="field custom" id="toField" hidden><span>To</span><input type="date" id="to"></label>
-        <label class="field pop-add" data-modes="pop" hidden><span>Add a landfill</span>
+        <label class="field pop-add" data-modes="schools" hidden><span>Or look up one landfill</span>
+          <input id="schLf" list="popList" type="search" autocomplete="off" placeholder="Type a landfill name"></label>
+        <label class="field" data-modes="schools" hidden><span>Distance from landfill</span>
+          <select id="schRadius"><option value="0.5">½ mile</option><option value="1" selected>1 mile</option><option value="2">2 miles</option><option value="3">3 miles</option><option value="5">5 miles</option></select></label>
+        <fieldset class="field sch-types" data-modes="schools" hidden><legend>Schools to include</legend>
+          <label><input type="checkbox" id="schType0" checked> Public K–12</label>
+          <label><input type="checkbox" id="schType1" checked> Private K–12</label>
+          <label><input type="checkbox" id="schType2"> Colleges and universities</label>
+          <label><input type="checkbox" id="schVirt" checked> Leave out virtual schools</label>
+        </fieldset>
+        <label class="field pop-add" data-modes="pop" hidden><span>Or pick one landfill</span>
           <input id="popAdd" list="popList" type="search" autocomplete="off" placeholder="Type a landfill name"></label>
         <datalist id="popList"></datalist>
         <label class="field" data-modes="emis" hidden><span>Area</span><select id="emArea"></select></label>
@@ -900,7 +981,8 @@
         <div class="em-states-wrap" id="emStatesWrap" hidden><p class="em-states-h">States to include</p><div class="em-states" id="emStates"></div></div>
       </form>
 
-      <div id="exFilters" class="ex-filters" data-modes="explore pop" hidden>
+      <button type="button" class="ex-toggle" id="exToggle" data-modes="schools" hidden aria-controls="exFilters" aria-expanded="false"></button>
+      <div id="exFilters" class="ex-filters" data-modes="explore schools" hidden>
         <div class="fgroups">
           <div class="fgroup dom-lf">
             <span class="chip chip-lf" data-ic="lf">Landfill data</span>
@@ -1132,6 +1214,10 @@ const CONFIG = {
     closure:      ['Landfill Expected Closure Year'],
     waste:        ['Waste in Place (metric tons)', 'Waste in Place', 'Waste in Place (tons)'],
     pctCapacity:  ['% of Capacity'],
+    schools1:     ['Schools Within 1 Mile'],
+    students1:    ['K-12 Students Within 1 Mile'],
+    schools5:     ['Schools Within 5 Miles'],
+    students5:    ['K-12 Students Within 5 Miles'],
     designCap:    ['Design Landfill Capacity (metric tons)', 'Design Capacity (metric tons)', 'Design Capacity', 'Design Capacity Metric Tons'],
     acceptance:   ['2024 Annual Waste Acceptance Rate (metric tons/year)', 'Annual Waste Acceptance Rate'],
     lfg:          ['LFG Collection System In Place?'],
@@ -1235,7 +1321,9 @@ const CONFIG = {
   },
   // "Report an issue or idea" sends to the same Google Apps Script web app as the team quiz
   // (it adds rows to a "Feedback" tab). Paste the web app URL between the quotes.
-  feedbackUrl: 'https://script.google.com/macros/s/AKfycbywZcLDxEmH-QQuU4xvuv5UWmx4cemGZAnkFucEF-CbKWkELjJl-o0xtfdgiaC5qwur8g/exec',
+  feedbackUrl: 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE',
+  // School locations, enrollment and race for the schools tool (a file in the same folder as this page)
+  schoolsDataUrl: 'schools.json',
   // FCF's own ECHO labels (severity, pattern, repeat offender) are hidden for now.
   // Set to true to bring them back on profiles, the state report, the explorer and CSV downloads.
   showFcfEchoLabels: false,
@@ -1541,6 +1629,7 @@ function normLandfill(r) {
     unemployedP: pctVal(g('unemployed')), lingIsoP: pctVal(g('lingIso')), lessHsP: pctVal(g('lessHs')),
     capP: pctVal(g('pctCapacity')), openedN: num(g('opened')), designCap: num(g('designCap')),
     lat: num(g('lat')), lon: num(g('lon')),
+    schools1: num(g('schools1')), students1: num(g('students1')), schools5: num(g('schools5')), students5: num(g('students5')),
     ej: {
       socio: text(g('ejSocio')).split(/\n+/).map(x => x.trim()).filter(Boolean),
       health: text(g('ejHealth')).split(/\n+/).map(x => x.trim()).filter(Boolean),
@@ -1847,7 +1936,11 @@ const TOOLS = {
   },
   pop: {
     name: 'People near landfills',
-    intro: 'Count the people living within 5 miles of the landfills in a state, or of landfills you pick, with the share who are people of color. Figures are upper-bound counts from census tracts.',
+    intro: 'How many people live within 5 miles of landfills: for a whole state, or for one landfill, with the share who are people of color. Figures are upper-bound counts from census tracts.',
+  },
+  schools: {
+    name: 'Schools near landfills',
+    intro: 'Count the schools and students within a chosen distance of landfills, with each school counted once, plus students by race and ethnicity.',
   },
   emis: {
     name: 'Emissions scenarios',
@@ -1872,7 +1965,7 @@ function applyMode() {
   if (MODE === 'emis') { $('#fromField').hidden = true; $('#toField').hidden = true; } else toggleCustom();
   toggleEmStates();
   // In the explorer the plume period belongs with the other plume filters
-  const inFilters = MODE === 'explore' || MODE === 'pop';
+  const inFilters = MODE === 'explore' || MODE === 'pop' || MODE === 'schools';
   const home = inFilters ? $('#exPlRow') : $('#form');
   const before = inFilters ? $('#exPlRow').firstElementChild : $('#emStatesWrap');
   ['#periodField', '#fromField', '#toField'].forEach(sel => {
@@ -1881,9 +1974,14 @@ function applyMode() {
   });
   if (MODE === 'pop') toggleCustom();
   document.querySelectorAll('.ex-only').forEach(el => { el.hidden = MODE !== 'explore'; });
+  $('#exFilters').classList.toggle('is-collapsed', MODE === 'schools' && !FILTERS_OPEN);
+  $('#exToggle').hidden = MODE !== 'schools';
+  updateFilterToggle();
+  if (DATA_READY) fillLocalOptions();
 }
 
 async function setMode(m) {
+  if (m !== 'schools') { SCH_ONLY_LF = null; if ($('#schLf')) $('#schLf').value = ''; }
   MODE = m;
   applyMode();
   if (m === 'home') { renderHome(); return; }
@@ -1892,10 +1990,9 @@ async function setMode(m) {
   if (!(await ensureAllData())) return;
   if (MODE !== m) return;   // someone switched tools while data was loading
   if (m === 'explore') buildReport();
+  else if (m === 'schools') buildSchools();
   else if (m === 'pop') {
-    fillPopList();
-    if (POP.ids.size) renderPop(); else if ($('#state').value) buildPopCounter();
-    else buildPopCounter();
+    buildPopCounter();
   }
   else if (m === 'landfill') {
     if (SELECTED_LF && LANDFILLS.has(SELECTED_LF)) { $('#lfq').value = LANDFILLS.get(SELECTED_LF).name; buildReport(); }
@@ -1926,7 +2023,9 @@ function renderHome() {
     { mode: 'explore', q: 'Which landfills match what I’m looking for?',
       uses: ['All Wm landfills in Pennsylvania', 'Large landfills in significant violation with plumes on record', 'Compare owners by waste, methane and violations'] },
     { mode: 'pop', q: 'How many people live near these landfills?',
-      uses: ['How many people live within 5 miles of landfills in a state', 'Total the people near a group of landfills for a campaign', 'Estimate how many of them are people of color'] },
+      uses: ['How many people live within 5 miles of landfills in a state', 'How many people live near one landfill', 'How many of them are people of color'] },
+    { mode: 'schools', q: 'How many schools and students are near these landfills?',
+      uses: ['Schools within 1 mile of landfills in a state or county', 'Students near a company’s landfills, by race and ethnicity', 'The schools closest to a landfill we’re campaigning on'] },
     { mode: 'emis', q: 'How much methane would better landfill rules cut?',
       uses: ['National cuts from better gas collection and cover by 2050', 'A state’s share of those cuts', 'Compare a 2030 start with a four-year delay'] },
   ];
@@ -1972,6 +2071,7 @@ const ICONS = {
   landfill: '<path d="M12 21s-6.5-5.8-6.5-10.5a6.5 6.5 0 0 1 13 0C18.5 15.2 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.4"/>',
   explore: '<path d="M4 5h16l-6.2 7.8V19l-3.6 1.8v-8z"/>',
   pop: '<circle cx="12" cy="7.5" r="3"/><path d="M6.5 20c0-3.3 2.5-6 5.5-6s5.5 2.7 5.5 6"/><circle cx="12" cy="12" r="9.5" stroke-dasharray="2.5 2.5"/>',
+  schools: '<path d="M3.5 10 12 5l8.5 5"/><path d="M5.5 10.5v8.5h13v-8.5"/><path d="M10 19v-4.5h4V19"/><path d="M12 5V2.5l3 1.2-3 1.2"/>',
   emis: '<path d="M4 4v16h16"/><path d="M7 9l4 3 3-4 5 2"/><path d="M7 15l4-1 3 1 5-3" stroke-dasharray="2.2 2.2"/>',
   alert: '<path d="M12 4 2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.2v.3"/>',
   message: '<path d="M4.5 5.5h15v10h-9l-4.5 3.5v-3.5h-1.5z"/><path d="M8.5 9.5h7M8.5 12.5h4"/>',
@@ -2067,6 +2167,18 @@ function jumpNav(ds) {
   return `<nav class="jump noprint" aria-label="Jump to a section"><span>Jump to</span>${ds.map(d => `<button type="button" class="chip chip-${d} chip-btn" data-jump="sec-${d}">${icon(d)}${DOMAINS[d].name}</button>`).join('')}</nav>`;
 }
 const sum = (list, f) => { let n = 0, any = false; list.forEach(x => { const v = f(x); if (v != null) { n += v; any = true; } }); return any ? n : null; };
+/* ---------- collapsible filter panel (schools tool) ---------- */
+let FILTERS_OPEN = false;
+function activeFilterCount() {
+  try { const e = readExplorer(); return [e.owner, e.status, e.ownership, e.lfg, e.plumes, e.echo, e.continuity].filter(Boolean).length + e.conds.length; } catch (x) { return 0; }
+}
+function updateFilterToggle() {
+  const b = $('#exToggle'); if (!b) return;
+  const n = activeFilterCount();
+  b.setAttribute('aria-expanded', String(FILTERS_OPEN));
+  b.innerHTML = `${FILTERS_OPEN ? 'Hide' : 'Show'} landfill filters <span class="tog-sub">owner, status, plumes, EPA compliance, conditions</span>${n ? `<span class="tog-n">${n} on</span>` : ''}<span class="tog-chev" aria-hidden="true">${FILTERS_OPEN ? '▴' : '▾'}</span>`;
+}
+
 /* ---------- county and city (within the chosen state) ---------- */
 const countyKey = v => String(v || '').trim().toLowerCase().replace(/\s+(county|parish|borough|census area|municipality)$/, '');
 const countyLabel = v => { const t = String(v || '').trim(); return !t ? '' : /\b(county|parish|borough|census area|municipality)$/i.test(t) ? t : `${t} County`; };
@@ -2086,18 +2198,28 @@ function fillLocalOptions() {
   if (!cSel || !ciSel) return;
   const sel = $('#state').value, st = sel && sel !== NATIONAL ? STATES.find(x => x.id === sel) : null;
   const keepC = cSel.value, keepCi = ciSel.value;
-  const inState = st ? [...LANDFILLS.values()].filter(l => l.name && lfInState(l, st)) : [];
+  let inState = st ? [...LANDFILLS.values()].filter(l => l.name && lfInState(l, st)) : [];
+  // In the explorer, people counter and schools tool, only list places with landfills that match the filters
+  if (st && DATA_READY && ['explore', 'pop', 'schools'].includes(MODE)) {
+    try { const r = getRange(PLUMES); inState = explorerMatches(readExplorer(), st, r.start, r.end, true); } catch (x) {}
+  }
+  if (MODE === 'schools') inState = inState.filter(l => l.lat != null && l.lon != null);
+  const nC = new Map(), nCi = new Map();
+  inState.forEach(l => { const k = countyKey(l.county); if (k) nC.set(k, (nC.get(k) || 0) + 1); });
   const counties = new Map();
   inState.forEach(l => { const k = countyKey(l.county); if (k && !counties.has(k)) counties.set(k, String(l.county).trim()); });
   const cOpts = [...counties.values()].sort((a, b) => countyLabel(a).localeCompare(countyLabel(b)));
-  cSel.innerHTML = `<option value="">${st ? 'All counties' : 'Choose a state first'}</option>` + cOpts.map(c => `<option value="${esc(c)}">${esc(countyLabel(c))}</option>`).join('');
+  if (keepC && !cOpts.some(c => countyKey(c) === countyKey(keepC))) cOpts.unshift(keepC);   // keep the choice, shown with 0
+  cSel.innerHTML = `<option value="">${st ? 'All counties' : 'Choose a state first'}</option>` + cOpts.map(c => `<option value="${esc(c)}">${esc(countyLabel(c))} (${fmtInt(nC.get(countyKey(c)) || 0)})</option>`).join('');
   cSel.disabled = !st;
-  if (cOpts.some(c => countyKey(c) === countyKey(keepC))) cSel.value = cOpts.find(c => countyKey(c) === countyKey(keepC));
+  if (keepC) cSel.value = cOpts.find(c => countyKey(c) === countyKey(keepC));
   const inCounty = inState.filter(l => !cSel.value || countyKey(l.county) === countyKey(cSel.value));
-  const cities = [...new Set(inCounty.map(l => String(l.city || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
-  ciSel.innerHTML = `<option value="">${st ? 'All cities' : 'Choose a state first'}</option>` + cities.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  inCounty.forEach(l => { const c = String(l.city || '').trim(); if (c) nCi.set(c, (nCi.get(c) || 0) + 1); });
+  const cities = [...nCi.keys()].sort((a, b) => a.localeCompare(b));
+  if (keepCi && !cities.includes(keepCi)) cities.unshift(keepCi);
+  ciSel.innerHTML = `<option value="">${st ? 'All cities' : 'Choose a state first'}</option>` + cities.map(c => `<option value="${esc(c)}">${esc(c)} (${fmtInt(nCi.get(c) || 0)})</option>`).join('');
   ciSel.disabled = !st;
-  if (cities.includes(keepCi)) ciSel.value = keepCi;
+  if (keepCi) ciSel.value = keepCi;
 }
 
 function lfInState(l, st) {
@@ -2203,8 +2325,10 @@ function shareParams() {
   if (MODE === 'home') return q;
   if (MODE === 'state' || MODE === 'explore') { if ($('#state').value) q.set('state', $('#state').value); }
   if (MODE === 'landfill' && SELECTED_LF) q.set('landfill', SELECTED_LF);
-  if (MODE === 'pop' && $('#state').value) q.set('state', $('#state').value);
-  if (['state', 'explore', 'pop'].includes(MODE)) { const loc = localArea(); if (loc.county) q.set('county', loc.county); if (loc.city) q.set('city', loc.city); }
+  if ((MODE === 'pop' || MODE === 'schools') && $('#state').value) q.set('state', $('#state').value);
+  if (MODE === 'pop' && POP.lfId) q.set('poplf', POP.lfId);
+  if (MODE === 'schools') { const o = schoolOptions(); q.set('radius', String(o.radius)); q.set('types', o.types.join(',')); if (SCH_ONLY_LF) q.set('schlf', SCH_ONLY_LF); }
+  if (['state', 'explore', 'pop', 'schools'].includes(MODE)) { const loc = localArea(); if (loc.county) q.set('county', loc.county); if (loc.city) q.set('city', loc.city); }
   if (MODE === 'emis') {
     q.set('area', $('#emArea').value); q.set('s1', $('#emS1').value); q.set('s2', $('#emS2').value);
     q.set('from', $('#emFrom').value); q.set('to', $('#emTo').value);
@@ -2220,7 +2344,14 @@ function applyUrlParams() {
   const q = new URLSearchParams(location.search);
   if (!q.has('view')) return;
   const view = q.get('view');
-  if (['home', 'state', 'landfill', 'explore', 'pop', 'emis'].includes(view)) MODE = view;
+  if (['home', 'state', 'landfill', 'explore', 'pop', 'emis', 'schools'].includes(view)) MODE = view;
+  if (view === 'pop' && q.get('poplf')) { const lf = LANDFILLS.get(q.get('poplf')); if (lf) $('#popAdd').value = `${lf.name} (${lf.stateAbbr || lf.state || ''})`; }
+  if (view === 'schools') {
+    if (q.get('radius') && [...$('#schRadius').options].some(o => o.value === q.get('radius'))) $('#schRadius').value = q.get('radius');
+    if (q.get('types')) [0, 1, 2].forEach(t => { $(`#schType${t}`).checked = q.get('types').split(',').includes(String(t)); });
+    const one = q.get('schlf') && LANDFILLS.get(q.get('schlf'));
+    if (one) { SCH_ONLY_LF = one.id; $('#schLf').value = `${one.name} (${one.stateAbbr || one.state || ''})`; }
+  }
   if (view === 'emis') {
     const setIf = (sel, v) => { if (v != null && [...$(sel).options].some(o => o.value === v)) $(sel).value = v; };
     setIf('#emArea', q.get('area')); setIf('#emS1', q.get('s1')); setIf('#emS2', q.get('s2'));
@@ -2428,41 +2559,129 @@ const STATE_POPULATION = {"Alabama":5054253,"Alaska":733971,"Arizona":7268175,"A
 /* ===================================================================================
    People near landfills (population counter)
    =================================================================================== */
-const POP = { ids: new Set(), off: new Set(), title: '' };
-
-function popStartFromState() {   // (kept for reference; the counter now uses the explorer's filters)
-  const sel = $('#state').value;
-  if (!sel) { setStatus('Choose a state, or all states, to start the count.', 'error'); return false; }
-  const national = sel === NATIONAL;
-  const st = national ? { id: NATIONAL, name: 'United States' } : STATES.find(s => s.id === sel);
-  POP.ids = new Set([...LANDFILLS.values()].filter(l => l.name && (national || lfInState(l, st))).map(l => l.id));
-  POP.off = new Set();
-  POP.title = national ? 'All landfills nationwide' : `${st.name} landfills`;
-  POP.state = national ? '' : st.name;
-  return true;
-}
+const POP = { lfId: null };
 
 function fillPopList() {
   const dl = $('#popList');
   if (!dl || dl.dataset.filled) return;
-  const opts = [...LANDFILLS.values()].filter(l => l.name)
+  dl.innerHTML = [...LANDFILLS.values()].filter(l => l.name)
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map(l => `<option value="${esc(`${l.name} (${l.stateAbbr || l.state || ''})`)}"></option>`);
-  dl.innerHTML = opts.join('');
+    .map(l => `<option value="${esc(`${l.name} (${l.stateAbbr || l.state || ''})`)}"></option>`).join('');
   dl.dataset.filled = '1';
 }
 
+// Picking one landfill by name
 function popAddFromInput() {
   const v = $('#popAdd').value.trim();
   if (!v) return;
   const lf = [...LANDFILLS.values()].find(l => `${l.name} (${l.stateAbbr || l.state || ''})` === v)
     || [...LANDFILLS.values()].find(l => l.name && l.name.toLowerCase() === v.toLowerCase());
   if (!lf) { setStatus(`No landfill called “${v}”. Pick one from the list as you type.`, 'error'); return; }
-  if (!POP.ids.size) { POP.title = 'Selected landfills'; POP.state = ''; }
-  POP.ids.add(lf.id); POP.off.delete(lf.id);
-  if (POP.state && !lfInState(lf, { name: POP.state, id: STATES.find(s => s.name === POP.state)?.id })) POP.title = 'Selected landfills';
-  $('#popAdd').value = '';
-  renderPop();
+  if ($('#status').classList.contains('error')) restoreStatus();
+  POP.lfId = lf.id;
+  renderPopLandfill(lf);
+}
+
+function buildPopCounter() {
+  if (!DATA_READY) return;
+  fillPopList();
+  if ($('#popAdd').value.trim()) { popAddFromInput(); return; }
+  const sel = $('#state').value;
+  if (!sel) { $('#report').innerHTML = '<p class="start">Choose a state, or pick one landfill by name.</p>'; return; }
+  POP.lfId = null;
+  const national = sel === NATIONAL;
+  const st = national ? null : STATES.find(s => s.id === sel);
+  renderPopState(st);
+}
+
+const popPct = v => v == null ? null : v <= 1 ? v * 100 : v;
+
+// A state's count comes from State Data, not from adding up its landfills
+function renderPopState(st) {
+  const national = !st;
+  const place = national ? 'United States' : st.name;
+  const lfs = [...LANDFILLS.values()].filter(l => l.name && (national || lfInState(l, st)));
+  let total = null, pct = null, source = 'State Data';
+  if (national) {
+    const vals = STATES.map(s => s.pop).filter(v => v != null);
+    total = vals.length === STATES.length ? vals.reduce((a, b) => a + b, 0) : null;
+    const usPop = Object.entries(STATE_POPULATION).filter(([k]) => k !== 'Puerto Rico').reduce((s, [, v]) => s + v, 0);
+    pct = total != null ? total / usPop * 100 : null;
+  } else { total = st.pop; pct = popPct(st.pct); }
+  const ranked = lfs.filter(l => l.pop != null).sort((a, b) => b.pop - a.pop);
+
+  CURRENT = { downloads: [{
+    label: 'Landfills CSV', filename: `${place} landfills, people within 5 miles`,
+    rows: () => [
+      ['Landfill', 'State', 'Owner', 'Status', 'People within 5 miles', '% people of color'],
+      ['Landfill name', 'State', 'Owner organization', 'Current status', 'This landfill on its own; neighboring landfills share people, so don’t add these up', 'Share of those people who are people of color'],
+      ...ranked.map(l => [l.name, l.stateAbbr || l.state, l.owner, l.status, l.pop, l.bipocP ?? '']),
+    ],
+    disabled: !ranked.length,
+  }] };
+
+  $('#report').innerHTML = headHTML(`People near landfills: ${place}`, [
+    `${plural(lfs.length, 'landfill')} in FCF’s landfill tracker`,
+  ]) + `
+    <ul class="atag">
+      <li class="dom-ej"><span class="atag-k">${icon('ej')}People within 5 miles</span><span class="atag-v">${total != null
+        ? `<strong>${fmtInt(total)} people</strong> live within 5 miles of a landfill${pct != null ? `, <strong>${fmtP(pct)}</strong> of ${national ? 'the U.S.' : esc(place) + '’s'} population` : ''}.`
+        : `No ${national ? 'national' : 'state'} figure is available in State Data yet.`}</span></li>
+    </ul>
+    ${popCaveat(false)}
+    <section class="domain dom-ej" id="sec-ej">
+      <header class="dom-head">${chip('ej')}<h3>Landfills by people nearby<span class="dom-place">: ${esc(place)}</span></h3>
+        <p class="dom-src">Each landfill’s own count. Landfills close together share people, so these figures can’t be added up. For any landfill on its own, pick it by name above.</p></header>
+      <div id="popTable"></div>
+    </section>
+    ${popSources(place)}`;
+  sortableTable($('#popTable'), [
+    { key: 'name', label: 'Landfill', value: l => l.name.toLowerCase(), html: l => `<button type="button" class="linkbtn" data-pop-lf="${esc(l.id)}">${esc(l.name)}</button>${profileBtn(l.id)}`, cls: 'col-name' },
+    ...(national ? [{ key: 'state', label: 'State', value: l => (l.stateAbbr || '').toLowerCase(), html: l => esc(l.stateAbbr || l.state || '') }] : []),
+    { key: 'owner', label: 'Owner', value: l => (l.owner || '').toLowerCase(), html: l => esc(l.owner || '—') },
+    { key: 'status', label: 'Status', value: l => (l.status || '').toLowerCase(), html: l => esc(l.status || '—') },
+    { key: 'pop', label: 'People within 5 miles', num: true, value: l => l.pop, html: l => fmtInt(l.pop) },
+    { key: 'bipoc', label: '% people of color', num: true, value: l => l.bipocP ?? -1, html: l => l.bipocP == null ? '<span class="na">—</span>' : fmtP(l.bipocP) },
+  ], ranked, 'pop', 'desc', 300);
+  document.querySelectorAll('[data-pop-lf]').forEach(b => b.addEventListener('click', () => {
+    const lf = LANDFILLS.get(b.dataset.popLf); if (!lf) return;
+    $('#popAdd').value = `${lf.name} (${lf.stateAbbr || lf.state || ''})`;
+    POP.lfId = lf.id; renderPopLandfill(lf); window.scrollTo?.(0, 0);
+  }));
+  wireActions();
+}
+
+function renderPopLandfill(lf) {
+  const poc = lf.pop != null && lf.bipocP != null ? Math.round(lf.pop * lf.bipocP / 100) : null;
+  const ref = lf.state ? stateAverage(lf.state, 'bipoc') : null;
+  CURRENT = { downloads: [] };
+  $('#report').innerHTML = headHTML(`People near ${lf.name}`, [esc([lf.city, lf.stateAbbr || lf.state].filter(Boolean).join(', ')), esc(lf.owner || '')]) + `
+    <ul class="atag">
+      <li class="dom-ej"><span class="atag-k">${icon('ej')}People within 5 miles</span><span class="atag-v">${lf.pop != null ? `Up to <strong>${fmtInt(lf.pop)} people</strong> live within 5 miles of this landfill.` : 'No population figure for this landfill in the tracker.'}</span></li>
+      <li class="dom-ej"><span class="atag-k">${icon('ej')}People of color</span><span class="atag-v">${poc != null ? `Up to <strong>${fmtInt(poc)} people</strong>, <strong>${fmtP(lf.bipocP)}</strong> of those nearby.` : 'Not available.'}</span>
+        ${lf.bipocP != null ? compareBars('People of color', lf.bipocP, ref != null ? `${lf.state} average` : '', ref) : ''}</li>
+    </ul>
+    <p class="pop-actions noprint">${profileBtn(lf.id)} <button type="button" class="linkbtn" id="popBack">Back to ${esc(lf.state || 'the state')}</button></p>
+    ${popCaveat(true)}
+    ${popSources(lf.name)}`;
+  $('#popBack')?.addEventListener('click', () => {
+    $('#popAdd').value = '';
+    const st = STATES.find(s => lfInState(lf, s));
+    if (st) $('#state').value = st.id;
+    buildPopCounter();
+  });
+  wireActions();
+}
+
+function popCaveat(single) {
+  return `<aside class="pop-caveat">
+    <h4>About these counts</h4>
+    <ul>
+      <li><strong>Whole neighborhoods are counted.</strong> The Census reports population for areas called census tracts. If any part of a tract falls inside a landfill’s 5-mile circle, everyone in that tract is counted, including people who live further away. Rural tracts are large, so this can add a lot of people. Quote ${single ? 'this as an “up to” figure' : 'landfill figures as “up to” figures'}.</li>
+      <li><strong>Only one landfill, or a whole state.</strong> Where landfills are close together, the same households fall inside several circles, so adding landfill figures together counts people more than once. That’s why this tool doesn’t total a list of landfills.</li>
+    </ul>
+    <p class="note">Figures from FCF’s landfill tracker, based on the Census Bureau’s American Community Survey 2019–2023. State figures come from the State Data table.</p>
+  </aside>`;
 }
 
 function popSelectionTitle(e, st) {
@@ -2481,98 +2700,10 @@ function popSelectionTitle(e, st) {
   return (head + (quals.length ? ' ' + andList(quals) : '')).replace(/^./, c => c.toUpperCase());
 }
 
-function buildPopCounter() {
-  if (!LF_ALL_LOADED) return;
-  const sel = $('#state').value;
-  const st = sel && sel !== NATIONAL ? STATES.find(s => s.id === sel) : null;
-  let range;
-  try { range = getRange(PLUMES); } catch (x) { setStatus(x.message, 'error'); return; }
-  if ($('#status').classList.contains('error')) restoreStatus();
-  const e = readExplorer();
-  const matches = explorerMatches(e, st, range.start, range.end);
-  POP.ids = new Set(matches.map(l => l.id));
-  POP.off = new Set();
-  POP.title = popSelectionTitle(e, st);
-  POP.state = st ? st.name : '';
-  renderPop();
-}
-
-function renderPop() {
-  const all = [...POP.ids].map(id => LANDFILLS.get(id)).filter(Boolean);
-  if (!all.length) { $('#report').innerHTML = '<p class="start">Choose a state and press Count, or add landfills one at a time.</p>'; return; }
-  const inc = all.filter(l => !POP.off.has(l.id));
-  const withPop = inc.filter(l => l.pop != null);
-  const total = withPop.reduce((s, l) => s + l.pop, 0);
-  const pocBase = withPop.filter(l => l.bipocP != null);
-  const poc = pocBase.reduce((s, l) => s + l.pop * l.bipocP / 100, 0);
-  const pocShare = pocBase.length ? poc / pocBase.reduce((s, l) => s + l.pop, 0) * 100 : null;
-  const statesIn = [...new Set(inc.map(l => l.state).filter(Boolean))];
-  const oneState = statesIn.length === 1 ? statesIn[0] : '';
-  const statePop = oneState ? STATE_POPULATION[oneState] : null;
-  const usPop = Object.entries(STATE_POPULATION).filter(([k]) => k !== 'Puerto Rico').reduce((s, [, v]) => s + v, 0);
-  const shareOf = oneState ? (statePop ? total / statePop * 100 : null) : (statesIn.length > 1 ? total / usPop * 100 : null);
-  const avgPoc = oneState ? stateAverage(oneState, 'bipoc') : stateAverage('United States', 'bipoc');
-  const missing = inc.length - withPop.length;
-
-  CURRENT = { downloads: [{
-    label: 'Population CSV', filename: `${POP.title} population within 5 miles`,
-    rows: () => [
-      ['Landfill', 'State', 'Owner', 'Status', 'Included in total', 'People within 5 miles', '% people of color', 'People of color (estimated)'],
-      ['Landfill name', 'State', 'Owner organization', 'Current status', 'Yes if counted in the total', 'Population of every census tract that touches the 5-mile circle (ACS 2019–2023)', 'Share of that population who are people of color', 'People within 5 miles × % people of color'],
-      ...all.sort((a, b) => (b.pop ?? -1) - (a.pop ?? -1)).map(l => [l.name, l.state, l.owner, l.status, POP.off.has(l.id) ? 'No' : 'Yes', l.pop ?? '', l.bipocP ?? '', l.pop != null && l.bipocP != null ? Math.round(l.pop * l.bipocP / 100) : '']),
-    ],
-  }] };
-
-  const rows = all.slice().sort((a, b) => (b.pop ?? -1) - (a.pop ?? -1));
-  const head = headHTML(POP.title, [
-    `People living within 5 miles, counted from census tracts`,
-    `${fmtInt(inc.length)} of ${plural(all.length, 'landfill')} included`,
-  ]);
-  $('#report').innerHTML = head + `
-    <ul class="atag">
-      <li class="dom-ej"><span class="atag-k">${icon('ej')}People within 5 miles</span><span class="atag-v">Up to <strong>${fmtInt(total)} people</strong>${shareOf != null ? `, at most <strong>${fmtP(shareOf)}</strong> of ${oneState ? esc(oneState) + '’s' : 'the U.S.'} population` : ''}.</span>
-        ${pocShare != null ? compareBars('People of color', pocShare, `${oneState || 'U.S.'} average`, avgPoc) : ''}</li>
-      <li class="dom-ej"><span class="atag-k">${icon('ej')}People of color</span><span class="atag-v">Up to <strong>${fmtInt(Math.round(poc))} people</strong>, estimated from each landfill’s share.</span></li>
-    </ul>
-    <aside class="pop-caveat">
-      <h4>Why these totals are higher than the real number of people</h4>
-      <ul>
-        <li><strong>Whole neighborhoods are counted.</strong> The Census reports population for areas called census tracts. If any part of a tract falls inside a landfill’s 5-mile circle, everyone in that tract is counted, including people who live further away. Rural tracts are large, so this can add a lot of people.</li>
-        <li><strong>People near more than one landfill are counted more than once.</strong> Where landfills are close together, as in many cities, the same households fall inside several 5-mile circles. Adding the landfills up counts those households once for every landfill they live near. A total of ${plural(inc.length, 'landfill')} can be well above the number of different people living near them.</li>
-      </ul>
-      <p><strong>How to quote it:</strong> “up to ${fmtInt(total)} people live within 5 miles of ${inc.length === 1 ? 'this landfill' : 'these landfills'}.” Avoid presenting the total as a count of distinct people, or comparing it directly with a state’s population.</p>
-      <p class="note">Figures from FCF’s landfill tracker, based on the Census Bureau’s American Community Survey 2019–2023.</p>
-    </aside>
-    ${missing ? `<p class="note">${plural(missing, 'included landfill')} ${missing === 1 ? 'has' : 'have'} no population figure and ${missing === 1 ? 'isn’t' : 'aren’t'} in the total.</p>` : ''}
-    <section class="domain dom-ej" id="sec-ej">
-      <header class="dom-head">${chip('ej')}<h3>Landfills counted<span class="dom-place">: ${esc(POP.title)}</span></h3><p class="dom-src">Untick a landfill to leave it out of the total. Add others from the box above.</p></header>
-      <p class="pop-tools noprint"><button type="button" class="linkbtn" data-pop="all">Include all</button> <button type="button" class="linkbtn" data-pop="none">Include none</button> <button type="button" class="linkbtn" data-pop="clear">Clear the list</button></p>
-      <div class="tablewrap"><table class="data pop-table">
-        <thead><tr><th scope="col">Include</th><th scope="col">Landfill</th><th scope="col">State</th><th scope="col">Owner</th><th scope="col">Status</th><th scope="col" class="num">People within 5 miles</th><th scope="col" class="num">% people of color</th></tr></thead>
-        <tbody>${rows.map(l => `<tr${POP.off.has(l.id) ? ' class="row-off"' : ''}>
-          <td><input type="checkbox" data-pop-id="${esc(l.id)}" ${POP.off.has(l.id) ? '' : 'checked'} aria-label="Include ${esc(l.name)}"></td>
-          <td>${esc(l.name)} ${profileBtn(l.id)}</td><td>${esc(l.stateAbbr || l.state || '')}</td><td>${esc(l.owner || '')}</td><td>${esc(l.status || '')}</td>
-          <td class="num">${l.pop == null ? '<span class="na">—</span>' : fmtInt(l.pop)}</td><td class="num">${l.bipocP == null ? '<span class="na">—</span>' : fmtP(l.bipocP)}</td></tr>`).join('')}</tbody>
-      </table></div>
-    </section>
-    ${popSources()}`;
-  wireActions();
-  document.querySelectorAll('[data-pop-id]').forEach(cb => cb.addEventListener('change', () => {
-    if (cb.checked) POP.off.delete(cb.dataset.popId); else POP.off.add(cb.dataset.popId);
-    renderPop();
-  }));
-  document.querySelectorAll('[data-pop]').forEach(b => b.addEventListener('click', () => {
-    if (b.dataset.pop === 'all') POP.off.clear();
-    if (b.dataset.pop === 'none') POP.off = new Set(POP.ids);
-    if (b.dataset.pop === 'clear') { POP.ids.clear(); POP.off.clear(); }
-    renderPop();
-  }));
-}
-
-function popSources() {
+function popSources(place) {
   const today = fmtDate(new Date());
   const text = `People within 5 miles: U.S. Census Bureau, American Community Survey 2019–2023 5-year estimates, all census tracts intersecting a 5-mile radius of each landfill (TIGER/Line 2023 tract boundaries), compiled in Full Circle Future’s landfill tracker. State populations: ${CONFIG.stateAveragesSource}.`;
-  const citation = `Full Circle Future. ${POP.title}: people living within 5 miles. Landfill data tools, generated ${today}. ${text}`;
+  const citation = `Full Circle Future. ${place}: people living within 5 miles. Landfill data tools, generated ${today}. ${text}`;
   return `
     <section class="sources" id="sec-sources">
       <h3>Sources and citation</h3>
@@ -2833,11 +2964,364 @@ async function sendFeedback(ev) {
   } finally { btn.disabled = false; }
 }
 
+let SCHOOLS_DATA = null, SCHOOLS_LOADING = null;
+// The school data lives in schools.json beside this page, and loads only when the schools tool opens
+function loadSchoolsData() {
+  if (SCHOOLS_DATA) return Promise.resolve(SCHOOLS_DATA);
+  if (!SCHOOLS_LOADING) {
+    SCHOOLS_LOADING = fetch(CONFIG.schoolsDataUrl, { cache: 'force-cache' })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(d => { SCHOOLS_DATA = d; SCH_GRID = null; return d; })
+      .catch(e => { SCHOOLS_LOADING = null; throw e; });
+  }
+  return SCHOOLS_LOADING;
+}
+
+/* ===================================================================================
+   Schools near landfills
+   Each school: [type, name, city, state, lat, lon, looksVirtual, enrollment?]
+   type 0 public K-12, 1 private K-12, 2 college or university
+   enrollment: [total, AIAN, Asian, Hispanic, Black, White, NHPI, Two or more]
+   =================================================================================== */
+const SCH_TYPES = ['Public K–12', 'Private K–12', 'College or university'];
+const SCH_RACE = ['American Indian or Alaska Native', 'Asian', 'Hispanic or Latino', 'Black or African American', 'White', 'Native Hawaiian or Pacific Islander', 'Two or more races'];
+let SCH_GRID = null;
+function schoolGrid() {
+  if (SCH_GRID) return SCH_GRID;
+  SCH_GRID = new Map();
+  SCHOOLS_DATA.forEach((s, i) => {
+    const k = `${Math.floor(s[4] * 10)}|${Math.floor(s[5] * 10)}`;
+    if (!SCH_GRID.has(k)) SCH_GRID.set(k, []);
+    SCH_GRID.get(k).push(i);
+  });
+  return SCH_GRID;
+}
+function milesBetween(lat1, lon1, lat2, lon2) {
+  const r = Math.PI / 180, dLat = (lat2 - lat1) * r, dLon = (lon2 - lon1) * r;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(dLon / 2) ** 2;
+  return 2 * 3958.8 * Math.asin(Math.sqrt(a));
+}
+function schoolsNear(lat, lon, radius) {
+  const g = schoolGrid(), out = [];
+  const a = Math.floor(lat * 10), b = Math.floor(lon * 10);
+  const dLat = Math.ceil(radius / 6.9), dLon = Math.ceil(radius / (6.9 * Math.max(0.15, Math.cos(lat * Math.PI / 180))));
+  for (let i = a - dLat; i <= a + dLat; i++) for (let j = b - dLon; j <= b + dLon; j++) {
+    const cell = g.get(`${i}|${j}`); if (!cell) continue;
+    for (const k of cell) { const s = SCHOOLS_DATA[k]; const d = milesBetween(lat, lon, s[4], s[5]); if (d <= radius) out.push([k, d]); }
+  }
+  return out;
+}
+
+function schoolOptions() {
+  return {
+    radius: Number($('#schRadius').value) || 1,
+    types: [0, 1, 2].filter(t => $(`#schType${t}`).checked),
+    noVirtual: $('#schVirt').checked,
+  };
+}
+
+/* ---------- schools line in the Communities sections of other reports ---------- */
+const schBox = id => `<div class="sch-summary" id="${id}"><p class="note">Counting schools nearby…</p></div>`;
+function schoolTotals(lfs, radius) {
+  const seen = new Set(); let pub = 0, priv = 0, students = 0, race = [0, 0, 0, 0, 0, 0, 0];
+  lfs.filter(l => l.lat != null && l.lon != null).forEach(l => schoolsNear(l.lat, l.lon, radius).forEach(([k]) => {
+    const s = SCHOOLS_DATA[k];
+    if (seen.has(k) || s[0] === 2 || s[6]) return;
+    seen.add(k); if (s[0] === 0) pub++; else priv++;
+    if (s[7]) { students += s[7][0] || 0; for (let i = 0; i < 7; i++) race[i] += s[7][i + 1] || 0; }
+  }));
+  const rt = race.reduce((a, b) => a + b, 0);
+  return { n: seen.size, pub, priv, students, poc: rt ? (rt - race[4]) / rt * 100 : null };
+}
+// opts: { single: landfill } for a profile, or { lfs, place, clearFilters } for an area
+async function runSchoolSummary(id, opts) {
+  const box = document.getElementById(id); if (!box) return;
+  try { await loadSchoolsData(); } catch (x) { box.innerHTML = '<p class="note">School counts aren’t available here: the school data file didn’t load.</p>'; return; }
+  const el = document.getElementById(id); if (!el) return;   // the report changed while loading
+  const btn = `<button type="button" class="btn sch-open" data-sch-open="${id}">${icon('schools')}See these schools on a map</button>`;
+  if (opts.single) {
+    const l = opts.single;
+    if (l.lat == null || l.lon == null) { el.innerHTML = '<p class="note">This landfill has no coordinates in Landfill Reference, so nearby schools can’t be counted.</p>'; return; }
+    const a = schoolTotals([l], 1), b = schoolTotals([l], 5);
+    el.innerHTML = `<h4>Schools nearby</h4><p><strong>${plural(a.n, 'school')}</strong> within 1 mile${a.students ? ` (${fmtInt(a.students)} K–12 students)` : ''}, and <strong>${plural(b.n, 'school')}</strong> within 5 miles${b.students ? ` (${fmtInt(b.students)} students${b.poc != null ? `, ${fmtP(b.poc)} students of color` : ''})` : ''}.</p>
+      <p class="note">Public and private K–12 schools, straight-line distance from the landfill’s point location.</p>${a.n || b.n ? btn : ''}`;
+  } else {
+    const t = schoolTotals(opts.lfs, 1);
+    el.innerHTML = `<h4>Schools within 1 mile</h4><p>${t.n ? `<strong>${plural(t.n, 'school')}</strong> (${fmtInt(t.pub)} public and ${fmtInt(t.priv)} private K–12) with <strong>${fmtInt(t.students)} K–12 students</strong> are within 1 mile of ${esc(opts.place)}${t.poc != null ? `; <strong>${fmtP(t.poc)}</strong> are students of color` : ''}.` : `No K–12 schools are within 1 mile of ${esc(opts.place)}.`}</p>
+      <p class="note">Each school counted once. Change the distance or see the list in the schools tool.</p>${t.n ? btn : ''}`;
+  }
+  el.querySelector('[data-sch-open]')?.addEventListener('click', () => openSchoolsTool(opts));
+}
+let SCH_ONLY_LF = null;
+function schPickFromInput() {
+  const v = $('#schLf').value.trim();
+  if (!v) { if (SCH_ONLY_LF) { SCH_ONLY_LF = null; buildSchools(); } return; }
+  const lf = [...LANDFILLS.values()].find(l => `${l.name} (${l.stateAbbr || l.state || ''})` === v)
+    || [...LANDFILLS.values()].find(l => l.name && l.name.toLowerCase() === v.toLowerCase());
+  if (!lf) { setStatus(`No landfill called “${v}”. Pick one from the list as you type.`, 'error'); return; }
+  if ($('#status').classList.contains('error')) restoreStatus();
+  SCH_ONLY_LF = lf.id;
+  buildSchools();
+}
+function openSchoolsTool(opts) {
+  SCH_ONLY_LF = opts.single ? opts.single.id : null;
+  $('#schLf').value = opts.single ? `${opts.single.name} (${opts.single.stateAbbr || opts.single.state || ''})` : '';
+  if (opts.clearFilters && activeFilterCount()) { clearExplorer(); setStatus('Landfill filters were cleared so the schools match this report.'); }
+  $('#schRadius').value = '1';
+  setMode('schools');
+  window.scrollTo?.(0, 0);
+}
+
+async function buildSchools() {
+  fillPopList();
+  if (!SCHOOLS_DATA) {
+    $('#report').innerHTML = '<p class="start">Loading school data…</p>';
+    try { await loadSchoolsData(); }
+    catch (x) {
+      $('#report').innerHTML = `<p class="notice">The school data couldn’t be loaded (${esc(x.message)}). It’s in a separate file, schools.json, which has to sit in the same folder as this page on GitHub. Opening the page as a file on your computer won’t load it.</p>`;
+      return;
+    }
+    if (MODE !== 'schools') return;
+  }
+  const sel = $('#state').value;
+  const st = sel && sel !== NATIONAL ? STATES.find(s => s.id === sel) : null;
+  let range;
+  try { range = getRange(PLUMES); } catch (x) { setStatus(x.message, 'error'); return; }
+  if ($('#status').classList.contains('error')) restoreStatus();
+  const o = schoolOptions();
+  if (!o.types.length) { setStatus('Tick at least one type of school.', 'error'); return; }
+  const e = readExplorer();
+  const matches = explorerMatches(e, st, range.start, range.end);
+  const only = SCH_ONLY_LF ? LANDFILLS.get(SCH_ONLY_LF) : null;
+  if (only) { matches.length = 0; matches.push(only); }
+  const located = matches.filter(l => l.lat != null && l.lon != null);
+  const unlocated = matches.length - located.length;
+
+  // every school within the radius of any chosen landfill, counted once
+  const bySchool = new Map();   // school index -> { d, lf, n }
+  const byLf = [];
+  for (const l of located) {
+    const near = schoolsNear(l.lat, l.lon, o.radius).filter(([k]) => {
+      const s = SCHOOLS_DATA[k];
+      return o.types.includes(s[0]) && !(o.noVirtual && s[6]);
+    });
+    let students = 0, closest = null;
+    near.forEach(([k, d]) => {
+      const cur = bySchool.get(k);
+      if (!cur) bySchool.set(k, { d, lf: l, n: 1 }); else { cur.n++; if (d < cur.d) { cur.d = d; cur.lf = l; } }
+      const en = SCHOOLS_DATA[k][7]; if (en && SCHOOLS_DATA[k][0] !== 2) students += en[0] || 0;
+      if (!closest || d < closest.d) closest = { k, d };
+    });
+    byLf.push({ l, n: near.length, students, closest });
+  }
+  const schools = [...bySchool.entries()].map(([k, v]) => ({ k, s: SCHOOLS_DATA[k], ...v })).sort((a, b) => a.d - b.d);
+  const countBy = t => schools.filter(x => x.s[0] === t).length;
+  const k12 = schools.filter(x => x.s[0] !== 2);
+  const withEn = k12.filter(x => x.s[7]);
+  const students = withEn.reduce((n, x) => n + (x.s[7][0] || 0), 0);
+  const race = SCH_RACE.map((_, i) => withEn.reduce((n, x) => n + (x.s[7][i + 1] || 0), 0));
+  const raceTotal = race.reduce((a, b) => a + b, 0);
+  const poc = raceTotal ? (raceTotal - race[4]) / raceTotal * 100 : null;
+  const lfWith = byLf.filter(x => x.n > 0).length;
+  const missingPriv = k12.filter(x => x.s[0] === 1 && !x.s[7]).length;
+  const missingPub = k12.filter(x => x.s[0] === 0 && !x.s[7]).length;
+  const rTxt = o.radius === 1 ? '1 mile' : `${o.radius} miles`;
+  const title = popSelectionTitle(e, st);
+  const pctOf = s => { const en = s[7]; if (!en) return null; const t = en.slice(1).reduce((a, b) => a + (b || 0), 0); return t ? (t - (en[5] || 0)) / t * 100 : null; };
+
+  CURRENT = { downloads: [
+    { label: 'Schools CSV', filename: `Schools within ${rTxt} of ${title}`, rows: () => [
+      ['School', 'Type', 'City', 'State', 'Students', ...SCH_RACE, '% students of color', 'Nearest landfill', 'Distance to nearest landfill (miles)', 'Landfills within radius', 'Latitude', 'Longitude'],
+      ['School name', 'Public or private K–12, or college', 'City', 'State', 'Enrolled students (public 2024-25; private 2019-20; blank if not reported or a college)', ...SCH_RACE.map(r => `${r} students`), 'Students who aren’t white, as a share of students with race reported', 'Closest of the chosen landfills', 'Straight-line distance from the landfill’s point location', 'How many chosen landfills are within the radius', 'School latitude', 'School longitude'],
+      ...schools.map(x => [x.s[1], SCH_TYPES[x.s[0]], x.s[2], x.s[3], x.s[7] ? x.s[7][0] : '', ...SCH_RACE.map((_, i) => x.s[7] ? (x.s[7][i + 1] ?? '') : ''), pctOf(x.s) == null ? '' : pctOf(x.s).toFixed(1), x.lf.name, x.d.toFixed(2), x.n, x.s[4], x.s[5]]),
+    ], disabled: !schools.length, emptyNote: 'No schools within this radius' },
+    { label: 'Landfills CSV', filename: `Landfills and schools within ${rTxt}`, rows: () => [
+      ['Landfill', 'State', 'Owner', 'Status', 'Schools within radius', 'K–12 students at those schools', 'Nearest school', 'Distance to nearest school (miles)'],
+      ['Landfill name', 'State', 'Owner organization', 'Current status', 'Schools of the chosen types within the radius', 'Students at public and private K–12 schools with enrollment reported (a school near two landfills counts for both here)', 'Closest school', 'Straight-line distance'],
+      ...byLf.slice().sort((a, b) => b.n - a.n).map(x => [x.l.name, x.l.stateAbbr || x.l.state, x.l.owner, x.l.status, x.n, x.students, x.closest ? SCHOOLS_DATA[x.closest.k][1] : '', x.closest ? x.closest.d.toFixed(2) : '']),
+    ], disabled: !byLf.length },
+  ] };
+
+  const head = headHTML(`Schools within ${rTxt}`, only
+    ? [`Near ${esc(only.name)}, ${esc(only.stateAbbr || only.state || '')}`, `<button type="button" class="linkbtn" id="schAll">Show all landfills instead</button>`]
+    : [`Near ${esc(title.replace(/^./, c => c.toLowerCase()))}`, `${plural(located.length, 'landfill')} searched`]);
+  $('#report').innerHTML = head + `
+    <ul class="atag">
+      <li class="dom-ej"><span class="atag-k">${icon('schools')}Schools</span><span class="atag-v"><strong>${plural(schools.length, 'school')}</strong> within ${rTxt}</span>
+        <div class="sch-split">${o.types.map(t => { const n = countBy(t); return `<div><strong>${fmtInt(n)} ${t === 2 ? (n === 1 ? 'college or university' : 'colleges or universities') : ['public', 'private'][t] + ' K–12'}</strong></div>`; }).join('')}</div>
+        <p class="sch-once">Each school is counted once, even if it’s near several landfills.</p></li>
+      <li class="dom-ej"><span class="atag-k">${icon('ej')}K–12 students</span><span class="atag-v">${k12.length ? `<strong>${fmtInt(students)} students</strong> attend ${withEn.length === k12.length ? 'these K–12 schools' : `the ${fmtInt(withEn.length)} K–12 schools that report enrollment`}.` : 'No K–12 schools in this selection.'}</span>
+        ${raceTotal ? raceBars(race, raceTotal) : ''}</li>
+      <li class="dom-lf"><span class="atag-k">${icon('lf')}Landfills</span><span class="atag-v"><strong>${fmtInt(lfWith)} of ${plural(located.length, 'landfill')}</strong> have at least one school within ${rTxt}.</span></li>
+    </ul>
+    <aside class="sch-limits"><h4>Before you quote these figures</h4><ul>
+      <li>Distances are straight lines from each landfill’s point location, not its property line.</li>
+      <li>Public enrollment is 2024-25; private is 2019-20, and about 30% of private schools have no student figure, so student totals are undercounts.</li>
+      <li>Students include pre-K. Colleges are counted as schools only.</li>
+      <li>Virtual schools are left out by name, and the list includes special programs (such as juvenile justice schools). Check individual schools before using one as an example.</li>
+    </ul><p class="note">Full method and checks: “Schools near landfills: methodology and quality checks”.</p></aside>
+    <section class="domain dom-ej" id="sec-sch-map"><header class="dom-head">${chip('ej')}<h3>Map<span class="dom-place">: schools within ${rTxt}</span></h3>
+      <p class="dom-src">Dashed circles show the ${rTxt} around each landfill. Click any point for details, or a school’s name in the list below to find it on the map.</p></header>
+      <label class="sch-map-opt noprint"><input type="checkbox" id="schMapNear" ${SCH_MAP_NEAR ? 'checked' : ''}> Show only landfills with a school nearby</label>
+      <div class="sch-map" id="schMap" role="region" aria-label="Map of landfills, schools and the search radius"><p class="note sch-map-msg">Loading the map…</p></div>
+      <div class="legend sch-legend"><span><i class="sch-dot" style="background:#2A1D3D"></i>Landfill</span><span><i class="sch-ring"></i>${rTxt} radius</span>${o.types.map(t => `<span><i class="sch-dot" style="background:${SCH_COLORS[t]}"></i>${esc(SCH_TYPES[t])}</span>`).join('')}</div>
+      <p class="note" id="schMapNote"></p>
+    </section>
+    ${raceTotal ? `<section class="domain dom-ej" id="sec-race"><header class="dom-head">${chip('ej')}<h3>Students by race and ethnicity<span class="dom-place">: within ${rTxt}</span></h3><p class="dom-src">Public and private K–12 schools that report race and ethnicity. Colleges aren’t included.</p></header>
+      <div class="tablewrap"><table class="data sch-race"><thead><tr><th scope="col">Group</th><th scope="col" class="num">Students</th><th scope="col" class="num">Share</th><th scope="col"></th></tr></thead><tbody>
+      <tr class="sch-total"><th scope="row">Students of color</th><td class="num">${fmtInt(raceTotal - race[4])}</td><td class="num">${fmtP(poc)}</td><td><span class="sch-bar sch-bar-total"><i style="width:${poc.toFixed(1)}%"></i></span></td></tr>
+      ${race.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v).map(({ v, i }) => `<tr><th scope="row"><i class="race-key" style="background:${RACE_COLORS[i]}"></i>${esc(SCH_RACE[i])}</th><td class="num">${fmtInt(v)}</td><td class="num">${fmtP(v / raceTotal * 100)}</td><td><span class="sch-bar"><i style="width:${(v / raceTotal * 100).toFixed(1)}%;background:${RACE_COLORS[i]}"></i></span></td></tr>`).join('')}
+      </tbody></table></div></section>` : ''}
+    <section class="domain dom-ej" id="sec-schools"><header class="dom-head">${chip('ej')}<h3>Schools<span class="dom-place">: within ${rTxt}</span></h3><p class="dom-src">Closest first. Distances are straight-line from each landfill’s point location, not its property line. The full list is in the Schools CSV.</p></header>
+      <div class="legend race-legend">${RACE_ORDER.map(i => `<span><i class="race-key" style="background:${RACE_COLORS[i]}"></i>${esc(SCH_RACE[i])}</span>`).join('')}</div>
+      <div id="schTable"></div></section>
+    <section class="domain dom-lf" id="sec-sch-lf"><header class="dom-head">${chip('lf')}<h3>Landfills<span class="dom-place">: ${esc(title)}</span></h3><p class="dom-src">Schools within ${rTxt} of each landfill. A school near two landfills is listed under both here, but counted once in the totals above.</p></header>
+      <div id="schLfTable"></div></section>
+    <aside class="pop-caveat"><h4>About these figures</h4><ul>
+      <li><strong>Enrollment years differ:</strong> public schools are 2024-25; private schools are 2019-20, the latest year published at school level.${missingPriv ? ` ${plural(missingPriv, 'private school')} here opened or reported since then and ${missingPriv === 1 ? 'has' : 'have'} no student figure.` : ''}${missingPub ? ` ${plural(missingPub, 'public school')} here ${missingPub === 1 ? 'reports' : 'report'} no enrollment.` : ''}</li>
+      <li><strong>Colleges and universities</strong> are counted as schools only; their students, mostly adults, aren’t included in the totals.</li>
+      <li><strong>Virtual schools</strong> are listed at an office address, so they’re left out when the box is ticked. They’re picked out by name (such as “Virtual”, “Online” or “Cyber”), so a few may slip through.</li>
+      ${unlocated ? `<li><strong>${plural(unlocated, 'landfill')}</strong> in this selection ${unlocated === 1 ? 'has' : 'have'} no coordinates in Landfill Reference and ${unlocated === 1 ? 'isn’t' : 'aren’t'} searched.</li>` : ''}
+    </ul></aside>
+    ${schoolSources(title, rTxt)}`;
+  sortableTable($('#schTable'), [
+    { key: 'name', label: 'School', value: x => x.s[1].toLowerCase(), html: x => `<button type="button" class="linkbtn" data-sch-map="${x.k}">${esc(x.s[1])}</button>`, cls: 'col-name' },
+    { key: 'type', label: 'Type', value: x => x.s[0], html: x => esc(SCH_TYPES[x.s[0]]), cls: 'col-nowrap' },
+    { key: 'place', label: 'City', value: x => `${x.s[3]} ${x.s[2]}`.toLowerCase(), html: x => esc(`${x.s[2]}, ${x.s[3]}`) },
+    { key: 'students', label: 'Students', num: true, value: x => x.s[7] ? x.s[7][0] : -1, html: x => x.s[7] ? fmtInt(x.s[7][0]) : '<span class="na">—</span>' },
+    { key: 'poc', label: 'Students by race (% students of color)', value: x => pctOf(x.s) ?? -1, html: x => schoolRaceBar(x.s, pctOf(x.s)), cls: 'col-race' },
+    { key: 'lf', label: 'Nearest landfill', value: x => x.lf.name.toLowerCase(), html: x => esc(x.lf.name) + profileBtn(x.lf.id), cls: 'col-lf' },
+    { key: 'd', label: 'Distance (miles)', num: true, value: x => x.d, html: x => x.d.toFixed(1) },
+    { key: 'n', label: 'Landfills within radius', num: true, value: x => x.n, html: x => fmtInt(x.n) },
+  ], schools, 'd', 'asc', 400);
+  sortableTable($('#schLfTable'), [
+    { key: 'name', label: 'Landfill', value: x => x.l.name.toLowerCase(), html: x => esc(x.l.name) + profileBtn(x.l.id), cls: 'col-name' },
+    { key: 'state', label: 'State', value: x => (x.l.stateAbbr || '').toLowerCase(), html: x => esc(x.l.stateAbbr || x.l.state || '') },
+    { key: 'owner', label: 'Owner', value: x => (x.l.owner || '').toLowerCase(), html: x => esc(x.l.owner || '—') },
+    { key: 'n', label: 'Schools', num: true, value: x => x.n, html: x => fmtInt(x.n) },
+    { key: 'students', label: 'K–12 students', num: true, value: x => x.students, html: x => fmtInt(x.students) },
+    { key: 'closest', label: 'Nearest school', value: x => x.closest ? x.closest.d : 99, html: x => x.closest ? `${esc(SCHOOLS_DATA[x.closest.k][1])} <span class="note">(${x.closest.d.toFixed(1)} mi)</span>` : '—' },
+  ], byLf.filter(x => x.n > 0), 'n', 'desc', 400);
+  wireActions();
+  $('#schAll')?.addEventListener('click', () => { SCH_ONLY_LF = null; $('#schLf').value = ''; buildSchools(); });
+  SCH_MAP_ARGS = { located, byLf, schools, o, pctOf };
+  $('#schMapNear').addEventListener('change', e => { SCH_MAP_NEAR = e.target.checked; drawSchoolMap(SCH_MAP_ARGS); });
+  drawSchoolMap(SCH_MAP_ARGS);
+}
+
+/* ---------- map (Leaflet, loaded only when needed) ---------- */
+const SCH_COLORS = ['#0A8574', '#C98E12', '#294480'];
+// Race and ethnicity colors (index matches SCH_RACE); listed largest-first in legends
+const RACE_COLORS = ['#8E6A9F', '#91C8E4', '#E6674F', '#2A1D3D', '#D3C8BC', '#E7B4D0', '#F4BD42'];
+const RACE_ORDER = [3, 2, 4, 1, 6, 0, 5];
+function raceBars(race, total) {
+  const poc = (total - race[4]) / total * 100;
+  const rows = race.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v);
+  return `<div class="race-bars">
+    <div class="rb rb-total"><span class="rb-l">Students of color</span><span class="rb-t"><i style="width:${poc.toFixed(1)}%"></i></span><strong>${fmtP(poc)}</strong></div>
+    ${rows.map(({ v, i }) => `<div class="rb"><span class="rb-l">${esc(SCH_RACE[i])}</span><span class="rb-t"><i style="width:${(v / total * 100).toFixed(1)}%;background:${RACE_COLORS[i]}"></i></span><span>${fmtP(v / total * 100)}</span></div>`).join('')}
+  </div>`;
+}
+function schoolRaceBar(s, poc) {
+  const en = s[7];
+  if (!en) return '<span class="na">—</span>';
+  const parts = en.slice(1), t = parts.reduce((a, b) => a + (b || 0), 0);
+  if (!t) return '<span class="na">—</span>';
+  const tip = RACE_ORDER.filter(i => parts[i]).map(i => `${SCH_RACE[i]} ${fmtP(parts[i] / t * 100)}`).join(', ');
+  return `<span class="srb" title="${esc(tip)}" role="img" aria-label="${esc(tip)}">${RACE_ORDER.filter(i => parts[i]).map(i => `<i style="width:${(parts[i] / t * 100).toFixed(2)}%;background:${RACE_COLORS[i]}"></i>`).join('')}</span><strong class="srb-n">${fmtP(poc)}</strong>`;
+}
+const LEAFLET_JS = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+const LEAFLET_CSS = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+let LEAFLET_READY = null, SCH_MAP = null, SCH_MARKERS = new Map(), SCH_MAP_NEAR = true, SCH_MAP_ARGS = null;
+function loadLeaflet() {
+  if (window.L) return Promise.resolve(window.L);
+  if (LEAFLET_READY) return LEAFLET_READY;
+  LEAFLET_READY = new Promise((resolve, reject) => {
+    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = LEAFLET_CSS; document.head.appendChild(css);
+    const js = document.createElement('script'); js.src = LEAFLET_JS; js.onload = () => resolve(window.L); js.onerror = () => { LEAFLET_READY = null; reject(new Error('map library')); };
+    document.head.appendChild(js);
+  });
+  return LEAFLET_READY;
+}
+async function drawSchoolMap({ located, byLf, schools, o, pctOf }) {
+  const box = $('#schMap'); if (!box) return;
+  let L;
+  try { L = await loadLeaflet(); } catch (x) { box.innerHTML = '<p class="note sch-map-msg">The map couldn’t load. Check your internet connection and press Update Report to try again.</p>'; return; }
+  if (!document.body.contains(box)) return;   // the report changed while the map library loaded
+  if (SCH_MAP) { SCH_MAP.remove(); SCH_MAP = null; }
+  box.innerHTML = '';
+  const map = L.map(box, { preferCanvas: true, scrollWheelZoom: false });
+  SCH_MAP = map;
+  const light = MAPBOX_TOKEN
+    ? L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/256/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`, { attribution: '© Mapbox © OpenStreetMap', maxZoom: 19 })
+    : L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors', maxZoom: 19 });
+  light.addTo(map);
+  if (MAPBOX_TOKEN) {
+    const sat = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`, { attribution: '© Mapbox © OpenStreetMap © Maxar', maxZoom: 19 });
+    L.control.layers({ 'Map': light, 'Satellite': sat }, null, { position: 'topright' }).addTo(map);
+  }
+  // Too many landfills makes the map unreadable: then show only those with schools nearby
+  const MAX = 600;
+  const withSchools = byLf.filter(x => x.n > 0).map(x => x.l);
+  const shownLfs = SCH_MAP_NEAR || located.length > MAX ? withSchools : located;
+  const counts = new Map(byLf.map(x => [x.l.id, x]));
+  const meters = o.radius * 1609.344;
+  const bounds = [];
+  shownLfs.slice(0, 1500).forEach(l => {
+    L.circle([l.lat, l.lon], { radius: meters, color: '#2A1D3D', weight: 1.5, dashArray: '5 5', fillColor: '#2A1D3D', fillOpacity: 0.05 }).addTo(map);
+    const c = counts.get(l.id);
+    L.circleMarker([l.lat, l.lon], { radius: 7, color: '#fff', weight: 2, fillColor: '#2A1D3D', fillOpacity: 1 })
+      .bindPopup(`<strong>${esc(l.name)}</strong><br>${esc([l.city, l.stateAbbr || l.state].filter(Boolean).join(', '))}${l.owner ? `<br>${esc(l.owner)}` : ''}<br>${c ? `${plural(c.n, 'school')}, ${fmtInt(c.students)} K–12 students within ${o.radius === 1 ? '1 mile' : o.radius + ' miles'}` : ''}`)
+      .addTo(map);
+    bounds.push([l.lat, l.lon]);
+  });
+  SCH_MARKERS = new Map();
+  schools.forEach(x => {
+    const s = x.s, en = s[7], p = pctOf(s);
+    const m = L.circleMarker([s[4], s[5]], { radius: 5, color: '#fff', weight: 1, fillColor: SCH_COLORS[s[0]], fillOpacity: 0.95 })
+      .bindPopup(`<strong>${esc(s[1])}</strong><br>${esc(SCH_TYPES[s[0]])}, ${esc(s[2])}, ${esc(s[3])}<br>${en ? `${fmtInt(en[0])} students${p != null ? `, ${fmtP(p)} students of color` : ''}` : (s[0] === 2 ? 'Enrollment not included for colleges' : 'No enrollment reported')}<br>${x.d.toFixed(1)} miles from ${esc(x.lf.name)}`)
+      .addTo(map);
+    SCH_MARKERS.set(x.k, m);
+  });
+  if (bounds.length) {
+    const pad = o.radius / 69;   // degrees of latitude, so whole circles fit
+    const lats = bounds.map(b => b[0]), lons = bounds.map(b => b[1]);
+    map.fitBounds([[Math.min(...lats) - pad, Math.min(...lons) - pad * 1.4], [Math.max(...lats) + pad, Math.max(...lons) + pad * 1.4]]);
+  } else map.setView([39.5, -98.35], 4);
+  $('#schMapNote').textContent = (!SCH_MAP_NEAR && located.length > MAX
+    ? `This selection has ${fmtInt(located.length)} landfills, too many to show at once, so the map shows only the ${fmtInt(shownLfs.length)} with a school nearby. `
+    : SCH_MAP_NEAR ? `Showing the ${fmtInt(shownLfs.length)} of ${fmtInt(located.length)} landfills with a school nearby. ` : '')
+    + 'Scroll-wheel zoom is off so the page scrolls normally; use the + and − buttons, or pinch on a phone.';
+}
+
+const andJoin = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-sch-map]'); if (!b || !SCH_MAP) return;
+  const m = SCH_MARKERS.get(Number(b.dataset.schMap)); if (!m) return;
+  $('#schMap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  SCH_MAP.setView(m.getLatLng(), Math.max(SCH_MAP.getZoom(), 14));
+  m.openPopup();
+});
+
+function schoolSources(title, rTxt) {
+  const today = fmtDate(new Date());
+  const text = 'School locations: National Center for Education Statistics (NCES), EDGE public school (2024-25), private school (2023-24) and postsecondary (2025-26) locations. Enrollment and race/ethnicity: NCES Common Core of Data 2024-25 (public) and Private School Survey 2019-20 (private), via the ELSI table generator. Landfill locations: Full Circle Future landfill tracker.';
+  const citation = `Full Circle Future. Schools within ${rTxt} of ${title.replace(/^./, c => c.toLowerCase())}. Landfill data tools, generated ${today}. ${text}`;
+  return `
+    <section class="sources" id="sec-sources">
+      <h3>Sources and citation</h3>
+      <ul class="src-list"><li>${chip('ej')}<span>${esc(text)}</span></li></ul>
+      <div class="cite"><label for="citeText">Cite these figures</label><textarea id="citeText" readonly rows="4">${esc(citation)}</textarea>
+        <button type="button" class="btn noprint" data-copy-cite>Copy citation</button></div>
+    </section>`;
+}
+
 function buildReport() {
   if (MODE === 'landfill') buildLandfillReport();
   else if (MODE === 'explore') buildExplorer();
   else if (MODE === 'pop') { if ($('#popAdd').value.trim()) popAddFromInput(); else buildPopCounter(); }
   else if (MODE === 'emis') buildEmissions();
+  else if (MODE === 'schools') { if ($('#schLf').value.trim()) schPickFromInput(); else buildSchools(); }
   else buildAreaReport();
 }
 
@@ -3040,9 +3524,10 @@ function buildAreaReport() {
     </dl>
     ${EJ_METRICS.some(m => ejVals[m.key] != null) ? `<div class="sub"><h4>Who lives near ${national ? 'landfills nationally' : 'landfills in ' + esc(st.name)}</h4><p class="note">Population-weighted across ${national ? 'all landfill communities' : 'the state’s landfill communities'}.</p>${ejBars(ejVals, national ? 'United States' : st.name, national ? 'All landfill communities' : `${st.name} landfill communities`)}</div>` : ''}
     ${topPop.length ? `<div class="sub chart"><h4>Landfills with the most people nearby</h4><p class="note">People living within 5 miles of each landfill.</p>${hbarChart(topPop, { key: 'pop', label: '' }, 'ej')}</div>` : ''}`;
-  const ejSection = domainSection('ej', 'Communities', ejInner, placeName);
+  const ejSection = domainSection('ej', 'Communities', ejInner + schBox('schSumState'), placeName);
 
   $('#report').innerHTML = head + glance + jumpNav(['lf', 'pl', 'ec', 'ej']) + lfSection + plSection + ecSection + ejSection + sourcesHTML(['lf', 'pl', 'ec', 'ej'], st.name, `Landfills, methane plumes, EPA compliance and nearby communities, plume data ${periodText}`);
+  runSchoolSummary('schSumState', { lfs: allLfs, place: national ? 'a landfill nationwide' : `a landfill in ${placeName}`, clearFilters: true });
 
   if (plumes.length) {
     if (national) sortableTable($('#stTable'), [
@@ -3303,6 +3788,7 @@ function communityInner(lf) {
   if (lf.pop == null && !bars && !lists) return '<p class="note">No community data for this landfill in the tracker.</p>';
   return `
     ${lf.pop != null ? `<p class="ej-pop"><span>${fmtInt(lf.pop)}</span> people live within 5 miles</p>` : ''}
+    ${schBox('schSumLf')}
     ${bars}
     ${lists}`;
 }
@@ -3581,6 +4067,7 @@ function buildLandfillReport() {
       ${glance}
     </div>` : glance;
   $('#report').innerHTML = head + hero + jumpNav(['lf', 'pl', 'ec', 'ej']) + lfSection + plSection + ecSection + ejSection + sourcesHTML(['lf', 'pl', 'ec', 'ej'], lf.name, `landfill profile, plume data ${periodText}`) + missingNote;
+  runSchoolSummary('schSumLf', { single: lf });
   if (plumes.length) sortableTable($('#plumeTable'), plumeColumns({ showLandfill: false }), plumes, 'date', 'desc');
   wireActions();
 }
@@ -3599,6 +4086,10 @@ const EX_METRICS = [
   { key: 'over64', d: 'ej', label: '% over 64 within 5 miles', agg: 'wpct', pct: true, get: l => l.over64P },
   { key: 'capP', d: 'lf', label: '% of capacity used', agg: 'mean', pct: true, get: l => capacityUsed(l)?.v ?? null },
   { key: 'designCap', d: 'lf', label: 'Design capacity (metric tons)', agg: 'sum', get: l => l.designCap },
+  { key: 'schools1', d: 'ej', label: 'Schools within 1 mile', agg: 'max', get: l => l.schools1 },
+  { key: 'students1', d: 'ej', label: 'K–12 students within 1 mile', agg: 'max', get: l => l.students1 },
+  { key: 'schools5', d: 'ej', label: 'Schools within 5 miles', agg: 'max', get: l => l.schools5 },
+  { key: 'students5', d: 'ej', label: 'K–12 students within 5 miles', agg: 'max', get: l => l.students5 },
   { key: 'opened', d: 'lf', label: 'Year opened', agg: 'none', get: l => l.openedN },
   { key: 'plumesAll', d: 'pl', label: 'Plumes on record', agg: 'sum', get: l => l.plumesAll },
   { key: 'plumesPeriod', d: 'pl', label: 'Plumes in period', agg: 'sum', get: l => l.plumesPeriod },
@@ -3632,7 +4123,7 @@ function fillExplorerOptions() {
   $('#exContinuity').innerHTML = opts(conts);
   $('#exContWrap').hidden = !CONFIG.showFcfEchoLabels;
   $('#exEchoWrap').hidden = !ECHO_LOADED;
-  $('#exContWrap').hidden = !ECHO_LOADED;
+  $('#exContWrap').hidden = !ECHO_LOADED || !CONFIG.showFcfEchoLabels;
   $('#exRank').innerHTML = metricOptions(m => m.agg !== 'none');
   restoreExplorer();
 }
@@ -3706,8 +4197,8 @@ function hbarChart(items, m, d = 'lf') {
 }
 
 // Landfills that pass the explorer's filters (shared by the data explorer and the people counter)
-function explorerMatches(e, st, start, end) {
-  const loc = localArea();
+function explorerMatches(e, st, start, end, ignoreLocal = false) {
+  const loc = ignoreLocal ? { active: false } : localArea();
   // per-landfill plume figures
   const rows = [...LANDFILLS.values()].filter(l => l.name).map(l => {
     const ps = LF_PLUMES.get(l.id) || [];
@@ -3866,11 +4357,13 @@ function buildExplorer() {
     </dl>` : '<p class="note">The ECHO table couldn’t be loaded.</p>', selection);
   const ejSec = EJ_METRICS.some(m => ejVals[m.key] != null) || tot('pop') != null ? domainSection('ej', 'Communities', `
     ${tot('pop') != null ? `<p class="ej-pop"><span>${fmtInt(tot('pop'))}</span> people within 5 miles, added across landfills</p>` : ''}
-    ${ejBars(ejVals, st ? st.name : 'United States', 'These landfills')}`, selection) : '';
+    ${ejBars(ejVals, st ? st.name : 'United States', 'These landfills')}
+    ${schBox('schSumEx')}`, selection) : '';
 
   $('#report').innerHTML = head + glance + jumpNav(['lf', 'pl', 'ec', 'ej']) + condSec + rankSection + lfSec + plSec + ecSec + ejSec +
     `<section class="domain dom-none" id="sec-table"><header class="dom-head"><span class="chip chip-none">All matching landfills</span><h3>Landfill list<span class="dom-place">: ${esc(selection)}</span></h3><p class="dom-src">Column colors show which dataset each figure comes from. Landfill names link to Waste Impact Tracker, compliance badges to EPA’s report, and Profile opens the landfill profile.</p></header><div class="tablewrap" id="exTable"></div></section>` +
     sourcesHTML(['lf', 'pl', 'ec', 'ej'], Title, `${filterText.length ? filterText.join('. ') + '. ' : ''}Plume data ${periodText}`);
+  runSchoolSummary('schSumEx', { lfs: matches, place: 'these landfills', clearFilters: false });
 
   if (groups) {
     sortableTable($('#exGroupTable'), [
@@ -3918,6 +4411,7 @@ function buildExplorer() {
     { key: 'pop', label: 'People within 5 mi', num: true, value: l => l.pop ?? -1, html: l => fmtInt(l.pop), g: 'ej' },
     { key: 'bipoc', label: '% BIPOC', num: true, value: l => l.bipocP ?? -1, html: l => fmtP(l.bipocP), g: 'ej' },
     { key: 'lowIncome', label: '% low income', num: true, value: l => l.lowIncomeP ?? -1, html: l => fmtP(l.lowIncomeP), g: 'ej' },
+    ...(matches.some(l => l.schools1 != null) ? [{ key: 'schools1', label: 'Schools within 1 mile', num: true, value: l => l.schools1 ?? -1, html: l => l.schools1 == null ? '<span class="na">—</span>' : fmtInt(l.schools1), g: 'ej' }] : []),
     ]),
   ], matches, e.conds.length ? e.conds[0].f : (ECHO_LOADED || !['qtrsNC'].includes(sortKey) ? sortKey : 'waste'), 'desc', 300);
 
@@ -4271,11 +4765,16 @@ function toggleCustom() {
   if (savedPreset && [...$('#preset').options].some(o => o.value === savedPreset)) $('#preset').value = savedPreset;
   toggleCustom();
   initEmissionsControls();
+  $('#exToggle').addEventListener('click', () => { FILTERS_OPEN = !FILTERS_OPEN; $('#exFilters').classList.toggle('is-collapsed', !FILTERS_OPEN); updateFilterToggle(); });
+  ['input', 'change'].forEach(ev => $('#exFilters').addEventListener(ev, updateFilterToggle));
   $('#fbOpen').insertAdjacentHTML('afterbegin', icon('message'));
   $('#fbOpen').addEventListener('click', openFeedback);
   $('#fbForm').addEventListener('submit', sendFeedback);
   document.querySelectorAll('[data-fb-close]').forEach(b => b.addEventListener('click', closeFeedback));
+  ['#schRadius', '#schType0', '#schType1', '#schType2', '#schVirt'].forEach(sel => $(sel).addEventListener('change', () => { if (MODE === 'schools' && DATA_READY) buildSchools(); }));
   $('#popAdd').addEventListener('change', () => { if (MODE === 'pop' && $('#popAdd').value.trim()) popAddFromInput(); });
+  $('#schLf').addEventListener('change', () => { if (MODE === 'schools' && DATA_READY) schPickFromInput(); });
+  $('#state').addEventListener('change', () => { if (MODE === 'pop') $('#popAdd').value = ''; });
   document.querySelectorAll('[data-ic]').forEach(el => el.insertAdjacentHTML('afterbegin', icon(el.dataset.ic)));
   applyMode();
 
@@ -4291,8 +4790,8 @@ function toggleCustom() {
     $('#county').value = ''; $('#city').value = ''; fillLocalOptions();
     if ($('#state').value || MODE === 'explore') buildReport();
   });
-  $('#county').addEventListener('change', () => { $('#city').value = ''; fillLocalOptions(); if (['state', 'explore', 'pop'].includes(MODE) && $('#state').value) buildReport(); });
-  $('#city').addEventListener('change', () => { if (['state', 'explore', 'pop'].includes(MODE) && $('#state').value) buildReport(); });
+  $('#county').addEventListener('change', () => { $('#city').value = ''; fillLocalOptions(); if (['state', 'explore', 'pop', 'schools'].includes(MODE) && $('#state').value) buildReport(); });
+  $('#city').addEventListener('change', () => { if (['state', 'explore', 'pop', 'schools'].includes(MODE) && $('#state').value) buildReport(); });
   $('#form').addEventListener('submit', e => {
     e.preventDefault();
     if (MODE === 'landfill' && !$('#lfResults').hidden) {
@@ -4338,12 +4837,12 @@ function toggleCustom() {
 
   // explorer filters update the results as you change them
   let exTimer;
-  const exUpdate = () => { clearTimeout(exTimer); exTimer = setTimeout(() => { if (MODE === 'explore') buildExplorer(); else if (MODE === 'pop' && DATA_READY) buildPopCounter(); }, 250); };
+  const exUpdate = () => { clearTimeout(exTimer); exTimer = setTimeout(() => { if (MODE === 'explore') buildExplorer(); else if (MODE === 'pop' && DATA_READY) buildPopCounter(); else if (MODE === 'schools' && DATA_READY) { SCH_ONLY_LF = null; $('#schLf').value = ''; buildSchools(); } if (DATA_READY) fillLocalOptions(); }, 250); };
   $('#exFilters').addEventListener('input', exUpdate);
   $('#exFilters').addEventListener('change', exUpdate);
   $('#exAddCond').addEventListener('click', () => { const r = condRow({ f: 'waste' }); $('#exConds').appendChild(r); r.querySelector('.c-val').focus(); });
   $('#exConds').addEventListener('click', e => { const d = e.target.closest('.c-del'); if (d) { d.closest('.cond').remove(); exUpdate(); } });
-  $('#exReset').addEventListener('click', () => { clearExplorer(); if (MODE === 'pop') buildPopCounter(); else buildExplorer(); });
+  $('#exReset').addEventListener('click', () => { clearExplorer(); if (MODE === 'pop') buildPopCounter(); else if (MODE === 'schools') buildSchools(); else buildExplorer(); });
 
   $('#connectBtn').addEventListener('click', async () => {
     const v = $('#token').value.trim();
@@ -4396,6 +4895,7 @@ function toggleCustom() {
   if (token) loadData();
   else showConnect();
 })();
+
 </script>
 </body>
 </html>
