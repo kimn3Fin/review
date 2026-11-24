@@ -984,6 +984,44 @@
     details.gtk .gtk-body { display: block; } details.gtk > summary .gtk-more { display: none; }
     .kpi { break-inside: avoid; }
   }
+
+  /* ===== step cards: layout fixes (round 41) ===== */
+  .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(200px, 0.55fr); align-items: start; }
+  .steps:has(#step2[hidden]) { grid-template-columns: minmax(0, 1fr) minmax(200px, 0.45fr); }
+  .steps .step { overflow: hidden; }
+  .steps .step-b > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
+  .steps .step-b > .field { flex: 1 1 180px; }
+  .steps .step-b > .lf-search, .steps .step-b > .pop-add, .steps .step-b > .sch-types, .steps .step-b > #onlyPlumesWrap { flex: 1 1 100%; }
+  .steps .step-b > .field.narrow { flex: 1 1 90px; }
+  .steps .step-b select, .steps .step-b input:not([type=checkbox]):not([type=radio]) { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
+  .steps .step-b input[type=checkbox], .steps .step-b input[type=radio] { width: 18px; height: 18px; min-width: 0; margin: 0; flex: 0 0 auto; }
+  .steps .field.pop-add input { min-width: 0; }
+  .steps .field.em-scen select { max-width: 100%; }
+  .steps .sch-types { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; }
+  .steps .sch-types legend { grid-column: 1 / -1; float: left; width: 100%; margin-bottom: 4px; font-size: 13px; }
+  .steps .sch-types label { display: flex; align-items: center; gap: 8px; font-size: 15px; line-height: 1.3; }
+  .steps .ex-toggle { flex: 0 1 auto; max-width: 100%; width: auto; box-sizing: border-box; padding: 8px 16px; }
+  .steps .ex-toggle .tog-sub { white-space: normal; }
+  .step-go .step-b { align-items: flex-start; }
+  .go-btn { height: auto; min-height: 52px; }
+  .step-go .step-h { margin-bottom: 12px; }
+  .update-row { margin-top: 14px; }
+  @media (max-width: 960px) {
+    .steps, .steps:has(#step2[hidden]) { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  /* ===== polish (round 42) ===== */
+  .tabbar .nav { gap: 2px; flex-wrap: wrap; }
+  .tabbar .nav button { font-size: 14px; padding: 7px 11px; gap: 6px; }
+  .r-head .r-state { font-size: clamp(30px, 4vw, 44px); line-height: 1.1; }
+  section.acc > .acc-head { padding-right: 48px; }
+  section.acc .acc-btn { margin-top: 4px; }
+  section.acc .acc-chev { position: absolute; right: 0; top: 2px; }
+  section.acc:not(.is-closed) .acc-btn { margin: 0; height: 0; overflow: visible; }
+  section.sources.acc > .acc-head { position: relative; }
+  .steps .ex-toggle { border-radius: 10px; }
+  .gtk-more-notes { margin-top: 8px; padding-top: 8px; border-top: 1px solid #EBD9AE; }
+  .gtk-more-notes h4 { display: none; }
 </style>
 </head>
 <body>
@@ -2156,7 +2194,7 @@ function renderHome() {
     <div class="home">
       <div class="home-intro">
         <h2>Landfill data tools</h2>
-        <p>Tools built on four datasets: ${chip('lf')} ${chip('pl')} ${chip('ec')} ${chip('ej')}. The report, profile and explorer show all four, in that order and in those colors, so you can always tell where a number comes from. The last two tools count people near landfills and model national methane scenarios.</p>
+        <p>Tools built on four datasets: ${chip('lf')} ${chip('pl')} ${chip('ec')} ${chip('ej')}. The report, profile and explorer show all four, in that order and in those colors, so you can always tell where a number comes from. The other three tools count the people and schools near landfills, and model how much methane stronger rules would cut.</p>
       </div>
       <div class="tool-rows">${tools.map(t => `
         <article class="tool-row">
@@ -2768,7 +2806,7 @@ function renderPopState(st) {
         : `No ${national ? 'national' : 'state'} figure is available in State Data yet.`}</span></li>
     </ul>
     ${popCaveat(false)}
-    <section class="domain dom-ej" id="sec-ej">
+    <section class="domain dom-ej" id="sec-ej" data-sum="${esc(ranked.length ? `Each landfill’s own count, largest first: ${ranked[0].name} (${fmtInt(ranked[0].pop)} people)` : 'No landfill population figures')}">
       <header class="dom-head">${chip('ej')}<h3>Landfills by people nearby<span class="dom-place">: ${esc(place)}</span></h3>
         <p class="dom-src">Each landfill’s own count. Landfills close together share people, so these figures can’t be added up. For any landfill on its own, pick it by name above.</p></header>
       <div id="popTable"></div>
@@ -3327,15 +3365,15 @@ async function buildSchools() {
       <div class="legend sch-legend"><span><i class="sch-dot" style="background:#2A1D3D"></i>Landfill</span><span><i class="sch-ring"></i>${rTxt} radius</span>${o.types.map(t => `<span><i class="sch-dot" style="background:${SCH_COLORS[t]}"></i>${esc(SCH_TYPES[t])}</span>`).join('')}</div>
       <p class="note" id="schMapNote"></p>
     </section>
-    ${raceTotal ? `<section class="domain dom-ej" id="sec-race"><header class="dom-head">${chip('ej')}<h3>Students by race and ethnicity<span class="dom-place">: within ${rTxt}</span></h3><p class="dom-src">Public and private K–12 schools that report race and ethnicity. Colleges aren’t included.</p></header>
+    ${raceTotal ? `<section class="domain dom-ej" id="sec-race" data-sum="${esc('Largest groups: ' + race.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v).slice(0, 3).map(x => `${SCH_RACE[x.i]} ${fmtP(x.v / raceTotal * 100)}`).join(', '))}"><header class="dom-head">${chip('ej')}<h3>Students by race and ethnicity<span class="dom-place">: within ${rTxt}</span></h3><p class="dom-src">Public and private K–12 schools that report race and ethnicity. Colleges aren’t included.</p></header>
       <div class="tablewrap"><table class="data sch-race"><thead><tr><th scope="col">Group</th><th scope="col" class="num">Students</th><th scope="col" class="num">Share</th><th scope="col"></th></tr></thead><tbody>
       <tr class="sch-total"><th scope="row">Students of color</th><td class="num">${fmtInt(raceTotal - race[4])}</td><td class="num">${fmtP(poc)}</td><td><span class="sch-bar sch-bar-total"><i style="width:${poc.toFixed(1)}%"></i></span></td></tr>
       ${race.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v).map(({ v, i }) => `<tr><th scope="row"><i class="race-key" style="background:${RACE_COLORS[i]}"></i>${esc(SCH_RACE[i])}</th><td class="num">${fmtInt(v)}</td><td class="num">${fmtP(v / raceTotal * 100)}</td><td><span class="sch-bar"><i style="width:${(v / raceTotal * 100).toFixed(1)}%;background:${RACE_COLORS[i]}"></i></span></td></tr>`).join('')}
       </tbody></table></div></section>` : ''}
-    <section class="domain dom-ej" id="sec-schools"><header class="dom-head">${chip('ej')}<h3>Schools<span class="dom-place">: within ${rTxt}</span></h3><p class="dom-src">Closest first. Distances are straight-line from each landfill’s point location, not its property line. The full list is in the Schools CSV.</p></header>
+    <section class="domain dom-ej" id="sec-schools" data-sum="${esc(schools.length ? `${plural(schools.length, 'school')}, nearest first. Closest: ${schools[0].s[1]}, ${schools[0].d.toFixed(1)} miles from ${schools[0].lf.name}` : 'No schools within this distance')}"><header class="dom-head">${chip('ej')}<h3>Schools<span class="dom-place">: within ${rTxt}</span></h3><p class="dom-src">Closest first. Distances are straight-line from each landfill’s point location, not its property line. The full list is in the Schools CSV.</p></header>
       <div class="legend race-legend">${RACE_ORDER.map(i => `<span><i class="race-key" style="background:${RACE_COLORS[i]}"></i>${esc(SCH_RACE[i])}</span>`).join('')}</div>
       <div id="schTable"></div></section>
-    <section class="domain dom-lf" id="sec-sch-lf"><header class="dom-head">${chip('lf')}<h3>Landfills<span class="dom-place">: ${esc(title)}</span></h3><p class="dom-src">Schools within ${rTxt} of each landfill. A school near two landfills is listed under both here, but counted once in the totals above.</p></header>
+    <section class="domain dom-lf" id="sec-sch-lf" data-sum="${esc((() => { const w = byLf.filter(x => x.n > 0).sort((a, b) => b.n - a.n); return w.length ? `${plural(w.length, 'landfill')} with a school within ${rTxt}. Most: ${w[0].l.name} (${plural(w[0].n, 'school')})` : 'No landfills with a school nearby'; })())}"><header class="dom-head">${chip('lf')}<h3>Landfills<span class="dom-place">: ${esc(title)}</span></h3><p class="dom-src">Schools within ${rTxt} of each landfill. A school near two landfills is listed under both here, but counted once in the totals above.</p></header>
       <div id="schLfTable"></div></section>
     <aside class="pop-caveat"><h4>About these figures</h4><ul>
       <li><strong>Enrollment years differ:</strong> public schools are 2024-25; private schools are 2019-20, the latest year published at school level.${missingPriv ? ` ${plural(missingPriv, 'private school')} here opened or reported since then and ${missingPriv === 1 ? 'has' : 'have'} no student figure.` : ''}${missingPub ? ` ${plural(missingPub, 'public school')} here ${missingPub === 1 ? 'reports' : 'report'} no enrollment.` : ''}</li>
@@ -4578,7 +4616,7 @@ function buildExplorer() {
     ${schBox('schSumEx')}`, selection) : '';
 
   $('#report').innerHTML = head + glance + jumpNav(['lf', 'pl', 'ec', 'ej']) + condSec + rankSection + lfSec + plSec + ecSec + ejSec +
-    `<section class="domain dom-none" id="sec-table"><header class="dom-head"><span class="chip chip-none">All matching landfills</span><h3>Landfill list<span class="dom-place">: ${esc(selection)}</span></h3><p class="dom-src">Column colors show which dataset each figure comes from. Landfill names link to Waste Impact Tracker, compliance badges to EPA’s report, and Profile opens the landfill profile.</p></header><div class="tablewrap" id="exTable"></div></section>` +
+    `<section class="domain dom-none" id="sec-table" data-sum="${esc(`All ${plural(matches.length, 'matching landfill')}, with every measure; sort by any column or download the list`)}"><header class="dom-head"><span class="chip chip-none">All matching landfills</span><h3>Landfill list<span class="dom-place">: ${esc(selection)}</span></h3><p class="dom-src">Column colors show which dataset each figure comes from. Landfill names link to Waste Impact Tracker, compliance badges to EPA’s report, and Profile opens the landfill profile.</p></header><div class="tablewrap" id="exTable"></div></section>` +
     sourcesHTML(['lf', 'pl', 'ec', 'ej'], Title, `${filterText.length ? filterText.join('. ') + '. ' : ''}Plume data ${periodText}`);
   runSchoolSummary('schSumEx', { lfs: matches, place: 'these landfills', clearFilters: false });
 
@@ -4745,12 +4783,13 @@ function sortableTable(container, cols, rows, key, dir, limit = Infinity) {
 
 /* ---------- layout: summary tiles, folding sections, Good to know strips ---------- */
 function sectionSummary(sec) {
+  if (sec.dataset.sum) return sec.dataset.sum;
   const lead = sec.querySelector('.lead');
   if (lead) { const t = lead.textContent.replace(/\s+/g, ' ').trim(); const m = t.match(/^.{20,170}?[.;](\s|$)/); return m ? m[0].trim() : t.slice(0, 160) + (t.length > 160 ? '…' : ''); }
   const stats = [...sec.querySelectorAll('.stats .stat')].slice(0, 3).map(st => `${st.querySelector('dt')?.textContent.trim()}: ${st.querySelector('dd')?.textContent.trim()}`).filter(x => !/: $/.test(x));
   if (stats.length) return stats.join(' · ');
   const rows = sec.querySelectorAll('tbody tr').length;
-  if (rows) return `${fmtInt(rows)} row${rows === 1 ? '' : 's'}`;
+  if (rows) return `A table of ${fmtInt(rows)} ${rows === 1 ? 'row' : 'rows'}`;
   const src = sec.querySelector('.dom-src'); return src ? src.textContent.replace(/\s+/g, ' ').trim().slice(0, 150) : '';
 }
 function openSection(sec, open = true) {
@@ -4773,10 +4812,13 @@ function enhanceReport() {
   if (atag && tiles.length && !atag.closest('.hero')) {
     const wrap = document.createElement('section');
     wrap.className = 'domain dom-none acc-sum'; wrap.id = 'sec-summary';
+    wrap.dataset.sum = 'The full summary, one card for each dataset';
     wrap.innerHTML = '<header class="dom-head"><span class="chip chip-none">Summary</span><h3>In more detail</h3></header>';
     atag.replaceWith(wrap); wrap.appendChild(atag);
   }
-  // Good to know strips
+  // Good to know strips: one per report, with any further notes inside it
+  const boxes = [...rep.querySelectorAll('.pop-caveat, .sch-limits')];
+  if (boxes.length > 1) { boxes.slice(1).forEach(b => { b.querySelector('h4')?.remove(); boxes[0].insertAdjacentHTML('beforeend', `<div class="gtk-more-notes">${b.innerHTML}</div>`); b.remove(); }); }
   rep.querySelectorAll('.pop-caveat, .sch-limits').forEach(box => {
     const title = box.querySelector('h4')?.textContent.trim() || 'Good to know';
     const first = box.querySelector('li')?.textContent.replace(/\s+/g, ' ').trim() || '';
@@ -4790,7 +4832,6 @@ function enhanceReport() {
   // folding sections
   const secs = [...rep.querySelectorAll(':scope > section.domain, :scope > section.sources')];
   if (secs.length > 1) {
-    let firstOpen = false;
     secs.forEach(sec => {
       const h = sec.querySelector(':scope > .dom-head') || sec.querySelector(':scope > h3');
       if (!h) return;
@@ -4804,9 +4845,7 @@ function enhanceReport() {
       const hh = btn.parentElement;
       hh.classList.add('acc-head');
       hh.addEventListener('click', e => { if (e.target.closest('a, button:not(.acc-btn), select, input')) return; openSection(sec, sec.classList.contains('is-closed')); });
-      const startOpen = !firstOpen && !sec.classList.contains('sources') && !sec.classList.contains('acc-sum');
-      if (startOpen) firstOpen = true;
-      openSection(sec, startOpen);
+      openSection(sec, true);   // every section starts open; each can be collapsed
     });
     const first = secs[0];
     const bar = document.createElement('div'); bar.className = 'acc-bar noprint';
