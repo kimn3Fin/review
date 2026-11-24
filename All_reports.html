@@ -1022,6 +1022,26 @@
   .steps .ex-toggle { border-radius: 10px; }
   .gtk-more-notes { margin-top: 8px; padding-top: 8px; border-top: 1px solid #EBD9AE; }
   .gtk-more-notes h4 { display: none; }
+
+  /* ===== race breakdowns (round 43) ===== */
+  .race-bars { width: 100%; }
+  .rb { grid-template-columns: minmax(170px, max-content) minmax(0, 1fr) 56px; gap: 12px; font-size: 14px; }
+  .rb-l { white-space: normal; overflow: visible; text-overflow: clip; }
+  .rb-t { height: 10px; }
+  .rb-total .rb-t { height: 16px; }
+  .srb { width: 170px; height: 18px; border-radius: 3px; cursor: pointer; }
+  .srb:focus-visible { outline: 3px solid var(--focus, #E6674F); outline-offset: 2px; }
+  td.col-race { min-width: 250px; }
+  .race-pop { position: absolute; z-index: 1000; display: none; width: 290px; background: #fff; border: 1px solid #C4B5A4; border-radius: 10px; padding: 10px 12px; font-size: 13.5px; box-shadow: 0 6px 18px rgba(42, 29, 61, .14); color: #2F2A36; }
+  .rp-h { margin: 0 0 6px; font-weight: 700; color: #2A1D3D; }
+  .rp-r { display: grid; grid-template-columns: 12px minmax(0, 1fr) 46px 50px; gap: 8px; align-items: center; margin: 3px 0; }
+  .rp-r i { width: 11px; height: 11px; border-radius: 2px; }
+  .rp-n { text-align: right; font-variant-numeric: tabular-nums; }
+  .rp-tot { border-top: 1px solid #EDE5DC; padding-top: 5px; margin-top: 5px; font-weight: 700; color: #2A1D3D; }
+  @media print { .race-pop { display: none !important; } }
+
+  td.col-name .linkbtn { text-align: left; }
+  td.col-lf, th.col-lf { min-width: 190px; }
 </style>
 </head>
 <body>
@@ -3425,11 +3445,48 @@ function schoolRaceBar(s, poc) {
   if (!en) return '<span class="na">—</span>';
   const parts = en.slice(1), t = parts.reduce((a, b) => a + (b || 0), 0);
   if (!t) return '<span class="na">—</span>';
-  const tip = RACE_ORDER.filter(i => parts[i]).map(i => `${SCH_RACE[i]} ${fmtP(parts[i] / t * 100)}`).join(', ');
-  return `<span class="srb" title="${esc(tip)}" role="img" aria-label="${esc(tip)}">${RACE_ORDER.filter(i => parts[i]).map(i => `<i style="width:${(parts[i] / t * 100).toFixed(2)}%;background:${RACE_COLORS[i]}"></i>`).join('')}</span><strong class="srb-n">${fmtP(poc)}</strong>`;
+  const label = RACE_ORDER.filter(i => parts[i]).map(i => `${SCH_RACE[i]} ${fmtP(parts[i] / t * 100)}`).join(', ');
+  return `<span class="srb" tabindex="0" role="button" aria-label="${esc(`${s[1]}: ${label}`)}" data-race="${esc(JSON.stringify(parts))}" data-school="${esc(s[1])}" data-students="${en[0] || 0}">${RACE_ORDER.filter(i => parts[i]).map(i => `<i style="width:${(parts[i] / t * 100).toFixed(2)}%;background:${RACE_COLORS[i]}"></i>`).join('')}</span><strong class="srb-n">${fmtP(poc)}</strong>`;
 }
+// Breakdown box for a school's bar: hover, keyboard focus, or tap
+let RACE_POP = null, RACE_POP_FOR = null;
+function showRacePop(bar) {
+  if (!RACE_POP) { RACE_POP = document.createElement('div'); RACE_POP.className = 'race-pop'; RACE_POP.setAttribute('role', 'tooltip'); document.body.appendChild(RACE_POP); }
+  const parts = JSON.parse(bar.dataset.race || '[]'), t = parts.reduce((a, b) => a + (b || 0), 0); if (!t) return;
+  const rows = parts.map((v, i) => ({ v: v || 0, i })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
+  const poc = t - (parts[4] || 0);
+  RACE_POP.innerHTML = `<p class="rp-h">${esc(bar.dataset.school)} · ${fmtInt(+bar.dataset.students)} students</p>
+    ${rows.map(x => `<div class="rp-r"><i style="background:${RACE_COLORS[x.i]}"></i><span>${esc(SCH_RACE[x.i])}</span><span class="rp-n">${fmtInt(x.v)}</span><span class="rp-n">${fmtP(x.v / t * 100)}</span></div>`).join('')}
+    <div class="rp-r rp-tot"><i></i><span>Students of color</span><span class="rp-n">${fmtInt(poc)}</span><span class="rp-n">${fmtP(poc / t * 100)}</span></div>`;
+  const r = bar.getBoundingClientRect();
+  RACE_POP.style.display = 'block';
+  const w = RACE_POP.offsetWidth, h = RACE_POP.offsetHeight;
+  let left = r.left + window.scrollX, top = r.bottom + window.scrollY + 8;
+  if (left + w > window.scrollX + document.documentElement.clientWidth - 10) left = window.scrollX + document.documentElement.clientWidth - w - 10;
+  if (r.bottom + h + 12 > window.innerHeight) top = r.top + window.scrollY - h - 8;
+  RACE_POP.style.left = `${Math.max(8, left)}px`; RACE_POP.style.top = `${top}px`;
+  RACE_POP_FOR = bar;
+}
+function hideRacePop() { if (RACE_POP) RACE_POP.style.display = 'none'; RACE_POP_FOR = null; }
+document.addEventListener('mouseover', e => { const b = e.target.closest('.srb[data-race]'); if (b && b !== RACE_POP_FOR) showRacePop(b); else if (!b && RACE_POP_FOR && !e.target.closest('.race-pop')) hideRacePop(); });
+document.addEventListener('focusin', e => { const b = e.target.closest('.srb[data-race]'); if (b) showRacePop(b); });
+document.addEventListener('focusout', e => { if (e.target.closest('.srb[data-race]')) hideRacePop(); });
+document.addEventListener('click', e => { const b = e.target.closest('.srb[data-race]'); if (b) { if (RACE_POP_FOR === b) hideRacePop(); else showRacePop(b); } else if (!e.target.closest('.race-pop')) hideRacePop(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') hideRacePop(); });
+window.addEventListener('scroll', () => { if (RACE_POP_FOR) hideRacePop(); }, { passive: true });
 const LEAFLET_JS = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
 const LEAFLET_CSS = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+let SCH_SAT = null, SCH_SAT_Z = 14;
+function autoSatellite(map) {
+  if (!SCH_SAT || !map) return;
+  const zoomedIn = map.getZoom() >= SCH_SAT_Z;
+  if (!SCH_SAT.auto) { if (zoomedIn === SCH_SAT.side) return; SCH_SAT.auto = true; }   // crossed the level: automatic again
+  const want = zoomedIn ? SCH_SAT.sat : SCH_SAT.light, other = zoomedIn ? SCH_SAT.light : SCH_SAT.sat;
+  if (map.hasLayer(want)) return;
+  SCH_SAT.switching = true;
+  map.removeLayer(other); want.addTo(map); map.fire('baselayerchange', { layer: want });
+  SCH_SAT.switching = false;
+}
 let LEAFLET_READY = null, SCH_MAP = null, SCH_MARKERS = new Map(), SCH_MAP_NEAR = true, SCH_MAP_ARGS = null;
 function loadLeaflet() {
   if (window.L) return Promise.resolve(window.L);
@@ -3452,8 +3509,9 @@ async function drawSchoolMap({ located, byLf, schools, o, pctOf }) {
   try { L = await loadLeaflet(); } catch (x) { box.innerHTML = '<p class="note sch-map-msg">The map couldn’t load. Check your internet connection and press Update Report to try again.</p>'; return; }
   if (!document.body.contains(box)) return;   // the report changed while the map library loaded
   if (SCH_MAP) { SCH_MAP.remove(); SCH_MAP = null; }
+  SCH_SAT = null;
   box.innerHTML = '';
-  const map = L.map(box, { preferCanvas: true, scrollWheelZoom: false });
+  const map = L.map(box, { preferCanvas: true, scrollWheelZoom: true, wheelPxPerZoomLevel: 90 });
   SCH_MAP = map;
   const light = MAPBOX_TOKEN
     ? L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/256/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`, { attribution: '© Mapbox © OpenStreetMap', maxZoom: 19 })
@@ -3462,6 +3520,10 @@ async function drawSchoolMap({ located, byLf, schools, o, pctOf }) {
   if (MAPBOX_TOKEN) {
     const sat = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`, { attribution: '© Mapbox © OpenStreetMap © Maxar', maxZoom: 19 });
     L.control.layers({ 'Map': light, 'Satellite': sat }, null, { position: 'topright' }).addTo(map);
+    SCH_SAT = { light, sat, auto: true, side: null };
+    // You picked a layer yourself: keep it until you zoom across the satellite level
+    map.on('baselayerchange', () => { if (SCH_SAT && !SCH_SAT.switching) { SCH_SAT.auto = false; SCH_SAT.side = map.getZoom() >= SCH_SAT_Z; } });
+    map.on('zoomend', () => autoSatellite(map));
   }
   // Too many landfills makes the map unreadable: then show only those with schools nearby
   const MAX = 600;
@@ -3499,6 +3561,10 @@ async function drawSchoolMap({ located, byLf, schools, o, pctOf }) {
     const latMid = (Math.min(...lats) + Math.max(...lats)) / 2, lonPad = pad / Math.max(0.2, Math.cos(latMid * Math.PI / 180));
     map.fitBounds([[Math.min(...lats) - pad, Math.min(...lons) - lonPad], [Math.max(...lats) + pad, Math.max(...lons) + lonPad]], { padding: [16, 16], maxZoom: 15 });
   };
+  if (bounds.length && map.getBoundsZoom) {
+    const l0 = bounds[0], lp0 = pad / Math.max(0.2, Math.cos(l0[0] * Math.PI / 180));
+    SCH_SAT_Z = map.getBoundsZoom([[l0[0] - pad, l0[1] - lp0], [l0[0] + pad, l0[1] + lp0]]);
+  }
   fitArea();
   setTimeout(fitArea, 300);   // again once the page has finished laying out
   // Zoom menus
@@ -3530,7 +3596,7 @@ async function drawSchoolMap({ located, byLf, schools, o, pctOf }) {
   $('#schMapNote').textContent = (!SCH_MAP_NEAR && located.length > MAX
     ? `This selection has ${fmtInt(located.length)} landfills, too many to show at once, so the map shows only the ${fmtInt(shownLfs.length)} with a school nearby. `
     : SCH_MAP_NEAR ? `Showing the ${fmtInt(shownLfs.length)} of ${fmtInt(located.length)} landfills with a school nearby. ` : '')
-    + 'Scroll-wheel zoom is off so the page scrolls normally; use the + and − buttons, or pinch on a phone.';
+    + 'Zoom with the scroll wheel, the + and − buttons, or by pinching on a phone.';
 }
 
 const andJoin = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
@@ -4166,7 +4232,14 @@ function locatorUrl(lf) {
   }
   return `https://api.mapbox.com/styles/v1/mapbox/light-v11/static/pin-s+E6674F(${ll})/${view}/150x160@2x?access_token=${MAPBOX_TOKEN}`;
 }
-let SAT_ZOOM = null;
+let SAT_ZOOM = null, SAT_WHEEL_AT = 0;
+document.addEventListener('wheel', e => {
+  const frame = e.target.closest('.sat-frame'); if (!frame || !$('#satImg')) return;
+  e.preventDefault();
+  const now = Date.now(); if (now - SAT_WHEEL_AT < 350) return;   // one step per flick of the wheel
+  SAT_WHEEL_AT = now;
+  zoomSatellite(e.deltaY < 0 ? 1 : -1);
+}, { passive: false });
 function zoomSatellite(step) {
   const lf = LANDFILLS.get(SELECTED_LF), img = $('#satImg');
   if (!lf || !img) return;
